@@ -4,6 +4,6 @@ namespace Wada.NCProgramConcatenationService
 {
     public interface INCProgramRepository
     {
-        NCProgram ReadAll(StreamReader reader);
+        Task<NCProgramCode> ReadAllAsync(StreamReader reader, string programName);
     }
 }

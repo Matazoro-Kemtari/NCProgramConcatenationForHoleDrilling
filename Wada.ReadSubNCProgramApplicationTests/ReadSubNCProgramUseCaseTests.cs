@@ -20,7 +20,7 @@ namespace Wada.ReadSubNCProgramApplication.Tests
 
             // then
             mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Once);
-            mock_nc.Verify(x => x.ReadAll(It.IsAny<StreamReader>()), Times.Once);
+            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod()]
@@ -29,7 +29,7 @@ namespace Wada.ReadSubNCProgramApplication.Tests
             // given
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INCProgramRepository> mock_nc = new();
-            mock_nc.Setup(x => x.ReadAll(It.IsAny<StreamReader>()))
+            mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()))
                 .Throws<ReadSubNCProgramApplicationException>();
 
             // when
@@ -41,7 +41,7 @@ namespace Wada.ReadSubNCProgramApplication.Tests
 
             // then
             _ = await Assert.ThrowsExceptionAsync<ReadSubNCProgramApplicationException>(targetAsync);
-            mock_nc.Verify(x => x.ReadAll(It.IsAny<StreamReader>()), Times.Once);
+            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

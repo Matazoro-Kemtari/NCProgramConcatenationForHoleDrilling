@@ -7,7 +7,7 @@ namespace Wada.ReadSubNCProgramApplication
 {
     public interface IReadSubNCProgramUseCase
     {
-        Task<NCProgram> ExecuteAsync(string path);
+        Task<NCProgramCode> ExecuteAsync(string path);
     }
 
     public class ReadSubNCProgramUseCase : IReadSubNCProgramUseCase
@@ -22,15 +22,16 @@ namespace Wada.ReadSubNCProgramApplication
         }
 
         [Logging]
-        public async Task<NCProgram> ExecuteAsync(string path)
+        public async Task<NCProgramCode> ExecuteAsync(string path)
         {
+            var fileName = Path.GetFileNameWithoutExtension(path);
             try
             {
                 // サブプログラムを読み込む
                 return await Task.Run(() =>
                 {
                     StreamReader reader = _streamReaderOpener.Open(path);
-                    return _ncProgramRepository.ReadAll(reader);
+                    return _ncProgramRepository.ReadAllAsync(reader, fileName);
                 });
             }
             catch (NCProgramConcatenationServiceException ex)
