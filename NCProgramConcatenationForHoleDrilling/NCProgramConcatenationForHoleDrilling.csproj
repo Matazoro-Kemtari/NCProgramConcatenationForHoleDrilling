@@ -13,4 +13,10 @@
     <PackageReference Include="NLog" Version="5.1.0" />
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wada.NCProgramConcatenationForHoleDrilling\Wada.NCProgramConcatenationForHoleDrilling.csproj" />
+    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NCProgramFile\Wada.NCProgramFile.csproj" />
+    <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
+  </ItemGroup>
 </Project>

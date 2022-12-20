@@ -25,7 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramFile", "Wada.NCProgramFile\Wada.NCProgramFile.csproj", "{1378CA73-01F1-4968-A775-71ABD0941054}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.NCProgramFileTests", "Wada.NCProgramFileTests\Wada.NCProgramFileTests.csproj", "{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramFileTests", "Wada.NCProgramFileTests\Wada.NCProgramFileTests.csproj", "{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.NCProgramConcatenationForHoleDrilling", "Wada.NCProgramConcatenationForHoleDrilling\Wada.NCProgramConcatenationForHoleDrilling.csproj", "{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,10 @@ Global
 		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +85,7 @@ Global
 		{77C5D031-833A-484E-8EB5-C631E826A70B} = {59A5C3B5-5809-4C0A-BFDC-FF70C80B5A9C}
 		{1378CA73-01F1-4968-A775-71ABD0941054} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
 		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4} = {2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}
