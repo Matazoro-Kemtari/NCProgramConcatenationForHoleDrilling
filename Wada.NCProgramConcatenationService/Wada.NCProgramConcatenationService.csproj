@@ -17,4 +17,8 @@
     <PackageReference Include="Ulid" Version="1.2.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Wada.Extension\Wada.Extension.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,8 @@
 ﻿using GongSolutions.Wpf.DragDrop;
+using Livet.Messaging;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -10,7 +12,10 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using Wada.AOP.Logging;
+using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
+using Wada.NCProgramConcatenationForHoleDrilling.Views;
+using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.ReadSubNCProgramApplication;
 
@@ -19,35 +24,59 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
     public class ConcatenationPageViewModel : BindableBase, IDestructible, IDropTarget
     {
         private readonly Concatenation _concatenation = new();
+        private readonly IDialogService _dialogService;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
 
-        public ConcatenationPageViewModel(IReadSubNCProgramUseCase readSubNCProgramUseCase)
+        public ConcatenationPageViewModel(IDialogService dialogService, IReadSubNCProgramUseCase readSubNCProgramUseCase)
         {
+            _dialogService = dialogService;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
 
             NCProgramFileName = _concatenation
                 .NCProgramFile
                 .ToReactivePropertySlimAsSynchronized(x => x.Value)
                 .AddTo(Disposables);
-            // TODO: ここでファイルを展開する処理を入れる
-            _concatenation.NCProgramFile.Subscribe([Logging] async (x) =>
-            {
-                if (x == null)
-                    return;
 
-                NCProgramCode ncProcramCode;
-                try
-                {
-                    ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(x);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    throw new NCProgramConcatenationForHoleDrillingException(ex.Message, ex);
-                }
-                MessageBox.Show(x);
-            });
+            // ドラッグアンドドロップされて 値が書き換わったイベント
+            _concatenation.NCProgramFile.Skip(1).Subscribe(x => ChangeSubprogramPath(x));
         }
 
+        [Logging]
+        private async void ChangeSubprogramPath(string path)
+        {
+            if (path == null || path == string.Empty)
+                return;
+
+            // サブプログラムを読み込む
+            NCProgramCode ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
+
+            // 読み込んだサブプログラムの作業指示を取得する
+            OperationType operationType;
+            try
+            {
+                operationType = ncProcramCode.FetchOperationType();
+            }
+            catch (NCProgramConcatenationServiceException ex)
+            {
+                _concatenation.Clear();
+
+                var message = MessageNotificationViaLivet.MakeExclamationMessage(
+                    ex.Message);
+                await Messenger.RaiseAsync(message);
+                return;
+            }
+
+            IDialogParameters parameters = new DialogParameters(
+                $"OperationTypeString={operationType.GetEnumDisplayName()}&SubProgramSource={ncProcramCode.ToString()}");
+            IDialogResult dialogResult = default;
+            _dialogService.ShowDialog(nameof(NotationContentConfirmationDialog),
+                parameters,
+                result => dialogResult = result);
+
+            MessageBox.Show("試作はここまでです");
+        }
+
+        [Logging]
         public void DragOver(IDropInfo dropInfo)
         {
             var dragFileList = ((DataObject)dropInfo.Data).GetFileDropList().Cast<string>();
@@ -57,6 +86,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
+        [Logging]
         public void Drop(IDropInfo dropInfo)
         {
             var dragFileList = ((DataObject)dropInfo.Data).GetFileDropList().Cast<string>();
@@ -77,5 +107,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private CompositeDisposable Disposables { get; } = new CompositeDisposable();
 
         public ReactivePropertySlim<string> NCProgramFileName { get; }
+
+        public InteractionMessenger Messenger { get; } = new InteractionMessenger();
     }
 }

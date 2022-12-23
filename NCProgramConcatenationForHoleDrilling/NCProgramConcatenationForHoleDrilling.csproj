@@ -19,4 +19,15 @@
     <ProjectReference Include="..\Wada.NCProgramFile\Wada.NCProgramFile.csproj" />
     <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

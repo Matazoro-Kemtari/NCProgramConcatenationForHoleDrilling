@@ -2,8 +2,13 @@
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 {
-    public record class Concatenation
+    internal record class Concatenation
     {
+        internal void Clear()
+        {
+            NCProgramFile.Value = default;
+        }
+
         public ReactivePropertySlim<string> NCProgramFile { get; init; } = new();
     }
 }
