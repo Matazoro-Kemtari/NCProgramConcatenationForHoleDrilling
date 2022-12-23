@@ -3,7 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCProgramConcatenationForHoleDrilling", "NCProgramConcatenationForHoleDrilling\NCProgramConcatenationForHoleDrilling.csproj", "{672B0AF0-09ED-42A5-BC91-F1D41ACA4F56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCProgramConcatenationForHoleDrilling", "NCProgramConcatenationForHoleDrilling\NCProgramConcatenationForHoleDrilling.csproj", "{672B0AF0-09ED-42A5-BC91-F1D41ACA4F56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AOP", "AOP", "{2280FE7F-FB0B-44C7-8DAE-70A7119006FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.AOP.Logging", "Wada.AOP.Logging\Wada.AOP.Logging.csproj", "{8B77098B-184F-456F-9E94-1C0791897C3D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCase", "UseCase", "{D3D9615A-1602-44DB-883B-5D520011579A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EditNCProgramApplication", "EditNCProgramApplication\EditNCProgramApplication.csproj", "{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadSubNCProgramApplication", "Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj", "{79C0DA99-7EA1-4B67-AA59-155763421201}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadSubNCProgramApplicationTests", "Wada.ReadSubNCProgramApplicationTests\Wada.ReadSubNCProgramApplicationTests.csproj", "{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{59A5C3B5-5809-4C0A-BFDC-FF70C80B5A9C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramConcatenationService", "Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj", "{77C5D031-833A-484E-8EB5-C631E826A70B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{6CA6A240-9B6E-4F45-B371-694B79D19BBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramFile", "Wada.NCProgramFile\Wada.NCProgramFile.csproj", "{1378CA73-01F1-4968-A775-71ABD0941054}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramFileTests", "Wada.NCProgramFileTests\Wada.NCProgramFileTests.csproj", "{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramConcatenationForHoleDrilling", "Wada.NCProgramConcatenationForHoleDrilling\Wada.NCProgramConcatenationForHoleDrilling.csproj", "{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +41,51 @@ Global
 		{672B0AF0-09ED-42A5-BC91-F1D41ACA4F56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{672B0AF0-09ED-42A5-BC91-F1D41ACA4F56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{672B0AF0-09ED-42A5-BC91-F1D41ACA4F56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B77098B-184F-456F-9E94-1C0791897C3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B77098B-184F-456F-9E94-1C0791897C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B77098B-184F-456F-9E94-1C0791897C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B77098B-184F-456F-9E94-1C0791897C3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79C0DA99-7EA1-4B67-AA59-155763421201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79C0DA99-7EA1-4B67-AA59-155763421201}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79C0DA99-7EA1-4B67-AA59-155763421201}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79C0DA99-7EA1-4B67-AA59-155763421201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77C5D031-833A-484E-8EB5-C631E826A70B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77C5D031-833A-484E-8EB5-C631E826A70B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77C5D031-833A-484E-8EB5-C631E826A70B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77C5D031-833A-484E-8EB5-C631E826A70B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1378CA73-01F1-4968-A775-71ABD0941054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1378CA73-01F1-4968-A775-71ABD0941054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1378CA73-01F1-4968-A775-71ABD0941054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1378CA73-01F1-4968-A775-71ABD0941054}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8B77098B-184F-456F-9E94-1C0791897C3D} = {2280FE7F-FB0B-44C7-8DAE-70A7119006FB}
+		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{79C0DA99-7EA1-4B67-AA59-155763421201} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{77C5D031-833A-484E-8EB5-C631E826A70B} = {59A5C3B5-5809-4C0A-BFDC-FF70C80B5A9C}
+		{1378CA73-01F1-4968-A775-71ABD0941054} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4} = {2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}

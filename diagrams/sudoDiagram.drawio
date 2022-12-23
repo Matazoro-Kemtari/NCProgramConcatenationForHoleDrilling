@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RzdB1_ECVK01WcsdOi-J" name="sodo">
-        <mxGraphModel dx="1145" dy="654" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1374" dy="785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -23,7 +23,7 @@
                     <mxGeometry x="10" y="870" width="340" height="180" as="geometry"/>
                 </mxCell>
                 <mxCell id="240" value="&lt;u&gt;穴加工用結合ソフト&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="940" y="50" width="210" height="220" as="geometry"/>
+                    <mxGeometry x="940" y="50" width="210" height="290" as="geometry"/>
                 </mxCell>
                 <mxCell id="164" style="edgeStyle=none;html=1;fontColor=#FF0000;endArrow=none;endFill=0;dashed=1;startArrow=none;" parent="1" source="5" target="158" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -67,6 +67,9 @@
                 <mxCell id="609" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" parent="1" source="238" target="608" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
+                <mxCell id="674" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="238" target="673" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="238" value="工作部員" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
                     <mxGeometry x="790" y="75" width="30" height="60" as="geometry"/>
                 </mxCell>
@@ -77,7 +80,7 @@
                     <mxGeometry x="20.62" y="190" width="30" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="259" value="サブプログラムの呼び出し番号を書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="150" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="215" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="372" value="オブジェクト図" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="520" y="840" width="100" height="20" as="geometry"/>
@@ -88,17 +91,17 @@
                 <mxCell id="465" value="(NCプログラム)&lt;br&gt;プログラム番号: O0012" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="620" y="878" width="160" height="49" as="geometry"/>
                 </mxCell>
-                <mxCell id="664" value="1" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="513" target="661">
+                <mxCell id="664" value="1" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" parent="1" source="513" target="661" edge="1">
                     <mxGeometry x="-0.5076" y="10" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="667" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="664">
+                <mxCell id="667" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="664" vertex="1" connectable="0">
                     <mxGeometry x="0.615" relative="1" as="geometry">
                         <mxPoint x="-4" y="-10" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="513" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;NCプログラム&lt;/u&gt;&lt;/span&gt;(NCProgram&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;プログラム番号&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
+                <mxCell id="513" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;NCプログラム&lt;/u&gt;&lt;/span&gt;(NCProgramCode&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;プログラム番号&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="28.76" y="900" width="111.24" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="158" value="&lt;span&gt;解決したい課題&lt;br&gt;・マシニング結合ソフトはあるが使い勝手が悪く手編集を行っている&lt;/span&gt;&lt;br&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・ドリルサイクルの編集ソフトがなく、手編集を行っている&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・手編集をしたデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・結合したデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・穴加工に絞ってNCプログラムを結合する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムはDrag&amp;amp;Dropで入力したい&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムは、ドリル、リーマ、タップの3種&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムの呼び出し番号はファイル名に由来する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;　(※プログラム中のプログラム番号ではない)&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・リーマ径により工程がないこともある&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[タップの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→面取り→タップ&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[リーマの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→下穴DR2→面取り→リーマ&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[ドリルの工程]&lt;/p&gt;・C/D→下穴DR1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=default;" parent="1" vertex="1">
@@ -132,7 +135,7 @@
                     <mxGeometry x="185.62" y="15" width="110" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="588" value="機械・穴径・素材・板厚ごとにメインデータを書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="85" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="150" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="591" style="edgeStyle=none;html=1;endArrow=none;endFill=0;dashed=1;" parent="1" source="590" target="588" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -153,7 +156,7 @@
                     <mxGeometry x="900" y="957" width="80" height="49" as="geometry"/>
                 </mxCell>
                 <mxCell id="596" value="穴加工の工程を結合する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="210" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="275" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="598" value="(コメント)&lt;br&gt;コメント: RB-250F" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="900" y="878" width="120" height="49" as="geometry"/>
@@ -165,10 +168,10 @@
                     <mxGeometry x="1070" y="947" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="606" value="メインデータとサブプログラムをFTPで転送する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="320" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="385" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="608" value="加工機を実行する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="380" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="445" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="614" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="610" target="612" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -197,73 +200,76 @@
                 <mxCell id="628" value="(NCプログラム)&lt;br&gt;プログラム番号: O0012" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="620" y="957" width="160" height="49" as="geometry"/>
                 </mxCell>
-                <mxCell id="651" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;dashed=1;" edge="1" source="652" target="656" parent="1">
+                <mxCell id="651" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;dashed=1;" parent="1" source="652" target="656" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="652" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;" vertex="1" parent="1">
+                <mxCell id="652" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;" parent="1" vertex="1">
                     <mxGeometry x="600" y="1030" width="440" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="653" style="edgeStyle=none;html=1;endArrow=none;endFill=0;startArrow=diamond;startFill=1;" edge="1" source="655" target="654" parent="1">
+                <mxCell id="653" style="edgeStyle=none;html=1;endArrow=none;endFill=0;startArrow=diamond;startFill=1;" parent="1" source="655" target="654" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="654" value="(ワード)&lt;br&gt;アドレス: G&lt;br&gt;データ: 54" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="654" value="(ワード)&lt;br&gt;アドレス: G&lt;br&gt;データ: 54" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="900" y="1040" width="80" height="49" as="geometry"/>
                 </mxCell>
-                <mxCell id="660" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="655" target="659">
+                <mxCell id="660" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" parent="1" source="655" target="659" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="655" value="(ブロック)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="655" value="(ブロック)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="800" y="1049.5" width="80" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="656" value="&lt;span style=&quot;font-size: 13px&quot;&gt;プログラム+コメント&lt;br style=&quot;font-size: 13px&quot;&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;spacing=2;" vertex="1" parent="1">
+                <mxCell id="656" value="&lt;span style=&quot;font-size: 13px&quot;&gt;プログラム+コメント&lt;br style=&quot;font-size: 13px&quot;&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;spacing=2;" parent="1" vertex="1">
                     <mxGeometry x="1070" y="1030" width="80" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="657" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" edge="1" source="658" target="655" parent="1">
+                <mxCell id="657" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" parent="1" source="658" target="655" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="658" value="(NCプログラム)&lt;br&gt;プログラム番号: O0012" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="658" value="(NCプログラム)&lt;br&gt;プログラム番号: O0012" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="620" y="1040" width="160" height="49" as="geometry"/>
                 </mxCell>
-                <mxCell id="659" value="(コメント)&lt;br&gt;コメント: RB-250F" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" vertex="1" parent="1">
+                <mxCell id="659" value="(コメント)&lt;br&gt;コメント: RB-250F" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="900" y="1100" width="120" height="49" as="geometry"/>
                 </mxCell>
-                <mxCell id="665" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="661" target="662">
+                <mxCell id="665" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" parent="1" source="661" target="662" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="668" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="665">
+                <mxCell id="668" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="665" vertex="1" connectable="0">
                     <mxGeometry x="-0.5391" y="-1" relative="1" as="geometry">
                         <mxPoint x="2" y="7" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="669" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="665">
+                <mxCell id="669" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="665" vertex="1" connectable="0">
                     <mxGeometry x="0.595" relative="1" as="geometry">
                         <mxPoint x="-16" y="-2" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="666" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="661" target="663">
+                <mxCell id="666" style="edgeStyle=none;html=1;startArrow=diamond;startFill=1;endArrow=none;endFill=0;" parent="1" source="661" target="663" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="670" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="666">
+                <mxCell id="670" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="666" vertex="1" connectable="0">
                     <mxGeometry x="-0.565" y="1" relative="1" as="geometry">
                         <mxPoint x="-5" y="8" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="671" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="666">
+                <mxCell id="671" value="0..n" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="666" vertex="1" connectable="0">
                     <mxGeometry x="0.6746" relative="1" as="geometry">
                         <mxPoint x="12" y="-3" as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="661" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;ブロック&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCBlock&lt;span&gt;)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="661" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;ブロック&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCBlock&lt;span&gt;)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="180.62" y="910" width="80" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="672" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" edge="1" parent="1" source="662" target="537">
+                <mxCell id="672" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=none;endFill=0;" parent="1" source="662" target="537" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="662" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;コメント&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCComment&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;コメント&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="662" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;コメント&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCComment&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;コメント&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="69.38" y="977" width="111.24" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="663" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;ワード&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCWord&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;アドレス&lt;br&gt;&lt;/font&gt;データ" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                <mxCell id="663" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;ワード&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(NCWord&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;アドレス&lt;br&gt;&lt;/font&gt;データ" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="220" y="977" width="111.24" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="673" value="サブプログラムを読み込む" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="955" y="90" width="180" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
