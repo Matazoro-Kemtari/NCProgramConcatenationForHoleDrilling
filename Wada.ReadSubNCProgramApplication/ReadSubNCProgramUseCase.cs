@@ -30,7 +30,7 @@ namespace Wada.ReadSubNCProgramApplication
                 // サブプログラムを読み込む
                 return await Task.Run(() =>
                 {
-                    StreamReader reader = _streamReaderOpener.Open(path);
+                    using StreamReader reader = _streamReaderOpener.Open(path);
                     return _ncProgramRepository.ReadAllAsync(reader, fileName);
                 });
             }
