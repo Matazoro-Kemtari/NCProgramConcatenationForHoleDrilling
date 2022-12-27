@@ -25,19 +25,9 @@ namespace Wada.ReadSubNCProgramApplication
         public async Task<NCProgramCode> ExecuteAsync(string path)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
-            try
-            {
-                // サブプログラムを読み込む
-                return await Task.Run(() =>
-                {
-                    using StreamReader reader = _streamReaderOpener.Open(path);
-                    return _ncProgramRepository.ReadAllAsync(reader, fileName);
-                });
-            }
-            catch (NCProgramConcatenationServiceException ex)
-            {
-                throw new ReadSubNCProgramApplicationException(ex.Message, ex);
-            }
+            // サブプログラムを読み込む
+            using StreamReader reader = _streamReaderOpener.Open(path);
+            return await _ncProgramRepository.ReadAllAsync(reader, fileName);
         }
     }
 }

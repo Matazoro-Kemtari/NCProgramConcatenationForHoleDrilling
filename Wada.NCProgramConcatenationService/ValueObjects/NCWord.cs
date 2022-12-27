@@ -13,6 +13,11 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public override string ToString() => $"({Comment})";
     }
 
+    public class TestNCCommentFactory
+    {
+        public static NCComment Create(string comment = "COMMENT") => new(comment);
+    }
+
     /// <summary>
     /// ワード
     /// </summary>
@@ -21,6 +26,16 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     public record class NCWord(Address Address, IValueData ValueData) : INCWord
     {
         public override string ToString() => Address.ToString() + ValueData.ToString();
+    }
+
+    public class TestNCWordFactory
+    {
+        public static NCWord Create(Address? address = default, IValueData? valueData = default)
+        {
+            address ??= TestAddressFactory.Create();
+            valueData ??= TestCoordinateValueFactory.Create();
+            return new(address, valueData);
+        }
     }
 
     /// <summary>
@@ -38,6 +53,11 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public override string ToString() => Value.ToString();
 
         public char Value { get; init; }
+    }
+
+    public class TestAddressFactory
+    {
+        public static Address Create(char value = 'G') => new(value);
     }
 
     public interface IValueData
@@ -82,6 +102,11 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public string Value { get; init; }
     }
 
+    public class TestNumericalValueFactory
+    {
+        public static NumericalValue Create(string value = "8000") => new(value);
+    }
+
     /// <summary>
     /// 座標数値
     /// </summary>
@@ -119,6 +144,11 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public string Value { get; init; }
     }
 
+    public class TestCoordinateValueFactory
+    {
+        public static CoordinateValue Create(string value = "8.") => new(value);
+    }
+
     /// <summary>
     /// 変数
     /// </summary>
@@ -129,6 +159,18 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public override string ToString() => $"#{VariableAddress}={ValueData}";
     }
 
+    public class TestNCVariableFactory
+    {
+        public static NCVariable Create(
+            VariableAddress? variableAddress = default,
+            IValueData? valueData = default)
+        {
+            variableAddress ??= TestVariableAddressFactory.Create();
+            valueData ??= TestCoordinateValueFactory.Create();
+            return new(variableAddress, valueData);
+        }
+    }
+
     /// <summary>
     /// 変数のアドレス
     /// </summary>
@@ -136,5 +178,10 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     public record class VariableAddress(uint Value)
     {
         public override string ToString() => Value.ToString();
+    }
+
+    public class TestVariableAddressFactory
+    {
+        public static VariableAddress Create(uint value = 1) => new(value);
     }
 }

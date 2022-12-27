@@ -31,6 +31,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramConcatenationForHoleDrilling", "Wada.NCProgramConcatenationForHoleDrilling\Wada.NCProgramConcatenationForHoleDrilling.csproj", "{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramConcatenationServiceTests", "Wada.NCProgramConcatenationServiceTests\Wada.NCProgramConcatenationServiceTests.csproj", "{B267E7B1-080D-4DD6-841C-E45C06D6DC44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{FD903C9F-9DC3-45EB-BF3B-3B02D6B5C61F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.Extension", "Wada.Extension\Wada.Extension.csproj", "{A69D289E-7951-4932-B111-C515CE823EBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.NCProgramConcatenationForHoleDrillingTests", "Wada.NCProgramConcatenationForHoleDrillingTests\Wada.NCProgramConcatenationForHoleDrillingTests.csproj", "{0DF9E990-74CC-48C0-A382-63E7EA725C86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +81,18 @@ Global
 		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B267E7B1-080D-4DD6-841C-E45C06D6DC44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B267E7B1-080D-4DD6-841C-E45C06D6DC44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B267E7B1-080D-4DD6-841C-E45C06D6DC44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B267E7B1-080D-4DD6-841C-E45C06D6DC44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69D289E-7951-4932-B111-C515CE823EBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69D289E-7951-4932-B111-C515CE823EBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69D289E-7951-4932-B111-C515CE823EBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69D289E-7951-4932-B111-C515CE823EBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DF9E990-74CC-48C0-A382-63E7EA725C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DF9E990-74CC-48C0-A382-63E7EA725C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DF9E990-74CC-48C0-A382-63E7EA725C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DF9E990-74CC-48C0-A382-63E7EA725C86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +106,9 @@ Global
 		{1378CA73-01F1-4968-A775-71ABD0941054} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
 		{1617A665-9EC4-4A34-ABDA-F53C3F200D6A} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
 		{CA2594D8-46A7-4577-A7A5-6E1E9381A1B4} = {2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}
+		{B267E7B1-080D-4DD6-841C-E45C06D6DC44} = {59A5C3B5-5809-4C0A-BFDC-FF70C80B5A9C}
+		{A69D289E-7951-4932-B111-C515CE823EBB} = {FD903C9F-9DC3-45EB-BF3B-3B02D6B5C61F}
+		{0DF9E990-74CC-48C0-A382-63E7EA725C86} = {2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}

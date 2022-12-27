@@ -12,22 +12,81 @@
              xmlns:dd="urn:gong-wpf-dragdrop"
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
              FontSize="16">
-    <Grid>
-        <Rectangle Margin="10"
-                   Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-                   Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
-                   StrokeThickness="3"
-                   StrokeDashArray="2"
-                   SnapsToDevicePixels="True"
-                   StrokeStartLineCap="Round"
-                   StrokeEndLineCap="Round"
-                   dd:DragDrop.IsDropTarget="True"
-                   dd:DragDrop.DropHandler="{Binding}"/>
-        <TextBlock Margin="20"
-                   Text="{Binding NCProgramFileName.Value}"
-                   TextWrapping="Wrap"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-    </Grid>
+
+    <UserControl.Resources>
+        <!--BooleanをVisibility列挙型に変換するコンバータ 組み込みコンバータ-->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    
+    <i:Interaction.Triggers>
+        <l:InteractionMessageTrigger MessageKey="Info" Messenger="{Binding Messenger}">
+            <l:InformationDialogInteractionMessageAction/>
+        </l:InteractionMessageTrigger>
+        <l:InteractionMessageTrigger MessageKey="Confirm" Messenger="{Binding Messenger}">
+            <l:ConfirmationDialogInteractionMessageAction/>
+        </l:InteractionMessageTrigger>
+    </i:Interaction.Triggers>
+
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="戻る(_B)"
+                    MinWidth="70"
+                    Margin="5,5,5,5"
+                    Padding="5,5,5,5"
+                    Command="{Binding PreviousViewCommand}"/>
+            <Button Content="進む(_N)"
+                    MinWidth="70"
+                    Margin="5,5,5,5"
+                    Padding="5,5,5,5"
+                    Command="{Binding NextViewCommand}"/>
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0"
+                       Margin="5"
+                       Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                       Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                       StrokeThickness="3"
+                       StrokeDashArray="2"
+                       SnapsToDevicePixels="True"
+                       StrokeStartLineCap="Round"
+                       StrokeEndLineCap="Round"
+                       dd:DragDrop.IsDropTarget="True"
+                       dd:DragDrop.DropHandler="{Binding}"/>
+            <TextBlock Grid.Row="0"
+                       Margin="20"
+                       x:Name="NCProgramFileName"
+                       Text="{Binding NCProgramFileName.Value}"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                <Validation.ErrorTemplate>
+                    <!-- エラー時に赤枠を表示させない -->
+                    <ControlTemplate/>           
+                </Validation.ErrorTemplate>
+            </TextBlock>
+            <TextBlock Grid.Row="0"
+                       Margin="20"
+                       Text="{Binding ErrorMsgNCProgramFileName.Value}"
+                       Foreground="Red"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       Visibility="{Binding (Validation.HasError), ElementName=NCProgramFileName, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1"
+                       Margin="5"
+                       Text="🥝板厚の入力エリア"/>
+            <TextBlock Grid.Row="2"
+                       Margin="5"
+                       Text="材質の入力エリア"/>
+        </Grid>
+    </DockPanel>
 </UserControl>

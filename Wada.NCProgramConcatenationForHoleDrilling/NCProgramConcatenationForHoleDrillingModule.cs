@@ -15,7 +15,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
+            containerRegistry.RegisterDialog<NotationContentConfirmationDialog>();
         }
     }
 }

@@ -3,6 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="2.3.0" />
@@ -18,5 +19,16 @@
     <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
     <ProjectReference Include="..\Wada.NCProgramFile\Wada.NCProgramFile.csproj" />
     <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
