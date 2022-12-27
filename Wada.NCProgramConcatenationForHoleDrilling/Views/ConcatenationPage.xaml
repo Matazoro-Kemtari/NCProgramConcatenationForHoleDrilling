@@ -47,7 +47,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Rectangle Grid.Row="0"
                        Margin="5"
@@ -81,12 +80,26 @@
                        Visibility="{Binding (Validation.HasError), ElementName=NCProgramFileName, Converter={StaticResource BooleanToVisibilityConverter}}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBlock Grid.Row="1"
-                       Margin="5"
-                       Text="🥝板厚の入力エリア"/>
-            <TextBlock Grid.Row="2"
-                       Margin="5"
-                       Text="材質の入力エリア"/>
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" Text="材質"/>
+                    <RadioButton Margin="5" Content="RB-250F" VerticalAlignment="Center"/>
+                    <RadioButton Margin="5" Content="RB-260" VerticalAlignment="Center"/>
+                    <RadioButton Margin="5" Content="3軸立型" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" Text="材質"/>
+                    <RadioButton Margin="5" Content="アルミ" VerticalAlignment="Center"/>
+                    <RadioButton Margin="5" Content="鉄" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" Text="板厚"/>
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <TextBox MinWidth="50" VerticalAlignment="Bottom"/>
+                        <TextBlock Text="mm" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </DockPanel>
 </UserControl>

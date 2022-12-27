@@ -27,7 +27,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
     public class ConcatenationPageViewModel : BindableBase, IDestructible, IDropTarget
     {
         private readonly ConcatenationPageModel _concatenation = new();
-        private IRegionNavigationService _regionNavigationService;
+        private readonly IRegionNavigationService _regionNavigationService;
         private readonly IDialogService _dialogService;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
 
