@@ -10,11 +10,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling
         {
         }
 
-        public NCProgramConcatenationForHoleDrillingException(string message) : base(message)
+        public NCProgramConcatenationForHoleDrillingException(string? message) : base(message)
         {
         }
 
-        public NCProgramConcatenationForHoleDrillingException(string message, Exception innerException) : base(message, innerException)
+        public NCProgramConcatenationForHoleDrillingException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 

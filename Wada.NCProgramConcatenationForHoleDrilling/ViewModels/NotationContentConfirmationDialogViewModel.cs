@@ -39,7 +39,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         }
 
         public string Title => "注記内容確認";
-        public event Action<IDialogResult> RequestClose;
+        public event Action<IDialogResult>? RequestClose;
         public bool CanCloseDialog() => true;
         public void OnDialogClosed() { }
         public void OnDialogOpened(IDialogParameters parameters)

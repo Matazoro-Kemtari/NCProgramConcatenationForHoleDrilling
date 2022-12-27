@@ -67,13 +67,14 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }
 
             IDialogParameters parameters = new DialogParameters(
-                $"OperationTypeString={operationType.GetEnumDisplayName()}&SubProgramSource={ncProcramCode.ToString()}");
-            IDialogResult dialogResult = default;
+                $"OperationTypeString={operationType.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
+            IDialogResult? dialogResult = default;
             _dialogService.ShowDialog(nameof(NotationContentConfirmationDialog),
                 parameters,
                 result => dialogResult = result);
 
-            MessageBox.Show("試作はここまでです");
+            if (dialogResult == null || dialogResult.Result != ButtonResult.OK)
+                return;
         }
 
         [Logging]
@@ -96,7 +97,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }) ? DragDropEffects.Copy : DragDropEffects.None;
 
             _concatenation.NCProgramFile.Value =
-                dragFileList.FirstOrDefault(x => Path.GetExtension(x) == string.Empty);
+                dragFileList.FirstOrDefault(x => Path.GetExtension(x) == string.Empty) ?? string.Empty;
         }
 
         public void Destroy() => Disposables.Dispose();

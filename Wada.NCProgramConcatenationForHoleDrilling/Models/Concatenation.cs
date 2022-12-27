@@ -6,7 +6,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
     {
         internal void Clear()
         {
-            NCProgramFile.Value = default;
+            NCProgramFile.Value = string.Empty;
         }
 
         public ReactivePropertySlim<string> NCProgramFile { get; init; } = new();

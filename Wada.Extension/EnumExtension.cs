@@ -17,11 +17,6 @@
                 .FirstOrDefault()
                 ?.ThrowIf(a => a == null, new ArgumentException("属性が設定されていません"))
                 .Name;
-            //var field = typeof(T).GetField(enumValue.ToString());
-            //var attrType = typeof(EnumDisplayNameAttribute);
-            //var attribute = Attribute.GetCustomAttribute(field, attrType);
-            //EnumDisplayNameAttribute enumDisplayNameAttribute = attribute as EnumDisplayNameAttribute;
-            //return enumDisplayNameAttribute != null ? enumDisplayNameAttribute.Name : string.Empty;
         }
     }
 }
