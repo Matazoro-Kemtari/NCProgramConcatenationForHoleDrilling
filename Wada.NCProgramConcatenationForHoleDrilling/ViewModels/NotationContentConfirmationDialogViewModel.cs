@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
     public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogAware, IDestructible
     {
-        private readonly NotationContentConfirmation _notationContentConfirmation = new();
+        private readonly NotationContentConfirmationDialogModel _notationContentConfirmation = new();
         
         public NotationContentConfirmationDialogViewModel()
         {
@@ -56,9 +56,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         /// </summary>
         private CompositeDisposable Disposables { get; } = new CompositeDisposable();
 
-        public ReactivePropertySlim<string> OperationTypeString { get; }
+        public ReactivePropertySlim<string?> OperationTypeString { get; }
 
-        public ReactivePropertySlim<string> SubProgramSource { get; }
+        public ReactivePropertySlim<string?> SubProgramSource { get; }
 
         public ReactiveCommand ExecCommand { get; }
 

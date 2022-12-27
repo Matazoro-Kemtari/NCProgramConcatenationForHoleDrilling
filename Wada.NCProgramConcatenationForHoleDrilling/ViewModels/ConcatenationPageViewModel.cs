@@ -1,11 +1,14 @@
 ﻿using GongSolutions.Wpf.DragDrop;
 using Livet.Messaging;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -23,22 +26,55 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
     public class ConcatenationPageViewModel : BindableBase, IDestructible, IDropTarget
     {
-        private readonly Concatenation _concatenation = new();
+        private readonly ConcatenationPageModel _concatenation = new();
+        private IRegionNavigationService _regionNavigationService;
         private readonly IDialogService _dialogService;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
 
-        public ConcatenationPageViewModel(IDialogService dialogService, IReadSubNCProgramUseCase readSubNCProgramUseCase)
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadSubNCProgramUseCase readSubNCProgramUseCase)
         {
+            _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
 
             NCProgramFileName = _concatenation
                 .NCProgramFile
-                .ToReactivePropertySlimAsSynchronized(x => x.Value)
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .SetValidateAttribute(() => NCProgramFileName)
                 .AddTo(Disposables);
 
             // ドラッグアンドドロップされて 値が書き換わったイベント
-            _concatenation.NCProgramFile.Skip(1).Subscribe(x => ChangeSubprogramPath(x));
+            _concatenation.NCProgramFile
+                .Skip(1)
+                .Where(x => x != null)
+                .Subscribe(x => ChangeSubprogramPath(x!));
+
+            ErrorMsgNCProgramFileName = NCProgramFileName
+                .ObserveErrorChanged
+                .Select(x => x?.Cast<string>().FirstOrDefault())
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(Disposables);
+
+            // コマンドボタンのbind
+            NextViewCommand = new[]
+            {
+                NCProgramFileName.ObserveHasErrors,
+            }
+            .CombineLatestValuesAreAllFalse()
+            .ToReactiveCommand()
+            .WithSubscribe(() => MoveNextView())
+            .AddTo(Disposables);
+
+            PreviousViewCommand = new DelegateCommand(
+                () => _regionNavigationService?.Journal.GoBack(),
+                () => _regionNavigationService?.Journal?.CanGoBack ?? false);
+
+        }
+
+        [Logging]
+        private void MoveNextView()
+        {
+            throw new NotImplementedException();
         }
 
         [Logging]
@@ -63,6 +99,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 var message = MessageNotificationViaLivet.MakeExclamationMessage(
                     ex.Message);
                 await Messenger.RaiseAsync(message);
+
                 return;
             }
 
@@ -74,7 +111,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 result => dialogResult = result);
 
             if (dialogResult == null || dialogResult.Result != ButtonResult.OK)
+            {
+                _concatenation.Clear();
                 return;
+            }
         }
 
         [Logging]
@@ -107,8 +147,16 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         /// </summary>
         private CompositeDisposable Disposables { get; } = new CompositeDisposable();
 
-        public ReactivePropertySlim<string> NCProgramFileName { get; }
-
         public InteractionMessenger Messenger { get; } = new InteractionMessenger();
+
+        [Display(Name = "サブプログラム")]
+        [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
+        public ReactiveProperty<string?> NCProgramFileName { get; }
+
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgNCProgramFileName { get; }
+
+        public ReactiveCommand NextViewCommand { get; }
+
+        public DelegateCommand PreviousViewCommand { get; }
     }
 }

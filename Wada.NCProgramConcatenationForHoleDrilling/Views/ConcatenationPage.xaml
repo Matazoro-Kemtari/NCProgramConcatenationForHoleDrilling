@@ -15,6 +15,12 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
              FontSize="16">
+
+    <UserControl.Resources>
+        <!--BooleanをVisibility列挙型に変換するコンバータ 組み込みコンバータ-->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger MessageKey="Info" Messenger="{Binding Messenger}">
             <l:InformationDialogInteractionMessageAction/>
@@ -25,30 +31,25 @@
     </i:Interaction.Triggers>
 
     <DockPanel LastChildFill="True">
-        <StackPanel DockPanel.Dock="Bottom"
-                    Margin="5"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal">
-            <Button Content="次へ(_N)" 
-                    Margin="5" 
-                    Padding="5" 
-                    MinWidth="50"
-                    Command="{Binding ExecCommand}"/>
-            <Button Content="キャンセル(_C)"
-                    Margin="5"
-                    Padding="5"
-                    MinWidth="60"
-                    Command="{Binding CancelCommand}"/>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="戻る(_B)"
+                    MinWidth="70"
+                    Margin="5,5,5,5"
+                    Padding="5,5,5,5"
+                    Command="{Binding PreviousViewCommand}"/>
+            <Button Content="進む(_N)"
+                    MinWidth="70"
+                    Margin="5,5,5,5"
+                    Padding="5,5,5,5"
+                    Command="{Binding NextViewCommand}"/>
         </StackPanel>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Margin="5" Text="サブプログラムをドラッグアンドドロップしてください"/>
-            <Rectangle Grid.Row="1"
+            <Rectangle Grid.Row="0"
                        Margin="5"
                        Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
                        Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
@@ -59,16 +60,31 @@
                        StrokeEndLineCap="Round"
                        dd:DragDrop.IsDropTarget="True"
                        dd:DragDrop.DropHandler="{Binding}"/>
-            <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="0"
                        Margin="20"
+                       x:Name="NCProgramFileName"
                        Text="{Binding NCProgramFileName.Value}"
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                <Validation.ErrorTemplate>
+                    <!-- エラー時に赤枠を表示させない -->
+                    <ControlTemplate/>           
+                </Validation.ErrorTemplate>
+            </TextBlock>
+            <TextBlock Grid.Row="0"
+                       Margin="20"
+                       Text="{Binding ErrorMsgNCProgramFileName.Value}"
+                       Foreground="Red"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       Visibility="{Binding (Validation.HasError), ElementName=NCProgramFileName, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-            <TextBlock Grid.Row="2"
+            <TextBlock Grid.Row="1"
                        Margin="5"
-                       Text="板厚の入力エリア"/>
-            <TextBlock Grid.Row="3"
+                       Text="🥝板厚の入力エリア"/>
+            <TextBlock Grid.Row="2"
                        Margin="5"
                        Text="材質の入力エリア"/>
         </Grid>
