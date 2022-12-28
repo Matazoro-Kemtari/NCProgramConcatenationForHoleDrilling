@@ -1,10 +1,14 @@
 ﻿using Prism.Mvvm;
+using System.Reflection;
+using System;
 
 namespace NCProgramConcatenationForHoleDrilling.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "穴加工用結合ソフト";
+        private static readonly Version? version = Assembly.GetExecutingAssembly().GetName().Version;
+        private static readonly string? assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+        private string _title = $"{assemblyName} {version}";
         public string Title
         {
             get { return _title; }

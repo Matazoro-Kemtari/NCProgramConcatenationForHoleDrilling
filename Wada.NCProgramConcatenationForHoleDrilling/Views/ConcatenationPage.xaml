@@ -51,8 +51,13 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <!-- enumをbooleanに変換するコンバーター -->
         <local:EnumToBooleanConverter x:Key="EnumToBoolean"/>
+        <!-- enumをbooleanにして True/Falseを反転して Visibility列挙型に変換する -->
+        <local:ValueConverterGroup x:Key="EnumVisibilityConverter">
+            <local:EnumToBooleanConverter/>
+            <BooleanToVisibilityConverter/>
+        </local:ValueConverterGroup>
     </UserControl.Resources>
-    
+
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger MessageKey="Info" Messenger="{Binding Messenger}">
             <l:InformationDialogInteractionMessageAction/>
@@ -113,16 +118,17 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
             <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition Height="0*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                
+
                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="加工機" HorizontalAlignment="Right"/>
 
                 <StackPanel Grid.Row="0" Grid.Column="1">
@@ -159,14 +165,14 @@
                 <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="材質" HorizontalAlignment="Right"/>
                 <StackPanel Grid.Row="1" Grid.Column="1">
                     <StackPanel x:Name="Material" Tag="{Binding Material.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
-                        <RadioButton Margin="5" Content="アルミ" VerticalAlignment="Center"
+                        <RadioButton Margin="5" Content="AL" VerticalAlignment="Center"
                                      IsChecked="{Binding Material.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Aluminum, UpdateSourceTrigger=PropertyChanged}">
                             <Validation.ErrorTemplate>
                                 <!-- エラー時に赤枠を表示させない -->
                                 <ControlTemplate/>
                             </Validation.ErrorTemplate>
                         </RadioButton>
-                        <RadioButton Margin="5" Content="鉄" VerticalAlignment="Center"
+                        <RadioButton Margin="5" Content="SS400" VerticalAlignment="Center"
                                      IsChecked="{Binding Material.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Iron, UpdateSourceTrigger=PropertyChanged}">
                             <Validation.ErrorTemplate>
                                 <!-- エラー時に赤枠を表示させない -->
@@ -181,8 +187,34 @@
                                TextWrapping="Wrap"
                                Visibility="{Binding (Validation.HasError), ElementName=Material, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </StackPanel>
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="板厚" HorizontalAlignment="Right"/>
-                <StackPanel Grid.Row="2" Grid.Column="1">
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="リーマ" HorizontalAlignment="Right"
+                           Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}">
+                    <StackPanel x:Name="Reamer" Tag="{Binding Reamer.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                        <RadioButton Margin="5" Content="クリスタルリーマ" VerticalAlignment="Center"
+                                     IsChecked="{Binding Reamer.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Crystal, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton Margin="5" Content="スキルリーマ" VerticalAlignment="Center"
+                                     IsChecked="{Binding Reamer.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Skill, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                    <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgReamer.Value}"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=Reamer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="板厚" HorizontalAlignment="Right"/>
+                <StackPanel Grid.Row="3" Grid.Column="1">
                     <StackPanel Margin="5" Orientation="Horizontal">
                         <TextBox x:Name="Thickness"
                                  Text="{Binding Thickness.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"

@@ -1,6 +1,5 @@
 ﻿using GongSolutions.Wpf.DragDrop;
 using Livet.Messaging;
-using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Regions;
@@ -55,6 +54,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .ToReadOnlyReactivePropertySlim()
                 .AddTo(Disposables);
 
+            FetchedOperationType = _concatenation
+                .FetchedOperationType
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .AddTo(Disposables);
+
             MachineTool = _concatenation
                 .MachineTool
                 .ToReactivePropertyAsSynchronized(x => x.Value)
@@ -79,6 +83,18 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .ToReadOnlyReactivePropertySlim()
                 .AddTo(Disposables);
 
+            Reamer = _concatenation
+                .Reamer
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .SetValidateAttribute(() => Reamer)
+                .AddTo(Disposables);
+
+            ErrorMsgReamer = Reamer
+                .ObserveErrorChanged
+                .Select(x => x?.Cast<string>().FirstOrDefault())
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(Disposables);
+
             Thickness = _concatenation
                 .Thickness
                 .ToReactivePropertyAsSynchronized(x => x.Value)
@@ -95,12 +111,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             NextViewCommand = new[]
             {
                 NCProgramFileName.ObserveHasErrors,
-                MachineTool
-                    .ObserveProperty(x=>x.Value)
-                    .Select(x => x == MachineToolType.Undefined),
-                Material
-                    .ObserveProperty(x => x.Value)
-                    .Select(x => x == MaterialType.Undefined),
+                MachineTool.ObserveHasErrors,
+                Material.ObserveHasErrors,
+                FetchedOperationType.CombineLatest(
+                    Reamer,
+                    (x, y) => x == DirectedOperationType.Reaming && y == ReamerType.Undefined),
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
@@ -129,11 +144,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             // サブプログラムを読み込む
             NCProgramCode ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
 
-            // 読み込んだサブプログラムの作業指示を取得する
-            OperationType operationType;
             try
             {
-                operationType = ncProcramCode.FetchOperationType();
+                // 読み込んだサブプログラムの作業指示を取得する
+                _concatenation.FetchedOperationType.Value = ncProcramCode.FetchOperationType();
             }
             catch (NCProgramConcatenationServiceException ex)
             {
@@ -147,7 +161,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }
 
             IDialogParameters parameters = new DialogParameters(
-                $"OperationTypeString={operationType.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
+                $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
             IDialogResult? dialogResult = default;
             _dialogService.ShowDialog(nameof(NotationContentConfirmationDialog),
                 parameters,
@@ -196,6 +210,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
         public ReactiveProperty<string> NCProgramFileName { get; }
 
+        public ReactiveProperty<DirectedOperationType> FetchedOperationType { get; }
+
         [Display(Name = "加工機")]
         [Range(1, double.MaxValue, ErrorMessage = "{0}を選択してください")]
         public ReactiveProperty<MachineToolType> MachineTool { get; }
@@ -203,6 +219,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Display(Name = "材質")]
         [Range(1, double.MaxValue, ErrorMessage = "{0}を選択してください")]
         public ReactiveProperty<MaterialType> Material { get; }
+
+        [Display(Name = "リーマ")]
+        [Range(1, double.MaxValue, ErrorMessage = "{0}を選択してください")]
+        public ReactiveProperty<ReamerType> Reamer { get; }
 
         [Display(Name = "板厚")]
         [Required(ErrorMessage = "{0}を入力してください")]
@@ -218,6 +238,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgMachineTool { get; }
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgMaterial { get; }
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgThickness { get; }
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgReamer { get; }
     }
 
     public enum MachineToolType
@@ -232,5 +253,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         Undefined,
         Aluminum,
         Iron,
+    }
+    public enum ReamerType
+    {
+        Undefined,
+        Crystal,
+        Skill
     }
 }

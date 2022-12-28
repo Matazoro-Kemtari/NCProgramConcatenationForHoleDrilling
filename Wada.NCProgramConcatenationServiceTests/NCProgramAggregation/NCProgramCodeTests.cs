@@ -8,7 +8,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
     {
         [DataTestMethod()]
         [DynamicData(nameof(NCBlockOperations))]
-        public void 正常系_作業指示が返ってくること(NCBlock ncBlock, OperationType expected)
+        public void 正常系_作業指示が返ってくること(NCBlock ncBlock, DirectedOperationType expected)
         {
             // given
 
@@ -24,7 +24,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 TestNCBlockFactory.Create(),
             };
             NCProgramCode ncProgramCode = new("hoge", ncBlocks);
-            OperationType actual = ncProgramCode.FetchOperationType();
+            DirectedOperationType actual = ncProgramCode.FetchOperationType();
 
             // then
             Assert.AreEqual(expected, actual);
@@ -34,11 +34,11 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         {
             new object[] {
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") }),
-                OperationType.TapProcessing,
+                DirectedOperationType.TapProcessing,
             },
             new object[] {
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),
-                OperationType.Reaming,
+                DirectedOperationType.Reaming,
             },
         };
 
