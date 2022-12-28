@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RzdB1_ECVK01WcsdOi-J" name="sodo">
-        <mxGraphModel dx="1374" dy="785" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1374" dy="539" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -70,6 +70,9 @@
                 <mxCell id="674" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="238" target="673" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
+                <mxCell id="676" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="238" target="675">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="238" value="工作部員" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
                     <mxGeometry x="790" y="75" width="30" height="60" as="geometry"/>
                 </mxCell>
@@ -80,7 +83,7 @@
                     <mxGeometry x="20.62" y="190" width="30" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="259" value="サブプログラムの呼び出し番号を書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="215" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="275" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="372" value="オブジェクト図" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="520" y="840" width="100" height="20" as="geometry"/>
@@ -104,8 +107,8 @@
                 <mxCell id="513" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;NCプログラム&lt;/u&gt;&lt;/span&gt;(NCProgramCode&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;プログラム番号&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="28.76" y="900" width="111.24" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="158" value="&lt;span&gt;解決したい課題&lt;br&gt;・マシニング結合ソフトはあるが使い勝手が悪く手編集を行っている&lt;/span&gt;&lt;br&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・ドリルサイクルの編集ソフトがなく、手編集を行っている&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・手編集をしたデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・結合したデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・穴加工に絞ってNCプログラムを結合する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムはDrag&amp;amp;Dropで入力したい&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムは、ドリル、リーマ、タップの3種&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムの呼び出し番号はファイル名に由来する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;　(※プログラム中のプログラム番号ではない)&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・リーマ径により工程がないこともある&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[タップの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→面取り→タップ&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[リーマの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→下穴DR2→面取り→リーマ&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[ドリルの工程]&lt;/p&gt;・C/D→下穴DR1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=default;" parent="1" vertex="1">
-                    <mxGeometry x="80" y="380" width="430" height="370" as="geometry"/>
+                <mxCell id="158" value="&lt;span&gt;解決したい課題&lt;br&gt;・マシニング結合ソフトはあるが使い勝手が悪く手編集を行っている&lt;/span&gt;&lt;br&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・ドリルサイクルの編集ソフトがなく、手編集を行っている&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・手編集をしたデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・結合したデータの確認作業に時間を要する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブプログラムを読み込み後に確認ダイアログを出す&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;span&gt;・穴加工に絞ってNCプログラムを結合する&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムはDrag&amp;amp;Dropで入力したい&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムは、ドリル、リーマ、タップの3種&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・リーマのときは、クリスタルリーマとスキルリーマの選択を表示する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・サブNCプログラムの呼び出し番号はファイル名に由来する&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;　(※プログラム中のプログラム番号ではない)&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・リーマ径により工程がないこともある&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[タップの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→面取り→タップ&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[リーマの工程]&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;・C/D→下穴DR1→下穴DR2→面取り→リーマ&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin-top: 0pt ; margin-bottom: 0pt ; margin-left: 0in ; direction: ltr ; unicode-bidi: embed ; word-break: normal&quot;&gt;[ドリルの工程]&lt;/p&gt;・C/D→下穴DR1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="380" width="510" height="370" as="geometry"/>
                 </mxCell>
                 <mxCell id="IUCaD1viUXP5vsJWslPz-527" value="&lt;span style=&quot;font-size: 13px&quot;&gt;コメント&lt;br style=&quot;font-size: 13px&quot;&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;spacing=2;" parent="1" vertex="1">
                     <mxGeometry x="1070" y="868" width="80" height="30" as="geometry"/>
@@ -131,11 +134,11 @@
                 <mxCell id="584" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="583" target="581" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="583" value="設計部で作る？" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=default;" parent="1" vertex="1">
+                <mxCell id="583" value="設計部で作る" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;fontSize=13;fontColor=default;" parent="1" vertex="1">
                     <mxGeometry x="185.62" y="15" width="110" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="588" value="機械・穴径・素材・板厚ごとにメインデータを書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="150" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="210" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="591" style="edgeStyle=none;html=1;endArrow=none;endFill=0;dashed=1;" parent="1" source="590" target="588" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -156,7 +159,7 @@
                     <mxGeometry x="900" y="957" width="80" height="49" as="geometry"/>
                 </mxCell>
                 <mxCell id="596" value="穴加工の工程を結合する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="275" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="335" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="598" value="(コメント)&lt;br&gt;コメント: RB-250F" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="900" y="878" width="120" height="49" as="geometry"/>
@@ -168,10 +171,10 @@
                     <mxGeometry x="1070" y="947" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="606" value="メインデータとサブプログラムをFTPで転送する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="385" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="445" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="608" value="加工機を実行する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="445" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="505" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="614" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="610" target="612" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -270,6 +273,9 @@
                 </mxCell>
                 <mxCell id="673" value="サブプログラムを読み込む" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="955" y="90" width="180" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="675" value="メインプログラムを読み込む" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="955" y="150" width="180" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
