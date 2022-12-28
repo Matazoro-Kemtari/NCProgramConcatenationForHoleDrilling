@@ -1,4 +1,5 @@
 ﻿using Reactive.Bindings;
+using Wada.NCProgramConcatenationForHoleDrilling.ViewModels;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 {
@@ -6,9 +7,18 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
     {
         internal void Clear()
         {
-            NCProgramFile.Value = null;
+            NCProgramFile.Value = string.Empty;
+            MachineTool.Value = MachineToolType.Undefined;
+            Material.Value = MaterialType.Undefined;
+            Thickness.Value = string.Empty;
         }
 
-        public ReactivePropertySlim<string?> NCProgramFile { get; } = new();
+        public ReactivePropertySlim<string> NCProgramFile { get; } = new();
+
+        public ReactivePropertySlim<MachineToolType> MachineTool { get; } = new();
+
+        public ReactivePropertySlim<MaterialType> Material { get; } = new();
+
+        public ReactivePropertySlim<string> Thickness { get; } = new(string.Empty);
     }
 }

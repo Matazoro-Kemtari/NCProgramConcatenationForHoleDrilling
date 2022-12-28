@@ -55,19 +55,62 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .ToReadOnlyReactivePropertySlim()
                 .AddTo(Disposables);
 
+            MachineTool = _concatenation
+                .MachineTool
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .SetValidateAttribute(() => MachineTool)
+                .AddTo(Disposables);
+
+            ErrorMsgMachineTool = MachineTool
+                .ObserveErrorChanged
+                .Select(x => x?.Cast<string>().FirstOrDefault())
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(Disposables);
+
+            Material = _concatenation
+                .Material
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .SetValidateAttribute(() => Material)
+                .AddTo(Disposables);
+
+            ErrorMsgMaterial = Material
+                .ObserveErrorChanged
+                .Select(x => x?.Cast<string>().FirstOrDefault())
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(Disposables);
+
+            Thickness = _concatenation
+                .Thickness
+                .ToReactivePropertyAsSynchronized(x => x.Value)
+                .SetValidateAttribute(() => Thickness)
+                .AddTo(Disposables);
+
+            ErrorMsgThickness = Thickness
+                .ObserveErrorChanged
+                .Select(x => x?.Cast<string>().FirstOrDefault())
+                .ToReadOnlyReactivePropertySlim()
+                .AddTo(Disposables);
+
             // コマンドボタンのbind
             NextViewCommand = new[]
             {
                 NCProgramFileName.ObserveHasErrors,
+                MachineTool
+                    .ObserveProperty(x=>x.Value)
+                    .Select(x => x == MachineToolType.Undefined),
+                Material
+                    .ObserveProperty(x => x.Value)
+                    .Select(x => x == MaterialType.Undefined),
+                Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
             .ToReactiveCommand()
             .WithSubscribe(() => MoveNextView())
             .AddTo(Disposables);
 
-            PreviousViewCommand = new DelegateCommand(
-                () => _regionNavigationService?.Journal.GoBack(),
-                () => _regionNavigationService?.Journal?.CanGoBack ?? false);
+            ClearCommand = new ReactiveCommand()
+                .WithSubscribe(() => _concatenation.Clear())
+                .AddTo(Disposables);
 
         }
 
@@ -151,12 +194,43 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         [Display(Name = "サブプログラム")]
         [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
-        public ReactiveProperty<string?> NCProgramFileName { get; }
+        public ReactiveProperty<string> NCProgramFileName { get; }
 
-        public ReadOnlyReactivePropertySlim<string?> ErrorMsgNCProgramFileName { get; }
+        [Display(Name = "加工機")]
+        [Range(1, double.MaxValue, ErrorMessage = "{0}を選択してください")]
+        public ReactiveProperty<MachineToolType> MachineTool { get; }
+
+        [Display(Name = "材質")]
+        [Range(1, double.MaxValue, ErrorMessage = "{0}を選択してください")]
+        public ReactiveProperty<MaterialType> Material { get; }
+
+        [Display(Name = "板厚")]
+        [Required(ErrorMessage = "{0}を入力してください")]
+        [RegularExpression(@"[0-9]+(\.[0-9]+)?", ErrorMessage = "半角の整数または小数を入力してください")]
+        [Range(1, double.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
+        public ReactiveProperty<string> Thickness { get; }
 
         public ReactiveCommand NextViewCommand { get; }
 
-        public DelegateCommand PreviousViewCommand { get; }
+        public ReactiveCommand ClearCommand { get; }
+
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgNCProgramFileName { get; }
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgMachineTool { get; }
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgMaterial { get; }
+        public ReadOnlyReactivePropertySlim<string?> ErrorMsgThickness { get; }
+    }
+
+    public enum MachineToolType
+    {
+        Undefined,
+        RB250F,
+        RB260,
+        Triaxial,
+    }
+    public enum MaterialType
+    {
+        Undefined,
+        Aluminum,
+        Iron,
     }
 }

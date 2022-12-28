@@ -36,11 +36,11 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 .Select(w =>
                 {
                     OperationType responce;
-                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
+                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d{1,2}"))
                         responce = OperationType.TapProcessing;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?H\d+"))
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?[HG]\d+"))
                         responce = OperationType.Reaming;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?DR"))
                         responce = OperationType.Drilling;
                     else
                         responce = OperationType.Undetected;
