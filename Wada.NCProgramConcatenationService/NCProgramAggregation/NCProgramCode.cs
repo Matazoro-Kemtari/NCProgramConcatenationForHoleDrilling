@@ -26,30 +26,30 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         /// <exception cref="NotImplementedException"></exception>
-        public OperationType FetchOperationType()
+        public DirectedOperationType FetchOperationType()
         {
             // 作業指示を探す
-            IEnumerable<OperationType> hasOperationType = NCBlocks
+            IEnumerable<DirectedOperationType> hasOperationType = NCBlocks
                 .Where(x => x != null)
                 .Select(block => block!.NCWords
                 .Where(w => w.GetType() == typeof(NCComment))
                 .Select(w =>
                 {
-                    OperationType responce;
-                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
-                        responce = OperationType.TapProcessing;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?H\d+"))
-                        responce = OperationType.Reaming;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
-                        responce = OperationType.Drilling;
+                    DirectedOperationType responce;
+                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d{1,2}"))
+                        responce = DirectedOperationType.TapProcessing;
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?[HG]\d+"))
+                        responce = DirectedOperationType.Reaming;
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?DR"))
+                        responce = DirectedOperationType.Drilling;
                     else
-                        responce = OperationType.Undetected;
+                        responce = DirectedOperationType.Undetected;
 
                     return responce;
                 }))
                 .SelectMany(x => x);
 
-            if (!hasOperationType.Any(x => x != OperationType.Undetected))
+            if (!hasOperationType.Any(x => x != DirectedOperationType.Undetected))
             {
                 // 有効な指示がない場合
                 string msg = "作業指示が見つかりません\n" +
@@ -57,15 +57,15 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 throw new NCProgramConcatenationServiceException(msg);
             }
 
-            if (hasOperationType.Count(x => x != OperationType.Undetected) > 1)
+            if (hasOperationType.Count(x => x != DirectedOperationType.Undetected) > 1)
             {
                 // 有効な指示が複数ある場合
-                string msg = $"作業指示が{hasOperationType.Count(x => x != OperationType.Undetected)}件あります\n" +
+                string msg = $"作業指示が{hasOperationType.Count(x => x != DirectedOperationType.Undetected)}件あります\n" +
                     $"サブプログラムを確認して、作業指示は1件にしてください";
                 throw new NCProgramConcatenationServiceException(msg);
             }
 
-            return hasOperationType.First(x => x != OperationType.Undetected);
+            return hasOperationType.First(x => x != DirectedOperationType.Undetected);
         }
 
         public Ulid ID { get; }
@@ -78,7 +78,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         public IEnumerable<NCBlock?> NCBlocks { get; init; }
     }
 
-    public enum OperationType
+    public enum DirectedOperationType
     {
         [EnumDisplayName("タップ")]
         TapProcessing,
