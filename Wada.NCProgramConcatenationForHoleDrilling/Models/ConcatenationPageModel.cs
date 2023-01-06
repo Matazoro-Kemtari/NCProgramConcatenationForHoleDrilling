@@ -1,4 +1,5 @@
 ﻿using Reactive.Bindings;
+using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.ViewModels;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 
@@ -6,6 +7,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 {
     internal record class ConcatenationPageModel
     {
+        [Logging]
         internal void Clear()
         {
             NCProgramFile.Value = string.Empty;

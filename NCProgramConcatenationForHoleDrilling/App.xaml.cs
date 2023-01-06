@@ -5,6 +5,7 @@ using System.Windows;
 using Wada.NCProgramConcatenationForHoleDrilling;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramFile;
+using Wada.ReadMainNCProgramApplication;
 using Wada.ReadSubNCProgramApplication;
 
 namespace NCProgramConcatenationForHoleDrilling
@@ -24,6 +25,7 @@ namespace NCProgramConcatenationForHoleDrilling
             // NCプログラム読み込み
             _ = containerRegistry.Register<INCProgramRepository, NCProgramRepository>();
             _ = containerRegistry.Register<IStreamReaderOpener, StreamReaderOpener>();
+            _ = containerRegistry.Register<IReadMainNCProgramUseCase, ReadMainNCProgramUseCase>();
             _ = containerRegistry.Register<IReadSubNCProgramUseCase, ReadSubNCProgramUseCase>();
         }
 

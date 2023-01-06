@@ -1,7 +1,25 @@
 ﻿using System.Text.RegularExpressions;
+using Wada.AOP.Logging;
 
 namespace Wada.NCProgramConcatenationService.ValueObjects
 {
+    /// <summary>
+    /// オプショナルブロックスキップ
+    /// </summary>
+    public enum OptionalBlockSkip
+    {
+        None,
+        BDT1,
+        BDT2,
+        BDT3,
+        BDT4,
+        BDT5,
+        BDT6,
+        BDT7,
+        BDT8,
+        BDT9,
+    }
+
     public interface INCWord { }
 
     /// <summary>
@@ -62,44 +80,63 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
 
     public interface IValueData
     {
-        decimal Number();
+        decimal Number { get; }
+        string Value { get; }
+        bool Indefinite { get; }
     }
 
     /// <summary>
     /// 数値(座標以外)
     /// </summary>
     /// <param name="Value"></param>
-    public record class NumericalValue : IValueData
+    public record class NumericalValue(string Value) : IValueData
     {
-        public NumericalValue(string value)
+        public override string ToString() => Value;
+
+        [Logging]
+        private static string Validate(string value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            string buf;
-            if (value.Contains('.'))
-                buf = string.Concat(value, "0");
-            else
-                buf = value;
+            if (value.Contains('*') && Regex.IsMatch(value, @"[^*]"))
+                // アスタリスクに混ざり物がある
+                throw new ArgumentException("アスタリスク以外の文字が含まれている", nameof(value));
 
-            if (!decimal.TryParse(buf, out _))
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            Value = value;
-        }
-
-        public decimal Number()
-        {
-            if (Value.Contains('.'))
+            if (!value.Contains('*'))
             {
-                return decimal.Parse(string.Concat(Value, "0"));
+                string buf;
+                if (value.Contains('.'))
+                    buf = string.Concat(value, "0");
+                else
+                    buf = value;
+
+                if (!decimal.TryParse(buf, out _))
+                    throw new ArgumentOutOfRangeException(nameof(value));
             }
-            return decimal.Parse(Value);
+
+            return value;
         }
 
-        public override string ToString() => Value;
+        [Logging]
+        private static decimal ConvertNumber(string value)
+        {
+            // アスタリスクの場合の処理
+            if (value.Contains('*'))
+                return 0m;
 
-        public string Value { get; init; }
+            if (value.Contains('.'))
+            {
+                return decimal.Parse(string.Concat(value, "0"));
+            }
+            return decimal.Parse(value);
+        }
+
+        public decimal Number => ConvertNumber(Value);
+
+        public string Value { get; init; } = Validate(Value);
+
+        public bool Indefinite => Value.Contains('*');
     }
 
     public class TestNumericalValueFactory
@@ -110,38 +147,56 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     /// <summary>
     /// 座標数値
     /// </summary>
-    public record class CoordinateValue : IValueData
+    /// /// <param name="Value"></param>
+    public record class CoordinateValue(string Value) : IValueData
     {
-        public CoordinateValue(string value)
+        public override string ToString() => Value;
+
+        [Logging]
+        private static string Validate(string value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            string buf;
-            if (value.Contains('.'))
-                buf = string.Concat(value, "0");
-            else
-                buf = value;
+            if (value.Contains('*') && Regex.IsMatch(value, @"[^*]"))
+                // アスタリスクに混ざり物がある
+                throw new ArgumentException("アスタリスク以外の文字が含まれている", nameof(value));
 
-            if (!decimal.TryParse(buf, out _))
-                throw new ArgumentOutOfRangeException(nameof(value));
+            if (!value.Contains('*'))
+            {
+                string buf;
+                if (value.Contains('.'))
+                    buf = string.Concat(value, "0");
+                else
+                    buf = value;
 
-            Value = value;
+                if (!decimal.TryParse(buf, out _))
+                    throw new ArgumentOutOfRangeException(nameof(value));
+            }
+
+            return value;
         }
 
-        public decimal Number()
+        [Logging]
+        private static decimal ConvertNumber(string value)
         {
-            if (Value.Contains('.'))
-                return decimal.Parse(string.Concat(Value, "0"));
+            // アスタリスクの場合の処理
+            if (value.Contains('*'))
+                return 0m;
+
+            if (value.Contains('.'))
+                return decimal.Parse(string.Concat(value, "0"));
 
             // 小数点がないと0.001の単位で解釈する
-            decimal buf = decimal.Parse(Value);
+            decimal buf = decimal.Parse(value);
             return buf / 1000m;
         }
 
-        public override string ToString() => Value;
+        public decimal Number => ConvertNumber(Value);
 
-        public string Value { get; init; }
+        public string Value { get; init; } = Validate(Value);
+
+        public bool Indefinite => Value.Contains('*');
     }
 
     public class TestCoordinateValueFactory
