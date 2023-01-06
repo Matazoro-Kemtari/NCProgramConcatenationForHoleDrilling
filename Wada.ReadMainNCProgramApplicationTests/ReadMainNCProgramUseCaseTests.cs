@@ -2,10 +2,10 @@
 using Moq;
 using Wada.NCProgramConcatenationService;
 
-namespace Wada.ReadSubNCProgramApplication.Tests
+namespace Wada.ReadMainNCProgramApplication.Tests
 {
     [TestClass()]
-    public class ReadSubNCProgramUseCaseTests
+    public class ReadMainNCProgramUseCaseTests
     {
         [TestMethod()]
         public async Task 正常系_ユースケースを実行するとリポジトリが実行されること()
@@ -15,7 +15,7 @@ namespace Wada.ReadSubNCProgramApplication.Tests
             Mock<INCProgramRepository> mock_nc = new();
 
             // when
-            IReadSubNCProgramUseCase readSubNCProgramUseCase = new ReadSubNCProgramUseCase(mock_reader.Object, mock_nc.Object);
+            IReadMainNCProgramUseCase readSubNCProgramUseCase = new ReadMainNCProgramUseCase(mock_reader.Object, mock_nc.Object);
             _ = await readSubNCProgramUseCase.ExecuteAsync(string.Empty);
 
             // then

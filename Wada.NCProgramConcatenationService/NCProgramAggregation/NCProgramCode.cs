@@ -95,11 +95,20 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
     /// ブロック
     /// </summary>
     /// <param name="NCWords">ワード</param>
-    public record class NCBlock(IEnumerable<INCWord> NCWords)
+    /// <param name="HasBlockSkip">オプショナルブロックスキップの有無</param>
+    public record class NCBlock(IEnumerable<INCWord> NCWords, OptionalBlockSkip HasBlockSkip)
     {
         public override string ToString()
         {
             StringBuilder buf = new();
+            if (HasBlockSkip != OptionalBlockSkip.None)
+            {
+                if (HasBlockSkip == OptionalBlockSkip.BDT1)
+                    buf.Append('/');
+                else
+                    buf.Append("/" + (int)HasBlockSkip);
+            }
+
             NCWords.ToList().ForEach(x => buf.Append(x.ToString()));
             return buf.ToString();
         }
@@ -121,7 +130,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         public static NCBlock Create(IEnumerable<INCWord>? ncWords = default)
         {
             ncWords ??= new List<INCWord>();
-            return new(ncWords);
+            return new(ncWords, OptionalBlockSkip.None);
         }
     }
 }

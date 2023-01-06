@@ -7,11 +7,14 @@ using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reflection.Emit;
+using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
 using Wada.Extension;
@@ -19,6 +22,7 @@ using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.ReadMainNCProgramApplication;
 using Wada.ReadSubNCProgramApplication;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
@@ -28,12 +32,24 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly ConcatenationPageModel _concatenation = new();
         private readonly IRegionNavigationService _regionNavigationService;
         private readonly IDialogService _dialogService;
+        private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadSubNCProgramUseCase readSubNCProgramUseCase)
+        private readonly List<string> _mainProgramNames = new()
+        {
+            "CD.txt",
+            "DR.txt",
+            "MENTORI.txt",
+            "REAMER.txt",
+            "TAP.txt",
+        };
+        private readonly Dictionary<string, NCProgramCode> _mainProgramCodes = new();
+
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
+            _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
 
             NCProgramFileName = _concatenation
@@ -127,12 +143,32 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .WithSubscribe(() => _concatenation.Clear())
                 .AddTo(Disposables);
 
+            // メインプログラム読込
+            _ = Task.Run(() =>
+            {
+                _mainProgramNames.ForEach(async x =>
+                {
+                    NCProgramCode ncCode = await _readMainNCProgramUseCase.ExecuteAsync(Path.Combine("メインプログラム", x).ToString());
+                    _mainProgramCodes.Add(x, ncCode);
+                });
+            });
         }
 
         [Logging]
         private void MoveNextView()
         {
-            throw new NotImplementedException();
+            switch (FetchedOperationType.Value)
+            {
+                case DirectedOperationType.Drilling:
+                    
+                    break;
+                case DirectedOperationType.Reaming:
+                    break;
+                case DirectedOperationType.TapProcessing:
+                    break;
+                default:
+                    break;
+            }
         }
 
         [Logging]

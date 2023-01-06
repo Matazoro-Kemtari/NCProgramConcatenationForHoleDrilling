@@ -2,19 +2,19 @@
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 
-namespace Wada.ReadSubNCProgramApplication
+namespace Wada.ReadMainNCProgramApplication
 {
-    public interface IReadSubNCProgramUseCase
+    public interface IReadMainNCProgramUseCase
     {
         Task<NCProgramCode> ExecuteAsync(string path);
     }
 
-    public class ReadSubNCProgramUseCase : IReadSubNCProgramUseCase
+    public class ReadMainNCProgramUseCase: IReadMainNCProgramUseCase
     {
         private readonly IStreamReaderOpener _streamReaderOpener;
         private readonly INCProgramRepository _ncProgramRepository;
 
-        public ReadSubNCProgramUseCase(IStreamReaderOpener streamReaderOpener, INCProgramRepository ncProgramRepository)
+        public ReadMainNCProgramUseCase(IStreamReaderOpener streamReaderOpener, INCProgramRepository ncProgramRepository)
         {
             _streamReaderOpener = streamReaderOpener;
             _ncProgramRepository = ncProgramRepository;

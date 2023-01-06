@@ -26,14 +26,18 @@ namespace Wada.NCProgramFile
                 else if (line.Trim() == "%")
                     continue;
 
+                // オプショナルブロックスキップ判定
+                OptionalBlockSkip hasBlockSkip = ExistsOptionalBlockSkip(line);
+
                 /*
-                 * コメントとワードを抽出する
-                 * \(.+\) : コメントと一致する
-                 * (?<!\([^)]*)[A-Za-z] : アドレスと一致する
-                 * (?<=#)\d{1,4}= : 変数番号と一致する
-                 * -?\d{1,4}(\.\d*)? : 数値と一致する
+                 * コメントとワード(アドレス+数値)を抽出する
+                 * 集積すると分かりにくいので注意
                  */
-                var matchedWords = Regex.Matches(line, @"(\(.+\)|((?<!\([^)]*)[A-Za-z]|(?<=#)\d+=)-?\d+(\.\d*)?)");
+                var matchedWords = Regex.Matches(
+                    line,
+                    @"(\(.+\)" + // コメントと一致する
+                    @"|(?<!\([^)]*)[A-Za-z](-?\d+(\.\d*)?|\*+)" + // ワード(アドレス+数値)と一致する
+                    @"|(?<=#)\d+=-?\d+(\.\d*)?)"); // 変数と一致する
                 if (matchedWords.Count == 0)
                 {
                     ncBlocks.Add(null);
@@ -47,7 +51,7 @@ namespace Wada.NCProgramFile
                     var matchComment = Regex.Match(matchWord.Value, @"(?<=\()[^\)]+");
                     // ワード
                     var matchAddress = Regex.Match(matchWord.Value, @"[A-Za-z]");
-                    var matchData = Regex.Match(matchWord.Value, @"-?\d+(\.\d*)?");
+                    var matchData = Regex.Match(matchWord.Value, @"(-?\d+(\.\d*)?|\*+)");
                     // 変数
                     var matchVariable = Regex.Match(matchWord.Value, @"\d+(?==)");
                     var matchVarValue = Regex.Match(matchWord.Value, @"(?<==)-?\d+(\.\d*)?");
@@ -75,10 +79,29 @@ namespace Wada.NCProgramFile
                     }
                     ncWords.Add(ncWord);
                 }
-                ncBlocks.Add(new NCBlock(ncWords));
+                ncBlocks.Add(new NCBlock(ncWords, hasBlockSkip));
             }
 
             return new(programName, ncBlocks);
+        }
+
+        private static OptionalBlockSkip ExistsOptionalBlockSkip(string line)
+        {
+            OptionalBlockSkip hasBlockSkip = OptionalBlockSkip.None;
+            if (Regex.IsMatch(line, @"^/[1-9]?(?!\d)"))
+            {
+                // スラッシュの後の数字1桁
+                Match num = Regex.Match(line, @"(?<=/)\d");
+
+                if (num.Success)
+                {
+                    hasBlockSkip = (OptionalBlockSkip)int.Parse(num.Value);
+                }
+                else
+                    hasBlockSkip = OptionalBlockSkip.BDT1;
+            }
+
+            return hasBlockSkip;
         }
     }
 }
