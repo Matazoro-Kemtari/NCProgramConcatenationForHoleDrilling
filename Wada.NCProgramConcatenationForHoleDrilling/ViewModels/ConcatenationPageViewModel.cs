@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
@@ -22,6 +21,7 @@ using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadSubNCProgramApplication;
 
