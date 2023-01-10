@@ -12,6 +12,7 @@
     <PackageReference Include="ReactiveProperty.WPF" Version="8.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Wada.EditNCProgramApplication\Wada.EditNCProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNCProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
   </ItemGroup>
