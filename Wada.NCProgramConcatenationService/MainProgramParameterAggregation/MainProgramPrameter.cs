@@ -22,6 +22,17 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         double PreparedHoleDiameter { get; }
 
         /// <summary>
+        /// C/D深さ
+        /// </summary>
+        double CenterDrillDepth { get; }
+        
+        /// <summary>
+        /// 面取り深さ
+        /// </summary>
+        double? ChamferingDepth { get; }
+
+
+        /// <summary>
         /// 下穴のドリル先端の長さ
         /// </summary>
         DrillTipLength PreparedHoleDrillTipLength { get; }
@@ -35,12 +46,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="SecondPreparedHoleDiameter">下穴2</param>
     /// <param name="CenterDrillDepth">C/D深さ</param>
     /// <param name="ChamferingDepth">面取り深さ</param>
-    public record class ReamerProgramPrameter(
+    public record class ReamingProgramPrameter(
         string DiameterKey,
         double PreparedHoleDiameter,
         double SecondPreparedHoleDiameter,
         double CenterDrillDepth,
-        double ChamferingDepth) : IMainProgramPrameter
+        double? ChamferingDepth) : IMainProgramPrameter
     {
         [Logging]
         private static double Validate(string value) => double.Parse(value);
@@ -62,11 +73,11 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="FeedForAluminum">送り(アルミ)</param>
     /// <param name="SpinForIron">回転(SS400)</param>
     /// <param name="FeedForIron">送り(SS400)</param>
-    public record class TapProgramPrameter(
+    public record class TappingProgramPrameter(
         string DiameterKey,
         double PreparedHoleDiameter,
         double CenterDrillDepth,
-        double ChamferingDepth,
+        double? ChamferingDepth,
         double SpinForAluminum,
         double FeedForAluminum,
         double SpinForIron,

@@ -5,7 +5,7 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     public enum DirectedOperationType
     {
         [EnumDisplayName("タップ")]
-        TapProcessing,
+        Tapping,
         [EnumDisplayName("リーマ")]
         Reaming,
         [EnumDisplayName("ドリル")]

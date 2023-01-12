@@ -164,7 +164,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     break;
                 case DirectedOperationType.Reaming:
                     break;
-                case DirectedOperationType.TapProcessing:
+                case DirectedOperationType.Tapping:
                     break;
                 default:
                     break;
