@@ -16,6 +16,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
+using Wada.EditNCProgramApplication;
 using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
@@ -34,6 +35,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
+        private readonly IEditNCProgramUseCase _editNCProgramUseCase;
 
         private readonly List<string> _mainProgramNames = new()
         {
@@ -45,12 +47,13 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         };
         private readonly Dictionary<string, NCProgramCode> _mainProgramCodes = new();
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase)
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IEditNCProgramUseCase editNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
+            _editNCProgramUseCase = editNCProgramUseCase;
 
             NCProgramFileName = _concatenation
                 .NCProgramFile
@@ -135,8 +138,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
-            .ToReactiveCommand()
-            .WithSubscribe(() => MoveNextView())
+            .ToAsyncReactiveCommand()
+            .WithSubscribe(() => MoveNextViewAsync())
             .AddTo(Disposables);
 
             ClearCommand = new ReactiveCommand()
@@ -155,20 +158,36 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         }
 
         [Logging]
-        private void MoveNextView()
+        private async Task MoveNextViewAsync()
         {
-            switch (FetchedOperationType.Value)
+            // メインプログラムを編集する
+            var taskEdit = _mainProgramCodes.Select(async x =>
             {
-                case DirectedOperationType.Drilling:
-                    
-                    break;
-                case DirectedOperationType.Reaming:
-                    break;
-                case DirectedOperationType.Tapping:
-                    break;
-                default:
-                    break;
-            }
+                // TODO: メインプログラムが何なのか特定する情報を渡す必要がある
+                EditNCProgramPram editNCProgramPram = new(
+                    x.Value,
+                    (EditNCProgramApplication.MachineToolType)MachineTool.Value,
+                    (EditNCProgramApplication.MaterialType)Material.Value,
+                    (EditNCProgramApplication.ReamerType)Reamer.Value,
+                    double.Parse(Thickness.Value));
+                switch (FetchedOperationType.Value)
+                {
+                    case DirectedOperationType.Drilling:
+                    case DirectedOperationType.TapProcessing:
+                        break;
+                    case DirectedOperationType.Reaming:
+                        break;
+                    default:
+                        throw new NCProgramConcatenationForHoleDrillingException(
+                            "未定義の作業指示が指定されています");
+
+                }
+                return await _editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
+            });
+            _= await Task.WhenAll(taskEdit);
+
+            // 結合する
+
         }
 
         [Logging]
@@ -266,7 +285,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Range(1, double.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
         public ReactiveProperty<string> Thickness { get; }
 
-        public ReactiveCommand NextViewCommand { get; }
+        public AsyncReactiveCommand NextViewCommand { get; }
 
         public ReactiveCommand ClearCommand { get; }
 

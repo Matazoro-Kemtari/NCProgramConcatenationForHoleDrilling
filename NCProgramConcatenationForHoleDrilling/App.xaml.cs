@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
+using Wada.EditNCProgramApplication;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationForHoleDrilling;
 using Wada.NCProgramConcatenationService;
@@ -29,6 +30,9 @@ namespace NCProgramConcatenationForHoleDrilling
             _ = containerRegistry.Register<IStreamReaderOpener, StreamReaderOpener>();
             _ = containerRegistry.Register<IReadMainNCProgramUseCase, ReadMainNCProgramUseCase>();
             _ = containerRegistry.Register<IReadSubNCProgramUseCase, ReadSubNCProgramUseCase>();
+
+            // メインプログラムの編集
+            _ = containerRegistry.Register<IEditNCProgramUseCase, EditNCProgramUseCase>();
 
             // パラメーターリスト読み込み
             _ = containerRegistry.Register<IReamingPrameterRepository, ReamingPrameterRepository>();

@@ -4,6 +4,12 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="240" value="&lt;u&gt;穴加工用結合ソフト&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="50" width="210" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="677" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="945" y="210" width="200" height="110" as="geometry"/>
+                </mxCell>
                 <mxCell id="632" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;" parent="1" vertex="1">
                     <mxGeometry x="590" y="860" width="570" height="320" as="geometry"/>
                 </mxCell>
@@ -21,9 +27,6 @@
                 </mxCell>
                 <mxCell id="363" value="&lt;u&gt;NCプログラム集約&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
                     <mxGeometry x="10" y="870" width="340" height="180" as="geometry"/>
-                </mxCell>
-                <mxCell id="240" value="&lt;u&gt;穴加工用結合ソフト&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
-                    <mxGeometry x="940" y="50" width="210" height="290" as="geometry"/>
                 </mxCell>
                 <mxCell id="164" style="edgeStyle=none;html=1;fontColor=#FF0000;endArrow=none;endFill=0;dashed=1;startArrow=none;" parent="1" source="5" target="158" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -73,6 +76,9 @@
                 <mxCell id="676" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" parent="1" source="238" target="675" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
+                <mxCell id="678" style="edgeStyle=none;html=1;endArrow=none;endFill=0;" edge="1" parent="1" source="238" target="596">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="238" value="工作部員" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
                     <mxGeometry x="790" y="75" width="30" height="60" as="geometry"/>
                 </mxCell>
@@ -83,7 +89,7 @@
                     <mxGeometry x="20.62" y="190" width="30" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="259" value="サブプログラムの呼び出し番号を書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="275" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="270" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="372" value="オブジェクト図" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="520" y="840" width="100" height="20" as="geometry"/>
@@ -138,7 +144,7 @@
                     <mxGeometry x="185.62" y="15" width="110" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="588" value="機械・穴径・素材・板厚ごとにメインデータを書き換える" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="210" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="220" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="591" style="edgeStyle=none;html=1;endArrow=none;endFill=0;dashed=1;" parent="1" source="590" target="588" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -171,10 +177,10 @@
                     <mxGeometry x="1070" y="947" width="80" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="606" value="メインデータとサブプログラムをFTPで転送する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="445" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="490" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="608" value="加工機を実行する" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="955" y="505" width="180" height="40" as="geometry"/>
+                    <mxGeometry x="955" y="565" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="614" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="610" target="612" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
