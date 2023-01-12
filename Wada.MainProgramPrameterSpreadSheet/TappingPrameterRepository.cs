@@ -5,10 +5,10 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class ReamingPrameterRepository : IReamingPrameterRepository
+    public class TappingPrameterRepository : ITappingPrameterRepository
     {
         [Logging]
-        public IEnumerable<ReamingProgramPrameter> ReadAll(Stream stream)
+        public IEnumerable<TappingProgramPrameter> ReadAll(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -22,14 +22,14 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 .ToList();
         }
 
+
         [Logging]
-        private static ReamingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static TappingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
             {
-                if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
-                    || !double.TryParse(cellValue?.ToString(), out _))
+                if (!row.Cell(columnLetter).TryGetValue(out T cellValue))
                     throw new NCProgramConcatenationServiceException(
                         $"{columnHedder}が取得できません" +
                         $" シート: {paramSheet.Name}," +
@@ -37,18 +37,24 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 return cellValue;
             }
 
-            var reamerDiameter = GetValueWithVaridate<string>("A", "リーマ径");
+            var reamerDiameter = GetValueWithVaridate<string>("A", "タップ径");
             var preparedHoleDiameter = GetValueWithVaridate<double>("B", "DR1(φ)");
-            var secondPreparedHoleDiameter = GetValueWithVaridate<double>("C", "DR2(φ)");
-            var centerDrillDepth = GetValueWithVaridate<double>("D", "C/D深さ");
-            var chamferingDepth = GetValueWithVaridate<double>("E", "面取深さ");
+            var centerDrillDepth = GetValueWithVaridate<double>("C", "C/D深さ");
+            var chamferingDepth = GetValueWithVaridate<double>("D", "面取深さ");
+            var spinForAluminum = GetValueWithVaridate<double>("E", "回転(AL)");
+            var feedForAluminum = GetValueWithVaridate<double>("F", "送り(AL)");
+            var spinForIron = GetValueWithVaridate<double>("G", "回転(SS400)");
+            var feedForIron = GetValueWithVaridate<double>("H", "送り(SS400)");
 
-            return new ReamingProgramPrameter(
+            return new TappingProgramPrameter(
                 reamerDiameter,
                 preparedHoleDiameter,
-                secondPreparedHoleDiameter,
                 centerDrillDepth,
-                chamferingDepth);
+                chamferingDepth,
+                spinForAluminum,
+                feedForAluminum,
+                spinForIron,
+                feedForIron);
         }
     }
 }
