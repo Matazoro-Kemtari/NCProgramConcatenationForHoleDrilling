@@ -1,7 +1,7 @@
 ﻿using Reactive.Bindings;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.ViewModels;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 {

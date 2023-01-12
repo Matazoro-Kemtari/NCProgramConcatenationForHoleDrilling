@@ -34,7 +34,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         {
             new object[] {
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") }),
-                DirectedOperationType.TapProcessing,
+                DirectedOperationType.Tapping,
             },
             new object[] {
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),

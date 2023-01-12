@@ -22,6 +22,7 @@ using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadSubNCProgramApplication;
 
@@ -186,6 +187,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             _= await Task.WhenAll(taskEdit);
 
             // 結合する
+
         }
 
         [Logging]
