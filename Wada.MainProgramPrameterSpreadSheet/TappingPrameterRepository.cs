@@ -5,10 +5,10 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class TappingPrameterRepository : ITappingPrameterRepository
+    public class TappingPrameterRepository : IMainProgramPrameterRepository
     {
         [Logging]
-        public IEnumerable<TappingProgramPrameter> ReadAll(Stream stream)
+        public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定

@@ -16,11 +16,11 @@ namespace Wada.ReadMainNCProgramApplication.Tests
 
             // when
             IReadMainNCProgramUseCase readSubNCProgramUseCase = new ReadMainNCProgramUseCase(mock_reader.Object, mock_nc.Object);
-            _ = await readSubNCProgramUseCase.ExecuteAsync(string.Empty);
+            _ = await readSubNCProgramUseCase.ExecuteAsync();
 
             // then
-            mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Once);
-            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Once);
+            mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(5));
+            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Exactly(5));
         }
     }
 }

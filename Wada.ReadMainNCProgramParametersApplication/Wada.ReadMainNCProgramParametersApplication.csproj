@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj" />
     <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
   </ItemGroup>
 

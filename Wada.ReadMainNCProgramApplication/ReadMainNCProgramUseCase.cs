@@ -6,10 +6,12 @@ namespace Wada.ReadMainNCProgramApplication
 {
     public interface IReadMainNCProgramUseCase
     {
-        Task<NCProgramCode> ExecuteAsync(string path);
+        Task<IEnumerable<MainNCProgramDTO>> ExecuteAsync();
     }
 
-    public class ReadMainNCProgramUseCase: IReadMainNCProgramUseCase
+    public record class MainNCProgramDTO(string ID, NCProgramCode NCProgramCode);
+
+    public class ReadMainNCProgramUseCase : IReadMainNCProgramUseCase
     {
         private readonly IStreamReaderOpener _streamReaderOpener;
         private readonly INCProgramRepository _ncProgramRepository;
@@ -21,12 +23,34 @@ namespace Wada.ReadMainNCProgramApplication
         }
 
         [Logging]
-        public async Task<NCProgramCode> ExecuteAsync(string path)
+        public async Task<IEnumerable<MainNCProgramDTO>> ExecuteAsync()
         {
-            var fileName = Path.GetFileNameWithoutExtension(path);
-            // サブプログラムを読み込む
-            using StreamReader reader = _streamReaderOpener.Open(path);
-            return await _ncProgramRepository.ReadAllAsync(reader, fileName);
+            List<string> _mainProgramNames = new()
+            {
+                "CD.txt",
+                "DR.txt",
+                "MENTORI.txt",
+                "REAMER.txt",
+                "TAP.txt",
+            };
+
+            string directory = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "..",
+                "メインプログラム");
+
+            var task = _mainProgramNames.Select(async x =>
+            {
+                var fileName = Path.GetFileNameWithoutExtension(x);
+                var path = Path.Combine(directory, x);
+
+                // サブプログラムを読み込む
+                using StreamReader reader = _streamReaderOpener.Open(path);
+                var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, fileName);
+                return new MainNCProgramDTO(fileName, ncProgramCode);
+            });
+
+            return await Task.WhenAll(task);
         }
     }
 }

@@ -24,6 +24,7 @@ using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
+using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
@@ -35,24 +36,20 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
+        private readonly IReadMainNCProgramParametersUseCase _readMainNCProgramParametersUseCase;
         private readonly IEditNCProgramUseCase _editNCProgramUseCase;
 
-        private readonly List<string> _mainProgramNames = new()
-        {
-            "CD.txt",
-            "DR.txt",
-            "MENTORI.txt",
-            "REAMER.txt",
-            "TAP.txt",
-        };
-        private readonly Dictionary<string, NCProgramCode> _mainProgramCodes = new();
+        private Dictionary<string, NCProgramCode>? _mainProgramCodes = null;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IEditNCProgramUseCase editNCProgramUseCase)
+        private MainNCProgramParametersDTO? _mainNCProgramParametersDTO = null;
+
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
+            _readMainNCProgramParametersUseCase = readMainNCProgramParametersUseCase;
             _editNCProgramUseCase = editNCProgramUseCase;
 
             NCProgramFileName = _concatenation
@@ -147,13 +144,51 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .AddTo(Disposables);
 
             // メインプログラム読込
-            _ = Task.Run(() =>
+            _ = Task.Run(async () =>
             {
-                _mainProgramNames.ForEach(async x =>
+                try
                 {
-                    NCProgramCode ncCode = await _readMainNCProgramUseCase.ExecuteAsync(Path.Combine("メインプログラム", x).ToString());
-                    _mainProgramCodes.Add(x, ncCode);
-                });
+                    var ncCodes = await _readMainNCProgramUseCase.ExecuteAsync();
+                    _mainProgramCodes = ncCodes.ToDictionary(x => x.ID, x => x.NCProgramCode);
+                }
+                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容が正しくありません。\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+                catch (OpenFileStreamReaderException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"メインプログラムの内容を読み込もうとしましたが、\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+
+            });
+
+            // リスト読み込み
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    _mainNCProgramParametersDTO = await _readMainNCProgramParametersUseCase.ExecuteAsync();
+                }
+                catch (NCProgramConcatenationServiceException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容が正しくありません。\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+                catch (OpenFileStreamException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容を読み込もうとしましたが、\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
             });
         }
 
@@ -173,7 +208,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 switch (FetchedOperationType.Value)
                 {
                     case DirectedOperationType.Drilling:
-                    case DirectedOperationType.TapProcessing:
+                    case DirectedOperationType.Tapping:
                         break;
                     case DirectedOperationType.Reaming:
                         break;
@@ -184,7 +219,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 }
                 return await _editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
             });
-            _= await Task.WhenAll(taskEdit);
+            _ = await Task.WhenAll(taskEdit);
 
             // 結合する
 

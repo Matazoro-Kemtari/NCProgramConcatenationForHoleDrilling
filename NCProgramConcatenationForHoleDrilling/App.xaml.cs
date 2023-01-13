@@ -31,13 +31,14 @@ namespace NCProgramConcatenationForHoleDrilling
             _ = containerRegistry.Register<IReadMainNCProgramUseCase, ReadMainNCProgramUseCase>();
             _ = containerRegistry.Register<IReadSubNCProgramUseCase, ReadSubNCProgramUseCase>();
 
+            // パラメーターリスト読み込み
+            _ = containerRegistry.Register<IStreamOpener, StreamOpener>();
+            _ = containerRegistry.Register<ReamingPrameterRepository>();
+            _ = containerRegistry.Register<TappingPrameterRepository>();
+            _ = containerRegistry.Register<IReadMainNCProgramParametersUseCase, ReadMainNCProgramParametersUseCase>();
+
             // メインプログラムの編集
             _ = containerRegistry.Register<IEditNCProgramUseCase, EditNCProgramUseCase>();
-
-            // パラメーターリスト読み込み
-            _ = containerRegistry.Register<IReamingPrameterRepository, ReamingPrameterRepository>();
-            _ = containerRegistry.Register<ITappingPrameterRepository, TappingPrameterRepository>();
-            _ = containerRegistry.Register<IReadMainNCProgramParametersUseCase, ReadMainNCProgramParametersUseCase>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

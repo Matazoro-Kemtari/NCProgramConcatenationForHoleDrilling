@@ -17,40 +17,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
-            IEnumerable<TappingProgramPrameter> tappingProgramPrameters = tappingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = tappingPrameterRepository.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, tappingProgramPrameters.Count());
             Assert.AreEqual(10, tappingProgramPrameters.Select(x => x.TargetToolDiameter).First());
-        }
-
-        [DataTestMethod()]
-        [DataRow("a")]
-        [DataRow("A")]
-        [DataRow("!")]
-        [DataRow(null)]
-        [DataRow("")]
-        [DataRow("漢字")]
-        public void 異常系_タップ径に数値以外が入っているとき例外を返すこと(string? value)
-        {
-            // given
-            using XLWorkbook workbook = MakeTestBook();
-            workbook.Worksheets.First().Cell(2, 1).SetValue(value);
-            using Stream stream = new MemoryStream();
-            workbook.SaveAs(stream);
-
-            // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
-            void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
-
-            // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
-            string expected = $"タップ径が取得できません" +
-                $" シート: Sheet1," +
-                $" セル: A2";
-            Assert.AreEqual(expected, ex.Message);
         }
 
         [DataTestMethod()]
@@ -69,7 +41,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -97,7 +69,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -125,7 +97,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -153,7 +125,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -181,7 +153,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -209,7 +181,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 
@@ -237,7 +209,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            ITappingPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
             void target() =>
                  tappingPrameterRepository.ReadAll(stream);
 

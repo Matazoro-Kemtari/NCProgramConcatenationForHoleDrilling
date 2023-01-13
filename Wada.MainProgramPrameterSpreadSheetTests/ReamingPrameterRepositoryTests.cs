@@ -17,8 +17,25 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IReamingPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            IEnumerable<ReamingProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+
+            // then
+            Assert.AreEqual(1, reamingProgramPrameters.Count());
+        }
+
+        [TestMethod()]
+        public void 正常系_面取り深さの値が無でもパラメータエクセルが読み込めること()
+        {
+            // given
+            using XLWorkbook workbook = MakeTestBook();
+            workbook.Worksheets.First().Cell(2, 5).SetValue("無");
+            using Stream xlsStream = new MemoryStream();
+            workbook.SaveAs(xlsStream);
+
+            // when
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
@@ -40,7 +57,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IReamingPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
             void target() =>
                  reamingPrameterRepository.ReadAll(stream);
 
@@ -68,7 +85,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IReamingPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
             void target() =>
                  reamingPrameterRepository.ReadAll(stream);
 
@@ -96,7 +113,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IReamingPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
             void target() =>
                  reamingPrameterRepository.ReadAll(stream);
 
@@ -124,7 +141,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IReamingPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
             void target() =>
                  reamingPrameterRepository.ReadAll(stream);
 

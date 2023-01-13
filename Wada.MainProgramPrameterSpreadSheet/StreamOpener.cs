@@ -16,12 +16,12 @@ namespace Wada.MainProgramPrameterSpreadSheet
             catch (FileNotFoundException ex)
             {
                 string msg = "ファイルが見つかりません";
-                throw new NCProgramConcatenationServiceException(msg, ex);
+                throw new OpenFileStreamException(msg, ex);
             }
             catch (IOException ex)
             {
                 string msg = "ファイルが使用中です";
-                throw new NCProgramConcatenationServiceException(msg, ex);
+                throw new OpenFileStreamException(msg, ex);
             }
 
             return reader;

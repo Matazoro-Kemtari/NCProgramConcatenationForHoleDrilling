@@ -2,23 +2,23 @@
 
 namespace Wada.NCProgramConcatenationService
 {
-    public interface IReamingPrameterRepository
+    public interface IMainProgramPrameterRepository
     {
         /// <summary>
         /// パラメータエクセルを読みだす
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        IEnumerable<ReamingProgramPrameter> ReadAll(Stream stream);
+        IEnumerable<IMainProgramPrameter> ReadAll(Stream stream);
     }
 
-    public interface ITappingPrameterRepository
-    {
-        /// <summary>
-        /// パラメータエクセルを読みだす
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        IEnumerable<TappingProgramPrameter> ReadAll(Stream stream);
-    }
+    //public interface ITappingPrameterRepository
+    //{
+    //    /// <summary>
+    //    /// パラメータエクセルを読みだす
+    //    /// </summary>
+    //    /// <param name="reader"></param>
+    //    /// <returns></returns>
+    //    IEnumerable<IMainProgramPrameter> ReadAll(Stream stream);
+    //}
 }

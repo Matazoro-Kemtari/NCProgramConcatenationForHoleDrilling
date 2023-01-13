@@ -5,10 +5,10 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class ReamingPrameterRepository : IReamingPrameterRepository
+    public class ReamingPrameterRepository : IMainProgramPrameterRepository
     {
         [Logging]
-        public IEnumerable<ReamingProgramPrameter> ReadAll(Stream stream)
+        public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -36,12 +36,20 @@ namespace Wada.MainProgramPrameterSpreadSheet
                         $" セル: {row.Cell(columnLetter).Address}");
                 return cellValue;
             }
+            [Logging]
+            T? GetValueWithOutVaridate<T>(string columnLetter, string columnHedder)
+            {
+                if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
+                    || !double.TryParse(cellValue?.ToString(), out _))
+                    return default(T);
+                return cellValue;
+            }
 
             var reamerDiameter = GetValueWithVaridate<string>("A", "リーマ径");
             var preparedHoleDiameter = GetValueWithVaridate<double>("B", "DR1(φ)");
             var secondPreparedHoleDiameter = GetValueWithVaridate<double>("C", "DR2(φ)");
             var centerDrillDepth = GetValueWithVaridate<double>("D", "C/D深さ");
-            var chamferingDepth = GetValueWithVaridate<double>("E", "面取深さ");
+            var chamferingDepth = GetValueWithOutVaridate<double?>("E", "面取深さ");
 
             return new ReamingProgramPrameter(
                 reamerDiameter,
