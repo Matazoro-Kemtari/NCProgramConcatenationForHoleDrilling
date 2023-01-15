@@ -13,16 +13,18 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
+using Wada.EditNCProgramApplication;
 using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
+using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
@@ -34,23 +36,21 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly IDialogService _dialogService;
         private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
+        private readonly IReadMainNCProgramParametersUseCase _readMainNCProgramParametersUseCase;
+        private readonly IEditNCProgramUseCase _editNCProgramUseCase;
 
-        private readonly List<string> _mainProgramNames = new()
-        {
-            "CD.txt",
-            "DR.txt",
-            "MENTORI.txt",
-            "REAMER.txt",
-            "TAP.txt",
-        };
-        private readonly Dictionary<string, NCProgramCode> _mainProgramCodes = new();
+        private Dictionary<string, NCProgramCode>? _mainProgramCodes = null;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase)
+        private MainNCProgramParametersDTO? _mainNCProgramParametersDTO = null;
+
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
+            _readMainNCProgramParametersUseCase = readMainNCProgramParametersUseCase;
+            _editNCProgramUseCase = editNCProgramUseCase;
 
             NCProgramFileName = _concatenation
                 .NCProgramFile
@@ -135,8 +135,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
-            .ToReactiveCommand()
-            .WithSubscribe(() => MoveNextView())
+            .ToAsyncReactiveCommand()
+            .WithSubscribe(() => MoveNextViewAsync())
             .AddTo(Disposables);
 
             ClearCommand = new ReactiveCommand()
@@ -144,31 +144,85 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .AddTo(Disposables);
 
             // メインプログラム読込
-            _ = Task.Run(() =>
+            _ = Task.Run(async () =>
             {
-                _mainProgramNames.ForEach(async x =>
+                try
                 {
-                    NCProgramCode ncCode = await _readMainNCProgramUseCase.ExecuteAsync(Path.Combine("メインプログラム", x).ToString());
-                    _mainProgramCodes.Add(x, ncCode);
-                });
+                    var ncCodes = await _readMainNCProgramUseCase.ExecuteAsync();
+                    _mainProgramCodes = ncCodes.ToDictionary(x => x.ID, x => x.NCProgramCode);
+                }
+                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容が正しくありません。\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+                catch (OpenFileStreamReaderException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"メインプログラムの内容を読み込もうとしましたが、\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+
+            });
+
+            // リスト読み込み
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    _mainNCProgramParametersDTO = await _readMainNCProgramParametersUseCase.ExecuteAsync();
+                }
+                catch (NCProgramConcatenationServiceException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容が正しくありません。\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
+                catch (OpenFileStreamException ex)
+                {
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(
+                        $"リストの内容を読み込もうとしましたが、\n{ex.Message}");
+                    await Messenger.RaiseAsync(message);
+                    Environment.Exit(0);
+                }
             });
         }
 
         [Logging]
-        private void MoveNextView()
+        private async Task MoveNextViewAsync()
         {
-            switch (FetchedOperationType.Value)
+            // メインプログラムを編集する
+            var taskEdit = _mainProgramCodes.Select(async x =>
             {
-                case DirectedOperationType.Drilling:
-                    
-                    break;
-                case DirectedOperationType.Reaming:
-                    break;
-                case DirectedOperationType.TapProcessing:
-                    break;
-                default:
-                    break;
-            }
+                // TODO: メインプログラムが何なのか特定する情報を渡す必要がある
+                EditNCProgramPram editNCProgramPram = new(
+                    x.Value,
+                    (EditNCProgramApplication.MachineToolType)MachineTool.Value,
+                    (EditNCProgramApplication.MaterialType)Material.Value,
+                    (EditNCProgramApplication.ReamerType)Reamer.Value,
+                    double.Parse(Thickness.Value));
+                switch (FetchedOperationType.Value)
+                {
+                    case DirectedOperationType.Drilling:
+                    case DirectedOperationType.Tapping:
+                        break;
+                    case DirectedOperationType.Reaming:
+                        break;
+                    default:
+                        throw new NCProgramConcatenationForHoleDrillingException(
+                            "未定義の作業指示が指定されています");
+
+                }
+                return await _editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
+            });
+            _ = await Task.WhenAll(taskEdit);
+
+            // 結合する
+
         }
 
         [Logging]
@@ -266,7 +320,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Range(1, double.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
         public ReactiveProperty<string> Thickness { get; }
 
-        public ReactiveCommand NextViewCommand { get; }
+        public AsyncReactiveCommand NextViewCommand { get; }
 
         public ReactiveCommand ClearCommand { get; }
 

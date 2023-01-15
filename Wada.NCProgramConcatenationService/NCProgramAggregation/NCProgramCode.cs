@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Wada.Extension;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.NCProgramAggregation
@@ -37,7 +36,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 {
                     DirectedOperationType responce;
                     if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d{1,2}"))
-                        responce = DirectedOperationType.TapProcessing;
+                        responce = DirectedOperationType.Tapping;
                     else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?[HG]\d+"))
                         responce = DirectedOperationType.Reaming;
                     else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?DR"))
@@ -76,19 +75,6 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         public string ProgramName { get; init; }
 
         public IEnumerable<NCBlock?> NCBlocks { get; init; }
-    }
-
-    public enum DirectedOperationType
-    {
-        [EnumDisplayName("タップ")]
-        TapProcessing,
-        [EnumDisplayName("リーマ")]
-        Reaming,
-        [EnumDisplayName("ドリル")]
-        Drilling,
-
-        [EnumDisplayName("不明")]
-        Undetected = int.MaxValue,
     }
 
     /// <summary>

@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
@@ -10,8 +9,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.AOP.Logging", "Wada.AOP.Logging\Wada.AOP.Logging.csproj", "{8B77098B-184F-456F-9E94-1C0791897C3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCase", "UseCase", "{D3D9615A-1602-44DB-883B-5D520011579A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EditNCProgramApplication", "EditNCProgramApplication\EditNCProgramApplication.csproj", "{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadSubNCProgramApplication", "Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj", "{79C0DA99-7EA1-4B67-AA59-155763421201}"
 EndProject
@@ -41,7 +38,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.NCProgramConcatenation
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadMainNCProgramApplication", "Wada.ReadMainNCProgramApplication\Wada.ReadMainNCProgramApplication.csproj", "{9B749CC4-9075-498E-80C8-2A950FDB40C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.ReadMainNCProgramApplicationTests", "Wada.ReadMainNCProgramApplicationTests\Wada.ReadMainNCProgramApplicationTests.csproj", "{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadMainNCProgramApplicationTests", "Wada.ReadMainNCProgramApplicationTests\Wada.ReadMainNCProgramApplicationTests.csproj", "{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadMainNCProgramParametersApplication", "Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNCProgramParametersApplication.csproj", "{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramPrameterSpreadSheet", "Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj", "{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramPrameterSpreadSheetTests", "Wada.MainProgramPrameterSpreadSheetTests\Wada.MainProgramPrameterSpreadSheetTests.csproj", "{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.EditNCProgramApplication", "Wada.EditNCProgramApplication\Wada.EditNCProgramApplication.csproj", "{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.ReadMainNCProgramParametersApplicationTests", "Wada.ReadMainNCProgramParametersApplicationTests\Wada.ReadMainNCProgramParametersApplicationTests.csproj", "{8191BE41-90B6-4093-AE45-50AE3E940D9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +64,6 @@ Global
 		{8B77098B-184F-456F-9E94-1C0791897C3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B77098B-184F-456F-9E94-1C0791897C3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B77098B-184F-456F-9E94-1C0791897C3D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79C0DA99-7EA1-4B67-AA59-155763421201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79C0DA99-7EA1-4B67-AA59-155763421201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79C0DA99-7EA1-4B67-AA59-155763421201}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -105,13 +108,32 @@ Global
 		{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8191BE41-90B6-4093-AE45-50AE3E940D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8191BE41-90B6-4093-AE45-50AE3E940D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8191BE41-90B6-4093-AE45-50AE3E940D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8191BE41-90B6-4093-AE45-50AE3E940D9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8B77098B-184F-456F-9E94-1C0791897C3D} = {2280FE7F-FB0B-44C7-8DAE-70A7119006FB}
-		{8DD5C36C-81EA-4E68-B8AE-CD5EEE25C26C} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{79C0DA99-7EA1-4B67-AA59-155763421201} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{1B1C67F7-EC9F-42B4-97A5-28EEEA44D608} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{77C5D031-833A-484E-8EB5-C631E826A70B} = {59A5C3B5-5809-4C0A-BFDC-FF70C80B5A9C}
@@ -123,6 +145,11 @@ Global
 		{0DF9E990-74CC-48C0-A382-63E7EA725C86} = {2CB3DA79-2FCC-4EE9-AE7D-813D5451C76A}
 		{9B749CC4-9075-498E-80C8-2A950FDB40C1} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{C4593E33-E34C-4B62-B9AE-0F6AD909DFE7} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{8191BE41-90B6-4093-AE45-50AE3E940D9C} = {D3D9615A-1602-44DB-883B-5D520011579A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}
