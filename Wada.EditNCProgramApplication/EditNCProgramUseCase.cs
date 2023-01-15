@@ -5,19 +5,25 @@ namespace Wada.EditNCProgramApplication
 {
     public interface IEditNCProgramUseCase
     {
-        Task<NCProgramCode> ExecuteAsync(EditNCProgramPram editNCProgramPram);
+        Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram);
     }
+
+    public record class EditNCProgramPram(
+        Dictionary<string, NCProgramCode> MainProgramCodes,
+        MachineToolType MachineTool,
+        MaterialType Material,
+        ReamerType Reamer,
+        double Thickness);
 
     public class EditNCProgramUseCase : IEditNCProgramUseCase
     {
         [Logging]
-        public async Task<NCProgramCode> ExecuteAsync(EditNCProgramPram editNCProgramPram)
+        public async Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram)
         {
             throw new NotImplementedException();
         }
     }
 
-    public record class EditNCProgramPram(NCProgramCode NCProgramCode, MachineToolType MachineTool, MaterialType Material, ReamerType Reamer, double Thickness);
     public enum MachineToolType
     {
         Undefined,

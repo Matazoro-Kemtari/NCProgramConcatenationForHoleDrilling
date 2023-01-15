@@ -154,14 +154,14 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容が正しくありません。\n{ex.Message}");
+                        $"リストの内容が正しくありません\n{ex.Message}");
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
                 catch (OpenFileStreamReaderException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"メインプログラムの内容を読み込もうとしましたが、\n{ex.Message}");
+                        $"メインプログラムの内容を読み込もうとしましたが\n{ex.Message}");
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
@@ -178,14 +178,14 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 catch (NCProgramConcatenationServiceException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容が正しくありません。\n{ex.Message}");
+                        $"リストの内容が正しくありません\n{ex.Message}");
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
                 catch (OpenFileStreamException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容を読み込もうとしましたが、\n{ex.Message}");
+                        $"リストの内容を読み込もうとしましたが\n{ex.Message}");
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
@@ -195,31 +195,24 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Logging]
         private async Task MoveNextViewAsync()
         {
-            // メインプログラムを編集する
-            var taskEdit = _mainProgramCodes.Select(async x =>
+            if (_mainProgramCodes == null)
             {
-                // TODO: メインプログラムが何なのか特定する情報を渡す必要がある
-                EditNCProgramPram editNCProgramPram = new(
-                    x.Value,
+                var message = MessageNotificationViaLivet.MakeInformationMessage(
+                    "設定ファイルの準備ができていません\n" +
+                    "数分待って実行してください\n" +
+                    "数分待っても状況が変わらない場合は 上長に報告してください");
+                await Messenger.RaiseAsync(message);
+                return;
+            }
+
+            // メインプログラムを編集する
+            var editedCodes = await _editNCProgramUseCase.ExecuteAsync(
+                new EditNCProgramPram(
+                    _mainProgramCodes,
                     (EditNCProgramApplication.MachineToolType)MachineTool.Value,
                     (EditNCProgramApplication.MaterialType)Material.Value,
                     (EditNCProgramApplication.ReamerType)Reamer.Value,
-                    double.Parse(Thickness.Value));
-                switch (FetchedOperationType.Value)
-                {
-                    case DirectedOperationType.Drilling:
-                    case DirectedOperationType.Tapping:
-                        break;
-                    case DirectedOperationType.Reaming:
-                        break;
-                    default:
-                        throw new NCProgramConcatenationForHoleDrillingException(
-                            "未定義の作業指示が指定されています");
-
-                }
-                return await _editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
-            });
-            _ = await Task.WhenAll(taskEdit);
+                    double.Parse(Thickness.Value)));
 
             // 結合する
 
