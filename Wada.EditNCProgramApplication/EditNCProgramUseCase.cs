@@ -1,11 +1,36 @@
 ﻿using Wada.AOP.Logging;
+using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.EditNCProgramApplication
 {
     public interface IEditNCProgramUseCase
     {
         Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram);
+    }
+
+    public class EditNCProgramUseCase : IEditNCProgramUseCase
+    {
+        private readonly IMainProgramParameterRewriter _mainParameterRewriter;
+
+        public EditNCProgramUseCase(IMainProgramParameterRewriter mainParameterRewriter)
+        {
+            _mainParameterRewriter = mainParameterRewriter;
+        }
+
+        [Logging]
+        public async Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram)
+        {
+            var taskRewriters = editNCProgramPram.MainProgramCodes.Select(x => Task.Run(() =>
+            {
+                string key= x.Key;
+                NCProgramCode ncProgramCode = x.Value;
+
+                return _mainParameterRewriter.RewriteProgramParameter();
+            }));
+            return await Task.WhenAll(taskRewriters);
+        }
     }
 
     public record class EditNCProgramPram(
@@ -15,12 +40,69 @@ namespace Wada.EditNCProgramApplication
         ReamerType Reamer,
         double Thickness);
 
-    public class EditNCProgramUseCase : IEditNCProgramUseCase
+    public class TestEditNCProgramPramFactory
     {
-        [Logging]
-        public async Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram)
+        public static EditNCProgramPram Create(
+            Dictionary<string, NCProgramCode>? mainProgramCodes = default,
+            MachineToolType machineTool = MachineToolType.RB250F,
+            MaterialType material = MaterialType.Aluminum,
+            ReamerType reamer = ReamerType.Crystal,
+            double thickness = 15)
         {
-            throw new NotImplementedException();
+            mainProgramCodes ??= new Dictionary<string, NCProgramCode>()
+            {
+                {
+                    "CD",
+                    TestNCProgramCodeFactory.Create(
+                        programName: "O1000",
+                        new List<NCBlock>
+                        {
+                            TestNCBlockFactory.Create(
+                                new List<INCWord>
+                                {
+                                    TestNCWordFactory.Create(
+                                        TestAddressFactory.Create(),
+                                        TestNumericalValueFactory.Create()),
+                                }),
+                        })
+                },
+                {
+                    "DR",
+                    TestNCProgramCodeFactory.Create(
+                        programName: "O2000",
+                        new List<NCBlock>
+                        {
+                            TestNCBlockFactory.Create(
+                                new List<INCWord>
+                                {
+                                    TestNCWordFactory.Create(
+                                        TestAddressFactory.Create(),
+                                        TestNumericalValueFactory.Create()),
+                                }),
+                        })
+                },
+                {
+                    "MENTORI",
+                    TestNCProgramCodeFactory.Create(
+                        programName: "O3000",
+                        new List<NCBlock>
+                        {
+                            TestNCBlockFactory.Create(
+                                new List<INCWord>
+                                {
+                                    TestNCWordFactory.Create(
+                                        TestAddressFactory.Create(),
+                                        TestNumericalValueFactory.Create()),
+                                }),
+                        })
+                },
+            };
+
+            return new(mainProgramCodes,
+                       machineTool,
+                       material,
+                       reamer,
+                       thickness);
         }
     }
 
