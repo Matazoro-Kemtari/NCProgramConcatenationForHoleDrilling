@@ -26,10 +26,12 @@ namespace Wada.EditNCProgramApplication
             {
                 string key= x.Key;
                 NCProgramCode ncProgramCode = x.Value;
-
-                return _mainParameterRewriter.RewriteProgramParameter();
+                throw new NotImplementedException();
+                //return _mainParameterRewriter.RewriteProgramParameter();
             }));
-            return await Task.WhenAll(taskRewriters);
+            // TODO: domain service完成後に直し
+            throw new NotImplementedException();
+            //return await Task.WhenAll(taskRewriters);
         }
     }
 

@@ -10,7 +10,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
         Task<MainNCProgramParametersDTO> ExecuteAsync();
     }
 
-    public record class MainNCProgramParametersDTO(IEnumerable<ReamingProgramPrameter> CrystalReamerParameters, IEnumerable<ReamingProgramPrameter> SkillReamerParameters, IEnumerable<TappingProgramPrameter> TapParameters);
+    public record class MainNCProgramParametersDTO(IEnumerable<ReamingProgramPrameter> CrystalReamerParameters, IEnumerable<ReamingProgramPrameter> SkillReamerParameters, IEnumerable<TappingProgramPrameter> TapParameters, IEnumerable<DrillingProgramPrameter> DrillingPrameters);
 
     public class ReadMainNCProgramParametersUseCase : IReadMainNCProgramParametersUseCase
     {
@@ -59,11 +59,21 @@ namespace Wada.ReadMainNCProgramParametersApplication
                 return _tappingPrameterRepository.ReadAll(stream);
             });
 
-            IEnumerable<IMainProgramPrameter>[] parameters = await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask);
+            var drillTask = Task.Run(() =>
+            {
+                var path = Path.Combine(
+                    directory,
+                    "ドリル.xlsx");
+                using Stream stream = _streamOpener.Open(path);
+                return _tappingPrameterRepository.ReadAll(stream);
+            });
+
+            IEnumerable<IMainProgramPrameter>[] parameters = await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);
             return new MainNCProgramParametersDTO(
                 (IEnumerable<ReamingProgramPrameter>)parameters[0],
                 (IEnumerable<ReamingProgramPrameter>)parameters[1],
-                (IEnumerable<TappingProgramPrameter>)parameters[2]);
+                (IEnumerable<TappingProgramPrameter>)parameters[2],
+                (IEnumerable<DrillingProgramPrameter>)parameters[3]);
         }
     }
 }

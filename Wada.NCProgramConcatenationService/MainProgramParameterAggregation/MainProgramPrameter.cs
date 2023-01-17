@@ -17,15 +17,10 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         double TargetToolDiameter { get; }
 
         /// <summary>
-        /// 下穴
-        /// </summary>
-        double PreparedHoleDiameter { get; }
-
-        /// <summary>
         /// C/D深さ
         /// </summary>
         double CenterDrillDepth { get; }
-        
+
         /// <summary>
         /// 面取り深さ
         /// </summary>
@@ -81,7 +76,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         double SpinForAluminum,
         double FeedForAluminum,
         double SpinForIron,
-        double FeedForIron): IMainProgramPrameter
+        double FeedForIron) : IMainProgramPrameter
     {
         [Logging]
         private static double Validate(string value)
@@ -98,5 +93,22 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         public double TargetToolDiameter { get; } = Validate(DiameterKey);
 
         public DrillTipLength PreparedHoleDrillTipLength { get; } = new(PreparedHoleDiameter);
+    }
+
+    public record class DrillingProgramPrameter(
+        string DiameterKey,
+        double CenterDrillDepth,
+        double CutDepthForAluminum,
+        double SpinForAluminum,
+        double FeedForAluminum,
+        double CutDepthForIron,
+        double SpinForIron,
+        double FeedForIron) : IMainProgramPrameter
+    {
+        public double TargetToolDiameter => throw new NotImplementedException();
+
+        public double? ChamferingDepth => throw new NotImplementedException();
+
+        public DrillTipLength PreparedHoleDrillTipLength => throw new NotImplementedException();
     }
 }
