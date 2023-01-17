@@ -5,7 +5,7 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     public record class DrillTipLength
     {
         [Logging]
-        public DrillTipLength(double diameter)
+        public DrillTipLength(decimal diameter)
         {
             // 通し穴見込量(mm)
             const decimal throughHoleEstimatedQuantity = 1.5m;
@@ -16,9 +16,9 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
             degree -= degree % 0.5m;
             degree += throughHoleEstimatedQuantity;
 
-            Value = (double)degree;
+            Value = (decimal)degree;
         }
 
-        public double Value { get; init; }
+        public decimal Value { get; init; }
     }
 }

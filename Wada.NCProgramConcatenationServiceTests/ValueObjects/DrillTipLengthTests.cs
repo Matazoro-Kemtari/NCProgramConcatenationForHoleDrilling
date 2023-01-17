@@ -13,7 +13,7 @@ namespace Wada.NCProgramConcatenationService.ValueObjects.Tests
         [DataRow(4, 2.5)]
         [DataRow(4.5, 3)]
         [DataRow(5, 3)]
-        public void 正常系_先端長さが計算できること(double diameter, double expected)
+        public void 正常系_先端長さが計算できること(decimal diameter, decimal expected)
         {
             // given
             // when

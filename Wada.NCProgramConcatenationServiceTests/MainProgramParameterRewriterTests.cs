@@ -9,34 +9,64 @@ namespace Wada.NCProgramConcatenationService.Tests
     public class MainProgramParameterRewriterTests
     {
         [DataTestMethod()]
-        [DataRow(MaterialType.Aluminum, 2000)]
-        [DataRow(MaterialType.Iron, 1500)]
-        public void 正常系_リーマメインプログラムの回転数パラメータが書き換えられること(MaterialType materialType, int spin)
+        [DataRow(MaterialType.Aluminum, 2000, 150)]
+        [DataRow(MaterialType.Iron, 1500, 100)]
+        public void 正常系_センタードリルがリーマパラメータで書き換えられること(MaterialType materialType, int spin, int feed)
         {
             // given
             // when
+            #region テストデータ
             NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create(
                 ncBlocks: new List<NCBlock>
                 {
                     TestNCBlockFactory.Create(
-                    ncWords: new List<INCWord> {
-                        TestNCWordFactory.Create(
-                            address: TestAddressFactory.Create('M'),
-                            valueData: TestNumericalValueFactory.Create("3")),
-                        TestNCWordFactory.Create(
-                            address: TestAddressFactory.Create('S'),
-                            valueData: TestNumericalValueFactory.Create("*")),
-                    })
+                        ncWords: new List<INCWord>
+                        {
+                            TestNCCommentFactory.Create(),
+                        }),
+                    TestNCBlockFactory.Create(
+                        ncWords: new List<INCWord> {
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('M'),
+                                valueData: TestNumericalValueFactory.Create("3")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('S'),
+                                valueData: TestNumericalValueFactory.Create("*")),
+                        }),
+                    TestNCBlockFactory.Create(
+                        ncWords: new List<INCWord> {
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('G'),
+                                valueData: TestNumericalValueFactory.Create("98")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('G'),
+                                valueData: TestNumericalValueFactory.Create("82")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('R'),
+                                valueData: TestCoordinateValueFactory.Create("3")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('Z'),
+                                valueData: TestCoordinateValueFactory.Create("*")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('P'),
+                                valueData: TestNumericalValueFactory.Create("1000")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('F'),
+                                valueData: TestNumericalValueFactory.Create("*")),
+                            TestNCWordFactory.Create(
+                                address: TestAddressFactory.Create('L'),
+                                valueData: TestNumericalValueFactory.Create("0")),
+                        })
                 });
             Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
             {
-                { MainProgramType.Reaming, rewritableCode },
+                { MainProgramType.CenterDrilling, rewritableCode },
             };
-            double diameter = 15d;
-            double fastDrill = 10d;
-            double secondDrill = 11.8;
-            double centerDrillDepth = -1.5;
-            double? chamferingDepth = -6.1;
+            decimal diameter = 15m;
+            decimal fastDrill = 10m;
+            decimal secondDrill = 11.8m;
+            decimal centerDrillDepth = -1.5m;
+            decimal? chamferingDepth = -6.1m;
             MainProgramParametersRecord parametersRecord = new(
                 new()
                 {
@@ -51,10 +81,12 @@ namespace Wada.NCProgramConcatenationService.Tests
                         ParameterType.DrillParameter,
                         new List<IMainProgramPrameter>
                         {
-                            new DrillingProgramPrameter(fastDrill.ToString())
+                            new DrillingProgramPrameter(fastDrill.ToString(), -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter(secondDrill.ToString(), -1.5m, 3.5m, 84m, 110m, 560m, 80m)
                         }
                     }
                 });
+            #endregion
 
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
             var expected = crystalReamingParameterRewriter.RewriteProgramParameter(
@@ -65,15 +97,25 @@ namespace Wada.NCProgramConcatenationService.Tests
                 );
 
             // then
-            var rewritedValue = expected
-                 .Select(x => x.NCBlocks.Where(y => y != null)
-                    .Select(y => y!.NCWords.Cast<NCWord>()
-                        .Where(z => z.Address.Value == 'S')
-                        .Select(z => z.ValueData.Number)
-                        .First())
-                    .First())
-                 .First();
-            Assert.AreEqual(spin, rewritedValue);
+            decimal rewritedSpin = NCWordから値を抽出する(expected, 'S');
+            Assert.AreEqual(spin, rewritedSpin);
+            var rewritedDepth = NCWordから値を抽出する(expected, 'Z');
+            Assert.AreEqual(centerDrillDepth, rewritedDepth);
+            var rewritedFeed = NCWordから値を抽出する(expected, 'F');
+            Assert.AreEqual(feed, rewritedFeed);
+        }
+
+        private static decimal NCWordから値を抽出する(IEnumerable<NCProgramCode> expected, char address)
+        {
+            return expected.Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Select(x => x.NCWords)
+                .SelectMany(x => x)
+                .Where(y => y!.GetType() == typeof(NCWord))
+                .Cast<NCWord>()
+                .Where(z => z.Address.Value == address)
+                .Select(z => z.ValueData.Number)
+                .First();
         }
     }
 }

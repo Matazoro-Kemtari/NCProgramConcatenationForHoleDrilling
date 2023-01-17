@@ -14,23 +14,23 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         /// <summary>
         /// ツール径
         /// </summary>
-        double TargetToolDiameter { get; }
+        decimal TargetToolDiameter { get; }
 
         /// <summary>
         /// C/D深さ
         /// </summary>
-        double CenterDrillDepth { get; }
+        decimal CenterDrillDepth { get; }
 
         /// <summary>
         /// 面取り深さ
         /// </summary>
-        double? ChamferingDepth { get; }
+        decimal? ChamferingDepth { get; }
 
 
         /// <summary>
         /// ドリル先端の長さ
         /// </summary>
-        double DrillTipLength { get; }
+        decimal DrillTipLength { get; }
     }
 
     /// <summary>
@@ -43,17 +43,17 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="ChamferingDepth">面取り深さ</param>
     public record class ReamingProgramPrameter(
         string DiameterKey,
-        double PreparedHoleDiameter,
-        double SecondPreparedHoleDiameter,
-        double CenterDrillDepth,
-        double? ChamferingDepth) : IMainProgramPrameter
+        decimal PreparedHoleDiameter,
+        decimal SecondPreparedHoleDiameter,
+        decimal CenterDrillDepth,
+        decimal? ChamferingDepth) : IMainProgramPrameter
     {
         [Logging]
-        private static double Validate(string value) => double.Parse(value);
+        private static decimal Validate(string value) => decimal.Parse(value);
 
-        public double TargetToolDiameter => Validate(DiameterKey);
+        public decimal TargetToolDiameter => Validate(DiameterKey);
 
-        public double DrillTipLength => 5d;
+        public decimal DrillTipLength => 5m;
 
         /// <summary>
         /// 下穴1のドリル先端の長さ
@@ -79,16 +79,16 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="FeedForIron">送り(SS400)</param>
     public record class TappingProgramPrameter(
         string DiameterKey,
-        double PreparedHoleDiameter,
-        double CenterDrillDepth,
-        double? ChamferingDepth,
-        double SpinForAluminum,
-        double FeedForAluminum,
-        double SpinForIron,
-        double FeedForIron) : IMainProgramPrameter
+        decimal PreparedHoleDiameter,
+        decimal CenterDrillDepth,
+        decimal? ChamferingDepth,
+        decimal SpinForAluminum,
+        decimal FeedForAluminum,
+        decimal SpinForIron,
+        decimal FeedForIron) : IMainProgramPrameter
     {
         [Logging]
-        private static double Validate(string value)
+        private static decimal Validate(string value)
         {
             var matchedDiameter = Regex.Match(value, @"(?<=M)\d+");
             if (!matchedDiameter.Success)
@@ -96,12 +96,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
                     "タップ径の値が読み取れません\n" +
                     $"書式を確認してください タップ径: {value}");
 
-            return double.Parse(matchedDiameter.Value);
+            return decimal.Parse(matchedDiameter.Value);
         }
 
-        public double TargetToolDiameter => Validate(DiameterKey);
+        public decimal TargetToolDiameter => Validate(DiameterKey);
 
-        public double DrillTipLength => 5d;
+        public decimal DrillTipLength => 5m;
 
         /// <summary>
         /// 下穴のドリル先端の長さ
@@ -121,23 +121,23 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="FeedForIron">送り(SS400)</param>
     public record class DrillingProgramPrameter(
         string DiameterKey,
-        double CenterDrillDepth,
-        double CutDepth,
-        double SpinForAluminum,
-        double FeedForAluminum,
-        double SpinForIron,
-        double FeedForIron) : IMainProgramPrameter
+        decimal CenterDrillDepth,
+        decimal CutDepth,
+        decimal SpinForAluminum,
+        decimal FeedForAluminum,
+        decimal SpinForIron,
+        decimal FeedForIron) : IMainProgramPrameter
     {
         [Logging]
-        private static double Validate(string value) => double.Parse(value);
+        private static decimal Validate(string value) => decimal.Parse(value);
 
         [Logging]
-        private static double CalcChamferingDepth(double diameter) => -(diameter / 2d + 0.2d);
+        private static decimal CalcChamferingDepth(decimal diameter) => -(diameter / 2m + 0.2m);
 
-        public double TargetToolDiameter => Validate(DiameterKey);
+        public decimal TargetToolDiameter => Validate(DiameterKey);
 
-        public double? ChamferingDepth => CalcChamferingDepth(TargetToolDiameter);
+        public decimal? ChamferingDepth => CalcChamferingDepth(TargetToolDiameter);
 
-        public double DrillTipLength => new DrillTipLength(TargetToolDiameter).Value;
+        public decimal DrillTipLength => new DrillTipLength(TargetToolDiameter).Value;
     }
 }

@@ -18,7 +18,7 @@ namespace Wada.NCProgramConcatenationService
         IEnumerable<NCProgramCode> RewriteProgramParameter(
             Dictionary<MainProgramType, NCProgramCode> rewritableCodes,
             MaterialType materialType,
-            double targetToolDiameter,
+            decimal targetToolDiameter,
             MainProgramParametersRecord prameters);
     }
 
@@ -33,7 +33,7 @@ namespace Wada.NCProgramConcatenationService
         public IEnumerable<NCProgramCode> RewriteProgramParameter(
             Dictionary<MainProgramType, NCProgramCode> rewritableCodes,
             MaterialType material,
-            double targetToolDiameter,
+            decimal targetToolDiameter,
             MainProgramParametersRecord prameterRecord)
         {
             if (material == MaterialType.Undefined)
@@ -52,33 +52,33 @@ namespace Wada.NCProgramConcatenationService
                     $"パラメータが受け取れません ParameterType: {nameof(ParameterType.DrillParameter)}");
 
             // メインプログラムを工程ごとに取り出す
-            return rewritableCodes.Select(dic =>
-            {
-                IMainProgramPrameter reamingParameter;
-                try
+            return rewritableCodes.Select(
+                dic =>
                 {
-                    reamingParameter = reamingParameters.First(x => x.TargetToolDiameter == targetToolDiameter);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    throw new NCProgramConcatenationServiceException(
-                        $"リーマ径 {targetToolDiameter}Φのリストがありません");
-                }
+                    IMainProgramPrameter reamingParameter;
+                    try
+                    {
+                        reamingParameter = reamingParameters.First(x => x.TargetToolDiameter == targetToolDiameter);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        throw new NCProgramConcatenationServiceException(
+                            $"リーマ径 {targetToolDiameter}のリストがありません");
+                    }
 
-                return dic.Key switch
-                {
-                    MainProgramType.CenterDrilling => MainProgramRewriter.RewriteProgramParameterForCenterDrilling(
-                        dic.Value,
-                        material,
-                        reamingParameter,
-                        drillingParameters),
-                    MainProgramType.Drilling => MainProgramRewriter.RewriteProgramParameterForDrilling(),
-                    MainProgramType.Chamfering => MainProgramRewriter.RewriteProgramParameterForChamfering(),
-                    MainProgramType.Reaming => MainProgramRewriter.RewriteProgramParameterForReaming(),
-                    MainProgramType.Tapping => MainProgramRewriter.RewriteProgramParameterForTapping(),
-                    _ => throw new NotImplementedException()
-                };
-            });
+                    return dic.Key switch
+                    {
+                        MainProgramType.CenterDrilling => MainProgramRewriter.RewriteProgramParameterForCenterDrilling(
+                            dic.Value,
+                            material,
+                            reamingParameter),
+                        MainProgramType.Drilling => MainProgramRewriter.RewriteProgramParameterForDrilling(),
+                        MainProgramType.Chamfering => MainProgramRewriter.RewriteProgramParameterForChamfering(),
+                        MainProgramType.Reaming => MainProgramRewriter.RewriteProgramParameterForReaming(),
+                        MainProgramType.Tapping => MainProgramRewriter.RewriteProgramParameterForTapping(),
+                        _ => throw new NotImplementedException()
+                    };
+                });
         }
     }
 
@@ -114,14 +114,12 @@ namespace Wada.NCProgramConcatenationService
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
         /// <param name="rewritingParameter">対象のパラメータ</param>
-        /// <param name="drillingParameters">ドリルのパラメータリスト</param>
         /// <returns></returns>
         [Logging]
         internal static NCProgramCode RewriteProgramParameterForCenterDrilling(
             NCProgramCode rewritableCode,
             MaterialType material,
-            IMainProgramPrameter rewritingParameter,
-            IEnumerable<IMainProgramPrameter>? drillingParameters)
+            IMainProgramPrameter rewritingParameter)
         {
             // NCプログラムを走査して書き換え対象を探す
             var rewritedNCBlocks = rewritableCode.NCBlocks
@@ -138,19 +136,31 @@ namespace Wada.NCProgramConcatenationService
                             NCWord ncWord = (NCWord)y;
                             if (ncWord.Address.Value == 'S')
                             {
+                                // 回転
                                 return ncWord with
                                 {
                                     ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteSpinParameter(material, ncWord.ValueData)
+                                    RewriteSpinParameter(material, (NumericalValue)ncWord.ValueData)
                                     : ncWord.ValueData
                                 };
                             }
                             else if (ncWord.Address.Value == 'Z')
                             {
+                                // C/D深さ
                                 return ncWord with
                                 {
                                     ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteDepthParameter(material, ncWord.ValueData, drillingParameters)
+                                    RewriteCenterDrillDepthParameter(rewritingParameter.CenterDrillDepth, (CoordinateValue)ncWord.ValueData)
+                                    : ncWord.ValueData
+                                };
+                            }
+                            else if (ncWord.Address.Value == 'F')
+                            {
+                                // 送り
+                                return ncWord with
+                                {
+                                    ValueData = ncWord.ValueData.Indefinite ?
+                                    RewriteFeedParameter(material, (NumericalValue)ncWord.ValueData)
                                     : ncWord.ValueData
                                 };
                             }
@@ -166,13 +176,32 @@ namespace Wada.NCProgramConcatenationService
             };
         }
 
-        private static IValueData RewriteDepthParameter(MaterialType material, IValueData valueData, object drillingProgramPrameter)
+        [Logging]
+        private static IValueData RewriteFeedParameter(MaterialType material, NumericalValue valueData)
         {
-            throw new NotImplementedException();
+            string feedValue;
+            switch (material)
+            {
+                case MaterialType.Aluminum:
+                    feedValue = "150";
+                    break;
+                case MaterialType.Iron:
+                    feedValue = "100";
+                    break;
+                default:
+                    throw new AggregateException(nameof(material));
+            }
+            return valueData with { Value = feedValue };
         }
 
         [Logging]
-        private static IValueData RewriteSpinParameter(MaterialType material, IValueData valueData)
+        private static IValueData RewriteCenterDrillDepthParameter(decimal centerDrillDepth, CoordinateValue valueData)
+        {
+            return valueData with { Value = centerDrillDepth.ToString() };
+        }
+
+        [Logging]
+        private static IValueData RewriteSpinParameter(MaterialType material, NumericalValue valueData)
         {
             string spinValue;
             switch (material)
@@ -186,7 +215,7 @@ namespace Wada.NCProgramConcatenationService
                 default:
                     throw new AggregateException(nameof(material));
             }
-            return  (NumericalValue)valueData with { Value = spinValue };
+            return valueData with { Value = spinValue };
         }
     }
 

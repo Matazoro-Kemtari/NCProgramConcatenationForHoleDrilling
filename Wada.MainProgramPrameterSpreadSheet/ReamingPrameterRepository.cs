@@ -29,7 +29,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
             {
                 if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
-                    || !double.TryParse(cellValue?.ToString(), out _))
+                    || !decimal.TryParse(cellValue?.ToString(), out _))
                     throw new NCProgramConcatenationServiceException(
                         $"{columnHedder}が取得できません" +
                         $" シート: {paramSheet.Name}," +
@@ -41,16 +41,16 @@ namespace Wada.MainProgramPrameterSpreadSheet
             T? GetValueWithOutVaridate<T>(string columnLetter, string columnHedder)
             {
                 if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
-                    || !double.TryParse(cellValue?.ToString(), out _))
+                    || !decimal.TryParse(cellValue?.ToString(), out _))
                     return default(T);
                 return cellValue;
             }
 
             var reamerDiameter = GetValueWithVaridate<string>("A", "リーマ径");
-            var preparedHoleDiameter = GetValueWithVaridate<double>("B", "DR1(φ)");
-            var secondPreparedHoleDiameter = GetValueWithVaridate<double>("C", "DR2(φ)");
-            var centerDrillDepth = GetValueWithVaridate<double>("D", "C/D深さ");
-            var chamferingDepth = GetValueWithOutVaridate<double?>("E", "面取深さ");
+            var preparedHoleDiameter = GetValueWithVaridate<decimal>("B", "DR1(φ)");
+            var secondPreparedHoleDiameter = GetValueWithVaridate<decimal>("C", "DR2(φ)");
+            var centerDrillDepth = GetValueWithVaridate<decimal>("D", "C/D深さ");
+            var chamferingDepth = GetValueWithOutVaridate<decimal?>("E", "面取深さ");
 
             return new ReamingProgramPrameter(
                 reamerDiameter,

@@ -40,7 +40,7 @@ namespace Wada.EditNCProgramApplication
         MachineToolType MachineTool,
         MaterialType Material,
         ReamerType Reamer,
-        double Thickness);
+        decimal Thickness);
 
     public class TestEditNCProgramPramFactory
     {
@@ -49,7 +49,7 @@ namespace Wada.EditNCProgramApplication
             MachineToolType machineTool = MachineToolType.RB250F,
             MaterialType material = MaterialType.Aluminum,
             ReamerType reamer = ReamerType.Crystal,
-            double thickness = 15)
+            decimal thickness = 15)
         {
             mainProgramCodes ??= new Dictionary<string, NCProgramCode>()
             {

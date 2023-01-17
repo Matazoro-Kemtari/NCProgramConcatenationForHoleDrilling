@@ -29,7 +29,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
             {
                 if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
-                    || !double.TryParse(cellValue?.ToString(), out _))
+                    || !decimal.TryParse(cellValue?.ToString(), out _))
                     throw new NCProgramConcatenationServiceException(
                         $"{columnHedder}が取得できません" +
                         $" シート: {paramSheet.Name}," +
@@ -38,12 +38,12 @@ namespace Wada.MainProgramPrameterSpreadSheet
             }
 
             var drillDiameter = GetValueWithVaridate<string>("A", "DR(φ)");
-            var centerDrillDepth = GetValueWithVaridate<double>("B", "C/D深さ");
-            var cutDepth = GetValueWithVaridate<double>("E", "切込(Q)");
-            var spinForAluminum = GetValueWithVaridate<double>("F", "回転(AL)");
-            var feedForAluminum = GetValueWithVaridate<double>("G", "送り(AL)");
-            var spinForIron = GetValueWithVaridate<double>("H", "回転(SS400)");
-            var feedForIron = GetValueWithVaridate<double>("I", "送り(SS400)");
+            var centerDrillDepth = GetValueWithVaridate<decimal>("B", "C/D深さ");
+            var cutDepth = GetValueWithVaridate<decimal>("E", "切込(Q)");
+            var spinForAluminum = GetValueWithVaridate<decimal>("F", "回転(AL)");
+            var feedForAluminum = GetValueWithVaridate<decimal>("G", "送り(AL)");
+            var spinForIron = GetValueWithVaridate<decimal>("H", "回転(SS400)");
+            var feedForIron = GetValueWithVaridate<decimal>("I", "送り(SS400)");
 
             return new DrillingProgramPrameter(
                 drillDiameter,
