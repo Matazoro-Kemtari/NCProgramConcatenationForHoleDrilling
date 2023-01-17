@@ -39,6 +39,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
+            Assert.IsNull(reamingProgramPrameters.Select(x => x.ChamferingDepth).First());
         }
 
         [DataTestMethod()]

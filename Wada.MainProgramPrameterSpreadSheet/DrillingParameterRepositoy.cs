@@ -5,10 +5,10 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class ReamingPrameterRepository : IMainProgramPrameterRepository
+    public class DrillingParameterRepositoy : IMainProgramPrameterRepository
     {
         [Logging]
-        public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
+        public IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -23,7 +23,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
         }
 
         [Logging]
-        private static ReamingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static DrillingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
@@ -37,27 +37,22 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 return cellValue;
             }
 
-            [Logging]
-            T? GetValueWithOutVaridate<T>(string columnLetter, string columnHedder)
-            {
-                if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
-                    || !double.TryParse(cellValue?.ToString(), out _))
-                    return default(T);
-                return cellValue;
-            }
+            var drillDiameter = GetValueWithVaridate<string>("A", "DR(φ)");
+            var centerDrillDepth = GetValueWithVaridate<double>("B", "C/D深さ");
+            var cutDepth = GetValueWithVaridate<double>("E", "切込(Q)");
+            var spinForAluminum = GetValueWithVaridate<double>("F", "回転(AL)");
+            var feedForAluminum = GetValueWithVaridate<double>("G", "送り(AL)");
+            var spinForIron = GetValueWithVaridate<double>("H", "回転(SS400)");
+            var feedForIron = GetValueWithVaridate<double>("I", "送り(SS400)");
 
-            var reamerDiameter = GetValueWithVaridate<string>("A", "リーマ径");
-            var preparedHoleDiameter = GetValueWithVaridate<double>("B", "DR1(φ)");
-            var secondPreparedHoleDiameter = GetValueWithVaridate<double>("C", "DR2(φ)");
-            var centerDrillDepth = GetValueWithVaridate<double>("D", "C/D深さ");
-            var chamferingDepth = GetValueWithOutVaridate<double?>("E", "面取深さ");
-
-            return new ReamingProgramPrameter(
-                reamerDiameter,
-                preparedHoleDiameter,
-                secondPreparedHoleDiameter,
+            return new DrillingProgramPrameter(
+                drillDiameter,
                 centerDrillDepth,
-                chamferingDepth);
+                cutDepth,
+                spinForAluminum,
+                feedForAluminum,
+                spinForIron,
+                feedForIron);
         }
     }
 }
