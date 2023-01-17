@@ -28,9 +28,9 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
 
 
         /// <summary>
-        /// 下穴のドリル先端の長さ
+        /// ドリル先端の長さ
         /// </summary>
-        DrillTipLength PreparedHoleDrillTipLength { get; }
+        double DrillTipLength { get; }
     }
 
     /// <summary>
@@ -51,10 +51,19 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         [Logging]
         private static double Validate(string value) => double.Parse(value);
 
-        public double TargetToolDiameter { get; } = Validate(DiameterKey);
+        public double TargetToolDiameter => Validate(DiameterKey);
 
-        public DrillTipLength PreparedHoleDrillTipLength { get; } = new(PreparedHoleDiameter);
-        public DrillTipLength SecondPreparedHoleDrillTipLength { get; } = new(SecondPreparedHoleDiameter);
+        public double DrillTipLength => 5d;
+
+        /// <summary>
+        /// 下穴1のドリル先端の長さ
+        /// </summary>
+        public DrillTipLength FastPreparedHoleDrillTipLength => new(PreparedHoleDiameter);
+
+        /// <summary>
+        /// 下穴2のドリル先端の長さ
+        /// </summary>
+        public DrillTipLength SecondPreparedHoleDrillTipLength => new(SecondPreparedHoleDiameter);
     }
 
     /// <summary>
@@ -90,25 +99,45 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
             return double.Parse(matchedDiameter.Value);
         }
 
-        public double TargetToolDiameter { get; } = Validate(DiameterKey);
+        public double TargetToolDiameter => Validate(DiameterKey);
 
-        public DrillTipLength PreparedHoleDrillTipLength { get; } = new(PreparedHoleDiameter);
+        public double DrillTipLength => 5d;
+
+        /// <summary>
+        /// 下穴のドリル先端の長さ
+        /// </summary>
+        public DrillTipLength PreparedHoleDrillTipLength => new(PreparedHoleDiameter);
     }
 
+    /// <summary>
+    /// ドリルパラメータ
+    /// </summary>
+    /// <param name="DiameterKey">ドリル径</param>
+    /// <param name="CenterDrillDepth">C/D深さ</param>
+    /// <param name="CutDepth">切込量</param>
+    /// <param name="SpinForAluminum">回転(アルミ)</param>
+    /// <param name="FeedForAluminum">送り(アルミ)</param>
+    /// <param name="SpinForIron">回転(SS400)</param>
+    /// <param name="FeedForIron">送り(SS400)</param>
     public record class DrillingProgramPrameter(
         string DiameterKey,
         double CenterDrillDepth,
-        double CutDepthForAluminum,
+        double CutDepth,
         double SpinForAluminum,
         double FeedForAluminum,
-        double CutDepthForIron,
         double SpinForIron,
         double FeedForIron) : IMainProgramPrameter
     {
-        public double TargetToolDiameter => throw new NotImplementedException();
+        [Logging]
+        private static double Validate(string value) => double.Parse(value);
 
-        public double? ChamferingDepth => throw new NotImplementedException();
+        [Logging]
+        private static double CalcChamferingDepth(double diameter) => -(diameter / 2d + 0.2d);
 
-        public DrillTipLength PreparedHoleDrillTipLength => throw new NotImplementedException();
+        public double TargetToolDiameter => Validate(DiameterKey);
+
+        public double? ChamferingDepth => CalcChamferingDepth(TargetToolDiameter);
+
+        public double DrillTipLength => new DrillTipLength(TargetToolDiameter).Value;
     }
 }
