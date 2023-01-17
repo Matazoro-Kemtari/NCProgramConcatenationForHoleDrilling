@@ -117,5 +117,150 @@ namespace Wada.NCProgramConcatenationService.Tests
                 .Select(z => z.ValueData.Number)
                 .First();
         }
+
+        [TestMethod]
+        public void 異常系_リーマのパラメータを渡さないとき例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.CenterDrilling, rewritableCode },
+            };
+            decimal diameter = 15m;
+            decimal fastDrill = 10m;
+            decimal secondDrill = 11.8m;
+            MainProgramParametersRecord parametersRecord = new(
+                new()
+                {
+                    {
+                        ParameterType.DrillParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new DrillingProgramPrameter(fastDrill.ToString(), -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter(secondDrill.ToString(), -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                        }
+                    }
+                });
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                _ = crystalReamingParameterRewriter.RewriteProgramParameter(
+                    rewritableCodeDic,
+                    MaterialType.Aluminum,
+                    diameter,
+                    parametersRecord
+                    );
+            }
+
+            // then
+            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            Assert.AreEqual($"パラメータが受け取れません ParameterType: {nameof(ParameterType.CrystalReamerParameter)}",
+                ex.Message);
+        }
+
+        [TestMethod]
+        public void 異常系_ドリルのパラメータを渡さないとき例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.CenterDrilling, rewritableCode },
+            };
+            decimal diameter = 15m;
+            decimal fastDrill = 10m;
+            decimal secondDrill = 11.8m;
+            decimal centerDrillDepth = -1.5m;
+            decimal? chamferingDepth = -6.1m;
+            MainProgramParametersRecord parametersRecord = new(
+                new()
+                {
+                    {
+                        ParameterType.CrystalReamerParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new ReamingProgramPrameter(diameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
+                        }
+                    }
+                });
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                _ = crystalReamingParameterRewriter.RewriteProgramParameter(
+                    rewritableCodeDic,
+                    MaterialType.Aluminum,
+                    diameter,
+                    parametersRecord
+                    );
+            }
+
+            // then
+            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            Assert.AreEqual($"パラメータが受け取れません ParameterType: {nameof(ParameterType.DrillParameter)}",
+                ex.Message);
+        }
+
+        [TestMethod]
+        public void 異常系_リストに一致するリーマ径が無いとき例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.CenterDrilling, rewritableCode },
+            };
+            decimal diameter = 15m;
+            decimal fastDrill = 10m;
+            decimal secondDrill = 11.8m;
+            decimal centerDrillDepth = -1.5m;
+            decimal? chamferingDepth = -6.1m;
+            MainProgramParametersRecord parametersRecord = new(
+                new()
+                {
+                    {
+                        ParameterType.CrystalReamerParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new ReamingProgramPrameter("200", fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
+                        }
+                    },
+                    {
+                        ParameterType.DrillParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new DrillingProgramPrameter(fastDrill.ToString(), -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter(secondDrill.ToString(), -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                        }
+                    }
+                });
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                var expected = crystalReamingParameterRewriter.RewriteProgramParameter(
+                    rewritableCodeDic,
+                    MaterialType.Aluminum,
+                    diameter,
+                    parametersRecord
+                    );
+                // 遅延実行
+                _ = expected.ToList();
+            }
+
+            // then
+            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            Assert.AreEqual($"リーマ径 {diameter}のリストがありません",
+                ex.Message);
+
+        }
     }
 }
