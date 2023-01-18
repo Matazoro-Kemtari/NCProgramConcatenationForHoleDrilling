@@ -23,9 +23,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             // then
             Assert.AreEqual(1, drillingProgramPrameters.Count());
             Assert.AreEqual(10, drillingProgramPrameters.Select(x => x.TargetToolDiameter).First());
-            Assert.AreEqual(-1.5d, drillingProgramPrameters.Select(x => x.CenterDrillDepth).First());
-            Assert.AreEqual(-5.2d, drillingProgramPrameters.Select(x => x.ChamferingDepth).First());
-            Assert.AreEqual(4.5d, drillingProgramPrameters.Select(x => x.DrillTipLength).First());
+            Assert.AreEqual(-1.5m, drillingProgramPrameters.Select(x => x.CenterDrillDepth).First());
+            Assert.AreEqual(-5.2m, drillingProgramPrameters.Select(x => x.ChamferingDepth).First());
+            Assert.AreEqual(4.5m, drillingProgramPrameters.Select(x => x.DrillTipLength).First());
         }
 
         [DataTestMethod()]

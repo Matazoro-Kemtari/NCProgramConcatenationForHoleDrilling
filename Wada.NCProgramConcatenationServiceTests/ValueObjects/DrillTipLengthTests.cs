@@ -13,14 +13,14 @@ namespace Wada.NCProgramConcatenationService.ValueObjects.Tests
         [DataRow(4, 2.5)]
         [DataRow(4.5, 3)]
         [DataRow(5, 3)]
-        public void 正常系_先端長さが計算できること(decimal diameter, decimal expected)
+        public void 正常系_先端長さが計算できること(double diameter, double expected)
         {
             // given
             // when
-            DrillTipLength drillTipLength = new(diameter);
+            DrillTipLength drillTipLength = new((decimal)diameter);
 
             // then
-            Assert.AreEqual(expected, drillTipLength.Value);
+            Assert.AreEqual((decimal)expected, drillTipLength.Value);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
     public class DrillingParameterRepositoy : IMainProgramPrameterRepository
     {
         [Logging]
-        public IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
+        public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定

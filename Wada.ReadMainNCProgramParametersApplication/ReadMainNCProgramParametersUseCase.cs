@@ -17,12 +17,14 @@ namespace Wada.ReadMainNCProgramParametersApplication
         private readonly IStreamOpener _streamOpener;
         private readonly IMainProgramPrameterRepository _reamingPrameterRepository;
         private readonly IMainProgramPrameterRepository _tappingPrameterRepository;
+        private readonly IMainProgramPrameterRepository _drillingPrameterRepository;
 
-        public ReadMainNCProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterRepository reamingPrameterRepository, TappingPrameterRepository tappingPrameterRepository)
+        public ReadMainNCProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterRepository reamingPrameterRepository, TappingPrameterRepository tappingPrameterRepository, DrillingParameterRepositoy drillingPrameterRepository)
         {
             _streamOpener = streamOpener;
             _reamingPrameterRepository = reamingPrameterRepository;
             _tappingPrameterRepository = tappingPrameterRepository;
+            _drillingPrameterRepository = drillingPrameterRepository;
         }
 
         [Logging]
@@ -65,10 +67,11 @@ namespace Wada.ReadMainNCProgramParametersApplication
                     directory,
                     "ドリル.xlsx");
                 using Stream stream = _streamOpener.Open(path);
-                return _tappingPrameterRepository.ReadAll(stream);
+                return _drillingPrameterRepository.ReadAll(stream);
             });
 
-            IEnumerable<IMainProgramPrameter>[] parameters = await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);
+            IEnumerable<IMainProgramPrameter>[] parameters =
+                await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);
             return new MainNCProgramParametersDTO(
                 (IEnumerable<ReamingProgramPrameter>)parameters[0],
                 (IEnumerable<ReamingProgramPrameter>)parameters[1],
