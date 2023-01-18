@@ -296,21 +296,21 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         public ReactiveProperty<DirectedOperationType> FetchedOperationType { get; }
 
         [Display(Name = "加工機")]
-        [Range(1, decimal.MaxValue, ErrorMessage = "{0}を選択してください")]
+        [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
         public ReactiveProperty<MachineToolType> MachineTool { get; }
 
         [Display(Name = "材質")]
-        [Range(1, decimal.MaxValue, ErrorMessage = "{0}を選択してください")]
+        [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
         public ReactiveProperty<MaterialType> Material { get; }
 
         [Display(Name = "リーマ")]
-        [Range(1, decimal.MaxValue, ErrorMessage = "{0}を選択してください")]
+        [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
         public ReactiveProperty<ReamerType> Reamer { get; }
 
         [Display(Name = "板厚")]
         [Required(ErrorMessage = "{0}を入力してください")]
         [RegularExpression(@"[0-9]+(\.[0-9]+)?", ErrorMessage = "半角の整数または小数を入力してください")]
-        [Range(1, decimal.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
+        [Range(1, double.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
         public ReactiveProperty<string> Thickness { get; }
 
         public AsyncReactiveCommand NextViewCommand { get; }

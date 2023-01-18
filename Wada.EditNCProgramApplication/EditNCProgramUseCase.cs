@@ -1,7 +1,8 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.NCProgramConcatenationService.ValueObjects;
+ 
 
 namespace Wada.EditNCProgramApplication
 {
@@ -12,9 +13,10 @@ namespace Wada.EditNCProgramApplication
 
     public class EditNCProgramUseCase : IEditNCProgramUseCase
     {
+        //[Dependency("CrystalReamingParameterRewriter")]
         private readonly IMainProgramParameterRewriter _mainParameterRewriter;
 
-        public EditNCProgramUseCase(IMainProgramParameterRewriter mainParameterRewriter)
+        public EditNCProgramUseCase( IMainProgramParameterRewriter mainParameterRewriter)
         {
             _mainParameterRewriter = mainParameterRewriter;
         }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.ParameterRewriter;
 
 namespace Wada.EditNCProgramApplication.Tests
 {
