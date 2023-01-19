@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
@@ -59,6 +58,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                         ncPrograms.AddRange(RewriteCNCProgramForDrilling(value, material, thickness, drillingParameters, reamingParameter));
                         break;
                     case MainProgramType.Chamfering:
+                        if (reamingParameter.ChamferingDepth != null)
+                            ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, reamingParameter));
                         break;
                     case MainProgramType.Reaming:
                         break;

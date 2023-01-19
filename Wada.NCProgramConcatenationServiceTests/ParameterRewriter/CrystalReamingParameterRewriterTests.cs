@@ -467,5 +467,62 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
                 ex.Message);
         }
+
+        [DataTestMethod()]
+        [DataRow(MaterialType.Aluminum, 1400)]
+        [DataRow(MaterialType.Iron, 1100)]
+        public void 正常系_面取りがリーマパラメータで書き換えられること(MaterialType materialType, int spin)
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.Chamfering, rewritableCode },
+            };
+            MainProgramParametersRecord parametersRecord =
+                TestMainProgramParametersRecordFactory.Create();
+            decimal diameter = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Select(x => x.TargetToolDiameter)
+                .FirstOrDefault();
+            decimal fastDrill = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.PreparedHoleDiameter)
+                .FirstOrDefault();
+            decimal secondDrill = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.SecondPreparedHoleDiameter)
+                .FirstOrDefault();
+            decimal centerDrillDepth = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.CenterDrillDepth)
+                .FirstOrDefault();
+            decimal? chamferingDepth = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.ChamferingDepth)
+                .FirstOrDefault();
+            #endregion
+
+            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var expected = crystalReamingParameterRewriter.RewriteByTool(
+                rewritableCodeDic,
+                materialType,
+                10m,
+                diameter,
+                parametersRecord
+                );
+
+            // then
+            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
+            Assert.AreEqual(spin, rewritedSpin);
+            var rewritedDepth = NCWordから値を取得する(expected, 'Z');
+            Assert.AreEqual(chamferingDepth, rewritedDepth);
+        }
     }
 }
