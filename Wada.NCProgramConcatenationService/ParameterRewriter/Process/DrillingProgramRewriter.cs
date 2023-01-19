@@ -8,7 +8,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
     internal class DrillingProgramRewriter
     {
         /// <summary>
-        /// 下穴ドリルのパラメータを書き換える
+        /// 下穴ドリルのメインプログラムを書き換える
         /// </summary>
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
@@ -41,7 +41,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 return ncWord.Address.Value switch
                                 {
                                     'S' => RewriteSpin(material, drillingParameter, ncWord),
-                                    'Z' => RewriteDrillDepth(thickness, drillingParameter, ncWord),
+                                    'Z' => RewriteDrillingDepth(thickness, drillingParameter, ncWord),
                                     'Q' => RewriteCutDepth(drillingParameter, ncWord),
                                     'F' => RewriteFeed(material, drillingParameter, ncWord),
                                     _ => y
@@ -77,14 +77,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             return ncWord with { ValueData = RewriteCutDepthValueData(drillingParameter, cutDepth) };
         }
 
-        private static INCWord RewriteDrillDepth(decimal thickness, DrillingProgramPrameter drillingParameter, NCWord ncWord)
+        private static INCWord RewriteDrillingDepth(decimal thickness, DrillingProgramPrameter drillingParameter, NCWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
             var depth = (CoordinateValue)ncWord.ValueData;
             return ncWord with
             {
-                ValueData = RewriteDrillDepthValueData(thickness, drillingParameter, depth)
+                ValueData = RewriteDrillingDepthValueData(thickness, drillingParameter, depth)
             };
         }
 
@@ -130,7 +130,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static IValueData RewriteDrillDepthValueData(decimal thickness, DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
+        private static IValueData RewriteDrillingDepthValueData(decimal thickness, DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
         {
             // 板厚＋刃先の長さ
             return valueData with { Value = AddDecimalPoint(Convert.ToString(-(thickness + drillingParameter.DrillTipLength))) };

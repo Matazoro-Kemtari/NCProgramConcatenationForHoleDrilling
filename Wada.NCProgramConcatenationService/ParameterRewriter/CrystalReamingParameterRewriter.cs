@@ -62,6 +62,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                             ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, reamingParameter));
                         break;
                     case MainProgramType.Reaming:
+                        ncPrograms.Add(ReamingProgramRewriter.Rewrite(value, material, ReamerType.CrystalReamerParameter, thickness, reamingParameter));
                         break;
                     case MainProgramType.Tapping:
                         break;

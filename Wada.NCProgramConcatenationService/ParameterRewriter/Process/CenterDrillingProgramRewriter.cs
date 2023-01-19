@@ -8,7 +8,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
     internal class CenterDrillingProgramRewriter
     {
         /// <summary>
-        /// センタードリルのパラメータを書き換える
+        /// センタードリルのメインプログラムを書き換える
         /// </summary>
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
@@ -27,21 +27,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     if (x == null)
                         return null;
 
-                var rewritedNCWords = x.NCWords
-                        .Select(y =>
-                        {
-                            if (y.GetType() != typeof(NCWord))
-                                return y;
-
-                            NCWord ncWord = (NCWord)y;
-                            return ncWord.Address.Value switch
+                    var rewritedNCWords = x.NCWords
+                            .Select(y =>
                             {
-                                'S' => RewriteSpin(material, ncWord),
-                                'Z' => RewriteCenterDrillDepth(rewritingParameter.CenterDrillDepth, ncWord),
-                                'F' => RewriteFeed(material, ncWord),
-                                _ => y
-                            };
-                        });
+                                if (y.GetType() != typeof(NCWord))
+                                    return y;
+
+                                NCWord ncWord = (NCWord)y;
+                                return ncWord.Address.Value switch
+                                {
+                                    'S' => RewriteSpin(material, ncWord),
+                                    'Z' => RewriteCenterDrillDepth(rewritingParameter.CenterDrillDepth, ncWord),
+                                    'F' => RewriteFeed(material, ncWord),
+                                    _ => y
+                                };
+                            });
 
                     return new NCBlock(rewritedNCWords, x.HasBlockSkip);
                 });
@@ -94,7 +94,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         [Logging]
         private static IValueData RewriteCenterDrillDepthValueData(decimal centerDrillDepth, CoordinateValue valueData)
         {
-            return valueData with { Value = centerDrillDepth.ToString() };
+            return valueData with { Value = Convert.ToString(centerDrillDepth) };
         }
 
         [Logging]

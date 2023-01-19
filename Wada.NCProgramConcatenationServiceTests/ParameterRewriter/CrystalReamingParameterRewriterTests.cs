@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_センタードリルがリーマパラメータで書き換えられること(MaterialType materialType, int spin, int feed)
+        public void 正常系_センタードリルプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int spin, int feed)
         {
             // given
             // when
@@ -261,7 +261,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_下穴がリーマパラメータで書き換えられること(MaterialType material, double thickness)
+        public void 正常系_下穴プログラムがリーマパラメータで書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
@@ -471,7 +471,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_面取りがリーマパラメータで書き換えられること(MaterialType materialType, int spin)
+        public void 正常系_面取りプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int spin)
         {
             // given
             // when
@@ -526,7 +526,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_面取りが無いパラメータで書き換えをしたとき何もしないこと()
+        public void 正常系_面取りプログラムが無いパラメータで書き換えをしたとき何もしないこと()
         {
             // given
             // when
@@ -567,6 +567,46 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             Assert.AreEqual(0, expected.Count());
+        }
+
+        [DataTestMethod()]
+        [DataRow(MaterialType.Aluminum, 10.5, 340, 68)]
+        [DataRow(MaterialType.Iron, 12.4, 253.33, 38)]
+        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double thickness, double spin, double feed)
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.Reaming, rewritableCode },
+            };
+            // リーマ径15のテストデータ
+            MainProgramParametersRecord parametersRecord =
+                TestMainProgramParametersRecordFactory.Create();
+            decimal diameter = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Select(x => x.TargetToolDiameter)
+                .FirstOrDefault();
+            #endregion
+
+            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var expected = crystalReamingParameterRewriter.RewriteByTool(
+                rewritableCodeDic,
+                materialType,
+                (decimal)thickness,
+                diameter,
+                parametersRecord
+                );
+
+            // then
+            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
+            Assert.AreEqual((decimal)spin, rewritedSpin);
+            var rewritedDepth = NCWordから値を取得する(expected, 'Z');
+            Assert.AreEqual((decimal)-thickness - 5m, rewritedDepth);
+            decimal rewritedFeed = NCWordから値を取得する(expected, 'F');
+            Assert.AreEqual((decimal)feed, rewritedFeed);
         }
     }
 }

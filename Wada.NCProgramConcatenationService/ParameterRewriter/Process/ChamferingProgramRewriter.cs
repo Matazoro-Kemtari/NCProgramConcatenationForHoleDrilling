@@ -8,7 +8,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
     internal class ChamferingProgramRewriter
     {
         /// <summary>
-        /// 面取りのパラメータを書き換える
+        /// 面取りのメインプログラムを書き換える
         /// </summary>
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
@@ -40,7 +40,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                             return ncWord.Address.Value switch
                             {
                                 'S' => RewriteSpin(material, ncWord),
-                                'Z' => RewriteChamferDepth(rewritingParameter.ChamferingDepth.Value, ncWord),
+                                'Z' => RewriteChamferingDepth(rewritingParameter.ChamferingDepth.Value, ncWord),
                                 _ => y
                             };
                         });
@@ -55,12 +55,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteChamferDepth(decimal chamferDepth, NCWord ncWord)
+        private static INCWord RewriteChamferingDepth(decimal chamferDepth, NCWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
             var depth = (CoordinateValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteChamferDepthValueData(chamferDepth, depth) };
+            return ncWord with { ValueData = RewriteChamferingDepthValueData(chamferDepth, depth) };
         }
 
         [Logging]
@@ -73,9 +73,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static IValueData RewriteChamferDepthValueData(decimal chamferDepth, CoordinateValue valueData)
+        private static IValueData RewriteChamferingDepthValueData(decimal chamferDepth, CoordinateValue valueData)
         {
-            return valueData with { Value = chamferDepth.ToString() };
+            return valueData with { Value = Convert.ToString(chamferDepth) };
         }
 
         [Logging]
