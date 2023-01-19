@@ -13,12 +13,13 @@ namespace Wada.EditNCProgramApplication
 
     public class EditNCProgramUseCase : IEditNCProgramUseCase
     {
-        //[Dependency("CrystalReamingParameterRewriter")]
-        private readonly IMainProgramParameterRewriter _mainParameterRewriter;
+        private readonly IMainProgramParameterRewriter _crystalReamingParameterRewriter;
+        private readonly IMainProgramParameterRewriter _skillReamingParameterRewriter;
 
-        public EditNCProgramUseCase( IMainProgramParameterRewriter mainParameterRewriter)
+        public EditNCProgramUseCase(CrystalReamingParameterRewriter crystalReamingParameterRewriter, SkillReamingParameterRewriter skillReamingParameterRewriter)
         {
-            _mainParameterRewriter = mainParameterRewriter;
+            _crystalReamingParameterRewriter = crystalReamingParameterRewriter;
+            _skillReamingParameterRewriter = skillReamingParameterRewriter;
         }
 
         [Logging]

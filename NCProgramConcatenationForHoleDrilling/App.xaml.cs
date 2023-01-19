@@ -6,6 +6,7 @@ using Wada.EditNCProgramApplication;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationForHoleDrilling;
 using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.NCProgramFile;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadMainNCProgramParametersApplication;
@@ -39,6 +40,8 @@ namespace NCProgramConcatenationForHoleDrilling
             _ = containerRegistry.Register<IReadMainNCProgramParametersUseCase, ReadMainNCProgramParametersUseCase>();
 
             // メインプログラムの編集
+            _ = containerRegistry.Register<CrystalReamingParameterRewriter>();
+            _ = containerRegistry.Register<SkillReamingParameterRewriter>();
             _ = containerRegistry.Register<IEditNCProgramUseCase, EditNCProgramUseCase>();
         }
 
