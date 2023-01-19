@@ -3,6 +3,7 @@ using System.Data;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ParameterRewriter.Process;
 
 namespace Wada.NCProgramConcatenationService.ParameterRewriter
 {
@@ -20,7 +21,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             MainProgramParametersRecord prameterRecord)
         {
             if (material == MaterialType.Undefined)
-                throw new ArgumentException("素材が未確定です");
+                throw new ArgumentException("素材が未定義です");
 
             // クリスタルリーマのパラメータを受け取る
             if (!prameterRecord.Parameters.TryGetValue(ParameterType.CrystalReamerParameter, out var reamingParameters)
@@ -35,7 +36,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     $"パラメータが受け取れません ParameterType: {nameof(ParameterType.DrillParameter)}");
 
             // メインプログラムを工程ごとに取り出す
-            List<NCProgramCode> ncPrograms = new List<NCProgramCode>();
+            List<NCProgramCode> ncPrograms = new();
             foreach (var (key, value) in rewritableCodes)
             {
                 IMainProgramPrameter reamingParameter;

@@ -83,6 +83,37 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
+        public void 異常系_素材が未定義の場合例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.CenterDrilling, rewritableCode },
+            };
+            decimal diameter = 15m;
+            MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create();
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                _ = crystalReamingParameterRewriter.RewriteByTool(
+                    rewritableCodeDic,
+                    MaterialType.Undefined,
+                    10m,
+                    diameter,
+                    parametersRecord
+                    );
+            }
+
+            // then
+            var ex = Assert.ThrowsException<ArgumentException>(target);
+            Assert.AreEqual("素材が未定義です", ex.Message);
+        }
+
+        [TestMethod]
         public void 異常系_リーマのパラメータを渡さないとき例外を返すこと()
         {
             // given
@@ -212,22 +243,19 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             void target()
             {
                 IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-                var expected = crystalReamingParameterRewriter.RewriteByTool(
+                _ = crystalReamingParameterRewriter.RewriteByTool(
                     rewritableCodeDic,
                     MaterialType.Aluminum,
                     10m,
                     diameter,
                     parametersRecord
                     );
-                // 遅延実行
-                _ = expected.ToList();
             }
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
             Assert.AreEqual($"リーマ径 {diameter}のリストがありません",
                 ex.Message);
-
         }
 
         [DataTestMethod]
@@ -243,35 +271,34 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             {
                 { MainProgramType.Drilling, rewritableCode },
             };
-            MainProgramParametersRecord parametersRecord =
-                TestMainProgramParametersRecordFactory.Create();
-            decimal diameter = parametersRecord.Parameters
+            var parametersRecord = TestMainProgramParametersRecordFactory.Create();
+            var diameter = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
-            decimal fastDrill = parametersRecord.Parameters
+            var fastDrill = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.PreparedHoleDiameter)
                 .FirstOrDefault();
-            decimal secondDrill = parametersRecord.Parameters
+            var secondDrill = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.SecondPreparedHoleDiameter)
                 .FirstOrDefault();
-            decimal centerDrillDepth = parametersRecord.Parameters
+            var centerDrillDepth = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
-            decimal? chamferingDepth = parametersRecord.Parameters
+            var chamferingDepth = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
             #endregion
 
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
             var expected = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
                 material,
@@ -281,23 +308,22 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 );
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            decimal spin;
-            if (material == MaterialType.Aluminum)
-                spin = ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum);
-            else
-                spin = ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron);
+            var rewritedSpin = NCWordから値を取得する(expected, 'S');
+            var spin = material == MaterialType.Aluminum
+                ? ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum)
+                : ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron);
             Assert.AreEqual(spin, rewritedSpin, "下穴1の回転数");
+
             rewritedSpin = NCWordから値を取得する(expected, 'S', 1);
-            if (material == MaterialType.Aluminum)
-                spin = ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum, 1);
-            else
-                spin = ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron, 1);
+            spin = material == MaterialType.Aluminum
+                ? ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum, 1)
+                : ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron, 1);
             Assert.AreEqual(spin, rewritedSpin, "下穴2の回転数");
 
             decimal rewritedDepth = NCWordから値を取得する(expected, 'Z');
             decimal depth = ドリルパラメータから値を取得する(parametersRecord, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(depth, rewritedDepth, "下穴1のZ");
+
             rewritedDepth = NCWordから値を取得する(expected, 'Z', 1);
             depth = ドリルパラメータから値を取得する(parametersRecord, x => -x.DrillTipLength - (decimal)thickness, 1);
             Assert.AreEqual(depth, rewritedDepth, "下穴2のZ");
@@ -305,22 +331,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             decimal rewritedCutDepth = NCWordから値を取得する(expected, 'Q');
             decimal cutDepth = ドリルパラメータから値を取得する(parametersRecord, x => x.CutDepth);
             Assert.AreEqual(cutDepth, rewritedCutDepth, "下穴1の切込");
+
             cutDepth = cutDepth = ドリルパラメータから値を取得する(parametersRecord, x => x.CutDepth, 1);
             rewritedCutDepth = NCWordから値を取得する(expected, 'Q', 1);
             Assert.AreEqual(cutDepth, rewritedCutDepth, "下穴2の切込");
 
             decimal rewritedFeed = NCWordから値を取得する(expected, 'F');
-            decimal feed;
-            if (material == MaterialType.Aluminum)
-                feed = ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum);
-            else
-                feed = ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron);
+            decimal feed = material == MaterialType.Aluminum
+                ? ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum)
+                : ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron);
             Assert.AreEqual(feed, rewritedFeed, "下穴1の送り");
+
             rewritedFeed = NCWordから値を取得する(expected, 'F', 1);
-            if (material == MaterialType.Aluminum)
-                feed = ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum, 1);
-            else
-                feed = ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron, 1);
+            feed = material == MaterialType.Aluminum
+                ? ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum, 1)
+                : ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron, 1);
             Assert.AreEqual(feed, rewritedFeed, "下穴2の送り");
         }
 
@@ -333,6 +358,114 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Skip(skip)
                 .Select(x => select(x))
                 .FirstOrDefault();
+        }
+
+        [TestMethod]
+        public void 異常系_下穴1回目に該当するドリル径が無いとき例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.Drilling, rewritableCode },
+            };
+            var parametersRecord = TestMainProgramParametersRecordFactory.Create(
+                new()
+                {
+                    {
+                        ParameterType.CrystalReamerParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new ReamingProgramPrameter("200", 1m, 200m, 0.1m, 0.1m)
+                        }
+                    },
+                    {
+                        ParameterType.DrillParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new DrillingProgramPrameter("100", -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter("100.5", -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                        }
+                    }
+                });
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                _ = crystalReamingParameterRewriter.RewriteByTool(
+                    rewritableCodeDic,
+                    MaterialType.Aluminum,
+                    10m,
+                    200m,
+                    parametersRecord
+                    );
+            }
+
+            // then
+            var fastDrill = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.PreparedHoleDiameter)
+                .FirstOrDefault();
+            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
+                ex.Message);
+        }
+
+        [TestMethod]
+        public void 異常系_下穴2回目に該当するドリル径が無いとき例外を返すこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.Drilling, rewritableCode },
+            };
+            var parametersRecord = TestMainProgramParametersRecordFactory.Create(
+                new()
+                {
+                    {
+                        ParameterType.CrystalReamerParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new ReamingProgramPrameter("200", 100m, 2m, 0.1m, 0.1m)
+                        }
+                    },
+                    {
+                        ParameterType.DrillParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new DrillingProgramPrameter("100", -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter("100.5", -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                        }
+                    }
+                });
+            #endregion
+            void target()
+            {
+                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                _ = crystalReamingParameterRewriter.RewriteByTool(
+                    rewritableCodeDic,
+                    MaterialType.Aluminum,
+                    10m,
+                    200m,
+                    parametersRecord
+                    );
+            }
+
+            // then
+            var fastDrill = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.SecondPreparedHoleDiameter)
+                .FirstOrDefault();
+            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
+                ex.Message);
         }
     }
 }
