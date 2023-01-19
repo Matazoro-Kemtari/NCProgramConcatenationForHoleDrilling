@@ -570,9 +570,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(MaterialType.Aluminum, 10.5, 340, 68)]
-        [DataRow(MaterialType.Iron, 12.4, 253.33, 38)]
-        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double thickness, double spin, double feed)
+        [DataRow(MaterialType.Aluminum, 10.5, 380, 80)]
+        [DataRow(MaterialType.Iron, 12.4, 290, 40)]
+        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double thickness, int spin, int feed)
         {
             // given
             // when
@@ -582,7 +582,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             {
                 { MainProgramType.Reaming, rewritableCode },
             };
-            // リーマ径15のテストデータ
+            // リーマ径13.3のテストデータ
             MainProgramParametersRecord parametersRecord =
                 TestMainProgramParametersRecordFactory.Create();
             decimal diameter = parametersRecord.Parameters

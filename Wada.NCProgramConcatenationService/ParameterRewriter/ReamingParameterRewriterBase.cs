@@ -12,7 +12,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         SkillReamerParameter,
     }
 
-    public abstract class ReamingParameterRewriterBase
+    public abstract class ReamingParameterRewriterBase : IMainProgramParameterRewriter
     {
         private readonly ParameterType _parameterType;
         private readonly ReamerType _reamerType;

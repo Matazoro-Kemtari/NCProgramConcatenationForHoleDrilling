@@ -29,7 +29,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         public static MainProgramParametersRecord Create(
             Dictionary<ParameterType, IEnumerable<IMainProgramPrameter>>? parameters = default)
         {
-            decimal reamerDiameter = 15m;
+            decimal reamerDiameter = 13.3m;
             decimal fastDrill = 10m;
             decimal secondDrill = 11.8m;
             decimal centerDrillDepth = -1.5m;

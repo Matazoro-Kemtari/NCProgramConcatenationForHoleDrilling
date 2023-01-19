@@ -107,7 +107,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var feedValue = Math.Round(figures, 2, MidpointRounding.AwayFromZero).ToString();
+            var feedValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
             return valueData with { Value = feedValue };
         }
 
@@ -136,8 +136,23 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var spinValue = Math.Round(figures, 2, MidpointRounding.AwayFromZero).ToString();
+            var spinValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
             return valueData with { Value = spinValue };
+        }
+
+        /// <summary>
+        /// 値を四捨五入します
+        /// </summary>
+        /// <param name="value">値</param>
+        /// <param name="decimals">小数部桁数</param>
+        /// <param name="mode">丸める方法</param>
+        /// <returns>丸められた値</returns>
+        private static decimal Round(decimal value, int decimals,
+            MidpointRounding mode)
+        {
+            // 小数部桁数の10の累乗を取得
+            decimal pow = (decimal)Math.Pow(10, decimals);
+            return Math.Round(value * pow, mode) / pow;
         }
     }
 }
