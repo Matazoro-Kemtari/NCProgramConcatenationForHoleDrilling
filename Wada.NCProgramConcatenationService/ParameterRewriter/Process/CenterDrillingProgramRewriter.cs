@@ -24,49 +24,26 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             var rewritedNCBlocks = rewritableCode.NCBlocks
                 .Select(x =>
                 {
-                    return x == null
-                        ? null
-                        : new NCBlock(
-                        x.NCWords.Select(y =>
+                    if (x == null)
+                        return null;
+
+                var rewritedNCWords = x.NCWords
+                        .Select(y =>
                         {
                             if (y.GetType() != typeof(NCWord))
                                 return y;
 
                             NCWord ncWord = (NCWord)y;
-                            if (ncWord.Address.Value == 'S')
+                            return ncWord.Address.Value switch
                             {
-                                // 回転
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteSpinParameter(material, (NumericalValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else if (ncWord.Address.Value == 'Z')
-                            {
-                                // C/D深さ
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteCenterDrillDepthParameter(rewritingParameter.CenterDrillDepth, (CoordinateValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else if (ncWord.Address.Value == 'F')
-                            {
-                                // 送り
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteFeedParameter(material, (NumericalValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else
-                                return y;
-                        }),
-                        x.HasBlockSkip);
+                                'S' => RewriteSpin(material, ncWord),
+                                'Z' => RewriteCenterDrillDepth(rewritingParameter.CenterDrillDepth, ncWord),
+                                'F' => RewriteFeed(material, ncWord),
+                                _ => y
+                            };
+                        });
+
+                    return new NCBlock(rewritedNCWords, x.HasBlockSkip);
                 });
 
             return rewritableCode with
@@ -76,44 +53,59 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static IValueData RewriteFeedParameter(MaterialType material, NumericalValue valueData)
+        private static INCWord RewriteFeed(MaterialType material, NCWord ncWord)
         {
-            string feedValue;
-            switch (material)
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var feed = (NumericalValue)ncWord.ValueData;
+            return ncWord with { ValueData = RewriteFeedValueData(material, feed) };
+        }
+
+        [Logging]
+        private static INCWord RewriteCenterDrillDepth(decimal centerDrillDepth, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var depth = (CoordinateValue)ncWord.ValueData;
+            return ncWord with { ValueData = RewriteCenterDrillDepthValueData(centerDrillDepth, depth) };
+        }
+
+        [Logging]
+        private static INCWord RewriteSpin(MaterialType material, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var spin = (NumericalValue)ncWord.ValueData;
+            return ncWord with { ValueData = RewriteSpinValueData(material, spin) };
+        }
+
+        [Logging]
+        private static IValueData RewriteFeedValueData(MaterialType material, NumericalValue valueData)
+        {
+            string feedValue = material switch
             {
-                case MaterialType.Aluminum:
-                    feedValue = "150";
-                    break;
-                case MaterialType.Iron:
-                    feedValue = "100";
-                    break;
-                default:
-                    throw new AggregateException(nameof(material));
-            }
+                MaterialType.Aluminum => "150",
+                MaterialType.Iron => "100",
+                _ => throw new AggregateException(nameof(material)),
+            };
             return valueData with { Value = feedValue };
         }
 
         [Logging]
-        private static IValueData RewriteCenterDrillDepthParameter(decimal centerDrillDepth, CoordinateValue valueData)
+        private static IValueData RewriteCenterDrillDepthValueData(decimal centerDrillDepth, CoordinateValue valueData)
         {
             return valueData with { Value = centerDrillDepth.ToString() };
         }
 
         [Logging]
-        private static IValueData RewriteSpinParameter(MaterialType material, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material, NumericalValue valueData)
         {
-            string spinValue;
-            switch (material)
+            string spinValue = material switch
             {
-                case MaterialType.Aluminum:
-                    spinValue = "2000";
-                    break;
-                case MaterialType.Iron:
-                    spinValue = "1500";
-                    break;
-                default:
-                    throw new AggregateException(nameof(material));
-            }
+                MaterialType.Aluminum => "2000",
+                MaterialType.Iron => "1500",
+                _ => throw new AggregateException(nameof(material)),
+            };
             return valueData with { Value = spinValue };
         }
     }

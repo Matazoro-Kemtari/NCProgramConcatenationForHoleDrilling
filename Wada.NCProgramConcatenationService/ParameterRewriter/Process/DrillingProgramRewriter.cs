@@ -28,59 +28,27 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             var rewritedNCBlocks = rewritableCode.NCBlocks
                 .Select(x =>
                 {
-                    return x == null
-                        ? null
-                        : new NCBlock(
-                        x.NCWords.Select(y =>
-                        {
-                            if (y.GetType() != typeof(NCWord))
-                                return y;
+                    if (x == null)
+                        return null;
 
-                            NCWord ncWord = (NCWord)y;
-                            if (ncWord.Address.Value == 'S')
+                    var rewritedNCWords = x.NCWords
+                        .Select(y =>
                             {
-                                // 回転
-                                return ncWord with
+                                if (y.GetType() != typeof(NCWord))
+                                    return y;
+
+                                NCWord ncWord = (NCWord)y;
+                                return ncWord.Address.Value switch
                                 {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteSpinParameter(material, drillingParameter, (NumericalValue)ncWord.ValueData)
-                                    : ncWord.ValueData
+                                    'S' => RewriteSpin(material, drillingParameter, ncWord),
+                                    'Z' => RewriteDrillDepth(thickness, drillingParameter, ncWord),
+                                    'Q' => RewriteCutDepth(drillingParameter, ncWord),
+                                    'F' => RewriteFeed(material, drillingParameter, ncWord),
+                                    _ => y
                                 };
-                            }
-                            else if (ncWord.Address.Value == 'Z')
-                            {
-                                // Drill深さ
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteDrillDepthParameter(thickness, drillingParameter, (CoordinateValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else if (ncWord.Address.Value == 'Q')
-                            {
-                                // 切込
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteCutDepthParameter(drillingParameter, (CoordinateValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else if (ncWord.Address.Value == 'F')
-                            {
-                                // 送り
-                                return ncWord with
-                                {
-                                    ValueData = ncWord.ValueData.Indefinite ?
-                                    RewriteFeedParameter(material, drillingParameter, (NumericalValue)ncWord.ValueData)
-                                    : ncWord.ValueData
-                                };
-                            }
-                            else
-                                return y;
-                        }),
-                        x.HasBlockSkip);
+                            });
+
+                    return new NCBlock(rewritedNCWords, x.HasBlockSkip);
                 });
 
             return rewritableCode with
@@ -89,21 +57,54 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             };
         }
 
-        [Logging]
-        private static IValueData RewriteFeedParameter(MaterialType material, DrillingProgramPrameter drillingParameter, NumericalValue valueData)
+        private static INCWord RewriteFeed(MaterialType material, DrillingProgramPrameter drillingParameter, NCWord ncWord)
         {
-            string feedValue;
-            switch (material)
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var feed = (NumericalValue)ncWord.ValueData;
+            return ncWord with
             {
-                case MaterialType.Aluminum:
-                    feedValue = drillingParameter.FeedForAluminum.ToString();
-                    break;
-                case MaterialType.Iron:
-                    feedValue = drillingParameter.FeedForIron.ToString();
-                    break;
-                default:
-                    throw new AggregateException(nameof(material));
-            }
+                ValueData = RewriteFeedValueData(material, drillingParameter, feed)
+            };
+        }
+
+        private static INCWord RewriteCutDepth(DrillingProgramPrameter drillingParameter, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var cutDepth = (CoordinateValue)ncWord.ValueData;
+
+            return ncWord with { ValueData = RewriteCutDepthValueData(drillingParameter, cutDepth) };
+        }
+
+        private static INCWord RewriteDrillDepth(decimal thickness, DrillingProgramPrameter drillingParameter, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var depth = (CoordinateValue)ncWord.ValueData;
+            return ncWord with
+            {
+                ValueData = RewriteDrillDepthValueData(thickness, drillingParameter, depth)
+            };
+        }
+
+        private static INCWord RewriteSpin(MaterialType material, DrillingProgramPrameter drillingParameter, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+            var spin = (NumericalValue)ncWord.ValueData;
+            return ncWord with { ValueData = RewriteSpinValueData(material, drillingParameter, spin) };
+        }
+
+        [Logging]
+        private static IValueData RewriteFeedValueData(MaterialType material, DrillingProgramPrameter drillingParameter, NumericalValue valueData)
+        {
+            string feedValue = material switch
+            {
+                MaterialType.Aluminum => drillingParameter.FeedForAluminum.ToString(),
+                MaterialType.Iron => drillingParameter.FeedForIron.ToString(),
+                _ => throw new AggregateException(nameof(material)),
+            };
             return valueData with { Value = feedValue };
         }
 
@@ -123,33 +124,27 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static IValueData RewriteCutDepthParameter(DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
+        private static IValueData RewriteCutDepthValueData(DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
         {
             return valueData with { Value = AddDecimalPoint(drillingParameter.CutDepth.ToString()) };
         }
 
         [Logging]
-        private static IValueData RewriteDrillDepthParameter(decimal thickness, DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
+        private static IValueData RewriteDrillDepthValueData(decimal thickness, DrillingProgramPrameter drillingParameter, CoordinateValue valueData)
         {
             // 板厚＋刃先の長さ
             return valueData with { Value = AddDecimalPoint(Convert.ToString(-(thickness + drillingParameter.DrillTipLength))) };
         }
 
         [Logging]
-        private static IValueData RewriteSpinParameter(MaterialType material, DrillingProgramPrameter drillingParameter, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material, DrillingProgramPrameter drillingParameter, NumericalValue valueData)
         {
-            string spinValue;
-            switch (material)
+            string spinValue = material switch
             {
-                case MaterialType.Aluminum:
-                    spinValue = drillingParameter.SpinForAluminum.ToString();
-                    break;
-                case MaterialType.Iron:
-                    spinValue = drillingParameter.SpinForIron.ToString();
-                    break;
-                default:
-                    throw new AggregateException(nameof(material));
-            }
+                MaterialType.Aluminum => drillingParameter.SpinForAluminum.ToString(),
+                MaterialType.Iron => drillingParameter.SpinForIron.ToString(),
+                _ => throw new AggregateException(nameof(material)),
+            };
             return valueData with { Value = spinValue };
         }
     }
