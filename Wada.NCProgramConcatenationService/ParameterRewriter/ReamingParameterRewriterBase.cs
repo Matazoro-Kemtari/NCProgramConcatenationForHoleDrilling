@@ -119,8 +119,6 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     case MainProgramType.Reaming:
                         ncPrograms.Add(ReamingProgramRewriter.Rewrite(value, material, _reamerType, thickness, reamingParameter));
                         break;
-                    case MainProgramType.Tapping:
-                        break;
                     default:
                         throw new NotImplementedException();
                 }
