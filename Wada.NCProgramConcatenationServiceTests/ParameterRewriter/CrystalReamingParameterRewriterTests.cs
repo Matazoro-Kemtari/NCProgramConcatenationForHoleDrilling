@@ -524,5 +524,49 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var rewritedDepth = NCWordから値を取得する(expected, 'Z');
             Assert.AreEqual(chamferingDepth, rewritedDepth);
         }
+
+        [TestMethod]
+        public void 正常系_面取りが無いパラメータで書き換えをしたとき何もしないこと()
+        {
+            // given
+            // when
+            #region テストデータ
+            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
+            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
+            {
+                { MainProgramType.Chamfering, rewritableCode },
+            };
+            var parametersRecord = TestMainProgramParametersRecordFactory.Create(
+                new()
+                {
+                    {
+                        ParameterType.CrystalReamerParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new ReamingProgramPrameter("200", 10m, 20m, 0.1m, null)
+                        }
+                    },
+                    {
+                        ParameterType.DrillParameter,
+                        new List<IMainProgramPrameter>
+                        {
+                            new DrillingProgramPrameter("10", -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter("10.5", -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                        }
+                    }
+                });
+            #endregion
+            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var expected = crystalReamingParameterRewriter.RewriteByTool(
+                rewritableCodeDic,
+                MaterialType.Aluminum,
+                10m,
+                200m,
+                parametersRecord
+                );
+
+            // then
+            Assert.AreEqual(0, expected.Count());
+        }
     }
 }
