@@ -5,12 +5,6 @@ using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
 {
-    internal enum ReamerType
-    {
-        CrystalReamerParameter,
-        SkillReamerParameter,
-    }
-
     internal class ReamingProgramRewriter
     {
         /// <summary>

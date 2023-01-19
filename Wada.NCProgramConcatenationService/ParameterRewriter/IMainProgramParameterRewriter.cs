@@ -44,6 +44,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     }
                 },
                 {
+                    ParameterType.SkillReamerParameter,
+                    new List<IMainProgramPrameter>
+                    {
+                        new ReamingProgramPrameter(reamerDiameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
+                    }
+                },
+                {
                     ParameterType.DrillParameter,
                     new List<IMainProgramPrameter>
                     {
