@@ -106,7 +106,25 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             string programName = "O0001",
             IEnumerable<NCBlock?>? ncBlocks = default)
         {
-            ncBlocks ??= new List<NCBlock>();
+            ncBlocks ??= new List<NCBlock>
+            {
+                TestNCBlockFactory.Create(
+                    ncWords: new List<INCWord>
+                    {
+                        TestNCCommentFactory.Create(),
+                    }),
+                TestNCBlockFactory.Create(
+                    ncWords: new List<INCWord>
+                    {
+                        TestNCWordFactory.Create(
+                            address: TestAddressFactory.Create('M'),
+                            valueData: TestNumericalValueFactory.Create("3")),
+                        TestNCWordFactory.Create(
+                            address: TestAddressFactory.Create('S'),
+                            valueData: TestNumericalValueFactory.Create("*")),
+                    }),
+                TestNCBlockFactory.Create(),
+            };
             return new(programName, ncBlocks);
         }
     }
@@ -115,7 +133,33 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
     {
         public static NCBlock Create(IEnumerable<INCWord>? ncWords = default)
         {
-            ncWords ??= new List<INCWord>();
+            ncWords ??= new List<INCWord>
+            {
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('G'),
+                    valueData: TestNumericalValueFactory.Create("98")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('G'),
+                    valueData: TestNumericalValueFactory.Create("82")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('R'),
+                    valueData: TestCoordinateValueFactory.Create("3")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('Z'),
+                    valueData: TestCoordinateValueFactory.Create("*")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('P'),
+                    valueData: TestCoordinateValueFactory.Create("*")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('Q'),
+                    valueData: TestCoordinateValueFactory.Create("*")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('F'),
+                    valueData: TestNumericalValueFactory.Create("*")),
+                TestNCWordFactory.Create(
+                    address: TestAddressFactory.Create('L'),
+                    valueData: TestNumericalValueFactory.Create("0")),
+            };
             return new(ncWords, OptionalBlockSkip.None);
         }
     }

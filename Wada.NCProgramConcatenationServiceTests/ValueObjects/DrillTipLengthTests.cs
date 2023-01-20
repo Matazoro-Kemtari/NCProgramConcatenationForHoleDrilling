@@ -17,10 +17,10 @@ namespace Wada.NCProgramConcatenationService.ValueObjects.Tests
         {
             // given
             // when
-            DrillTipLength drillTipLength = new(diameter);
+            DrillTipLength drillTipLength = new((decimal)diameter);
 
             // then
-            Assert.AreEqual(expected, drillTipLength.Value);
+            Assert.AreEqual((decimal)expected, drillTipLength.Value);
         }
     }
 }
