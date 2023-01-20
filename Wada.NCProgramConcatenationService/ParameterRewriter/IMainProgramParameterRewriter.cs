@@ -69,6 +69,20 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                                                     SpinForIron: 560m,
                                                     FeedForIron: 80m)
                     }
+                },
+                {
+                    ParameterType.TapParameter,
+                    new List<IMainProgramPrameter>
+                    {
+                        new TappingProgramPrameter(DiameterKey: "M12",
+                                                   PreparedHoleDiameter: fastDrill,
+                                                   CenterDrillDepth: centerDrillDepth,
+                                                   ChamferingDepth: -6.3m,
+                                                   SpinForAluminum: 160m,
+                                                   FeedForAluminum: 280m,
+                                                   SpinForIron: 120m,
+                                                   FeedForIron: 210m)
+                    }
                 }
             };
             return new(parameters);

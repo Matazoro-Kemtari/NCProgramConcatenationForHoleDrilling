@@ -43,7 +43,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"リーマ径 {targetToolDiameter}のリストがありません", ex);
+                        $"タップ径 {targetToolDiameter}のリストがありません", ex);
                 }
 
                 switch (key)
@@ -59,6 +59,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                             ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, tappingParameter));
                         break;
                     case MainProgramType.Tapping:
+                        ncPrograms.Add(TappingProgramRewriter.Rewrite(value, material, thickness, tappingParameter));
                         break;
                     default:
                         throw new NotImplementedException();

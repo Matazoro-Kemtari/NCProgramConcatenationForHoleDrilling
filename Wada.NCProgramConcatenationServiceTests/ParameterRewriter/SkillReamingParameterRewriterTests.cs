@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_センタードリルプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int spin, int feed)
+        public void 正常系_センタードリルプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int expectedSpin, int expectedFeed)
         {
             // given
             // when
@@ -23,32 +23,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             };
             MainProgramParametersRecord parametersRecord =
                 TestMainProgramParametersRecordFactory.Create();
+            #endregion
+
             decimal diameter = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.SkillReamerParameter)!
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
-            decimal fastDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.PreparedHoleDiameter)
-                .FirstOrDefault();
-            decimal secondDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.SecondPreparedHoleDiameter)
-                .FirstOrDefault();
-            decimal centerDrillDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.CenterDrillDepth)
-                .FirstOrDefault();
-            decimal? chamferingDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.ChamferingDepth)
-                .FirstOrDefault();
-            #endregion
-
             IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
             var expected = skillReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
@@ -60,11 +40,18 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual(spin, rewritedSpin);
+            Assert.AreEqual(expectedSpin, rewritedSpin);
+
             var rewritedDepth = NCWordから値を取得する(expected, 'Z');
-            Assert.AreEqual(centerDrillDepth, rewritedDepth);
+            decimal expectedCenterDrillDepth = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.CenterDrillDepth)
+                .FirstOrDefault();
+            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth);
+
             var rewritedFeed = NCWordから値を取得する(expected, 'F');
-            Assert.AreEqual(feed, rewritedFeed);
+            Assert.AreEqual(expectedFeed, rewritedFeed);
         }
 
         private static decimal NCWordから値を取得する(IEnumerable<NCProgramCode> expected, char address, int skip = 0)
@@ -96,6 +83,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             decimal diameter = 15m;
             MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create();
             #endregion
+
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
@@ -124,9 +112,6 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             {
                 { MainProgramType.CenterDrilling, rewritableCode },
             };
-            decimal diameter = 15m;
-            decimal fastDrill = 10m;
-            decimal secondDrill = 11.8m;
             MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create(
                 new()
                 {
@@ -134,15 +119,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                         ParameterType.DrillParameter,
                         new List<IMainProgramPrameter>
                         {
-                            new DrillingProgramPrameter(fastDrill.ToString(), -1.5m, 3m, 960m, 130m, 640m, 90m),
-                            new DrillingProgramPrameter(secondDrill.ToString(), -1.5m, 3.5m, 84m, 110m, 560m, 80m)
+                            new DrillingProgramPrameter(10m.ToString(), -1.5m, 3m, 960m, 130m, 640m, 90m),
+                            new DrillingProgramPrameter(11.8m.ToString(), -1.5m, 3.5m, 84m, 110m, 560m, 80m)
                         }
                     }
                 });
             #endregion
+
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+                decimal diameter = 15m;
                 _ = skillReamingParameterRewriter.RewriteByTool(
                     rewritableCodeDic,
                     MaterialType.Aluminum,
@@ -170,10 +157,6 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 { MainProgramType.CenterDrilling, rewritableCode },
             };
             decimal diameter = 15m;
-            decimal fastDrill = 10m;
-            decimal secondDrill = 11.8m;
-            decimal centerDrillDepth = -1.5m;
-            decimal? chamferingDepth = -6.1m;
             MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create(
                 new()
                 {
@@ -181,11 +164,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                         ParameterType.SkillReamerParameter,
                         new List<IMainProgramPrameter>
                         {
-                            new ReamingProgramPrameter(diameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
+                            new ReamingProgramPrameter(diameter.ToString(), 10m, 11.8m, -1.5m, -6.1m)
                         }
                     }
                 });
             #endregion
+
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
@@ -215,11 +199,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             {
                 { MainProgramType.CenterDrilling, rewritableCode },
             };
-            decimal diameter = 15m;
             decimal fastDrill = 10m;
             decimal secondDrill = 11.8m;
-            decimal centerDrillDepth = -1.5m;
-            decimal? chamferingDepth = -6.1m;
             MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create(
                 new()
                 {
@@ -227,7 +208,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                         ParameterType.SkillReamerParameter,
                         new List<IMainProgramPrameter>
                         {
-                            new ReamingProgramPrameter("200", fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
+                            new ReamingProgramPrameter("200", fastDrill, secondDrill, -1.5m, -6.1m)
                         }
                     },
                     {
@@ -240,6 +221,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                     }
                 });
             #endregion
+
+            decimal diameter = 15m;
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
@@ -272,32 +255,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 { MainProgramType.Drilling, rewritableCode },
             };
             var parametersRecord = TestMainProgramParametersRecordFactory.Create();
+            #endregion
+
             var diameter = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.SkillReamerParameter)!
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
-            var fastDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.PreparedHoleDiameter)
-                .FirstOrDefault();
-            var secondDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.SecondPreparedHoleDiameter)
-                .FirstOrDefault();
-            var centerDrillDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.CenterDrillDepth)
-                .FirstOrDefault();
-            var chamferingDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.ChamferingDepth)
-                .FirstOrDefault();
-            #endregion
-
             var skillReamingParameterRewriter = new SkillReamingParameterRewriter();
             var expected = skillReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
@@ -391,6 +354,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                     }
                 });
             #endregion
+
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
@@ -445,6 +409,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                     }
                 });
             #endregion
+
             void target()
             {
                 IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
@@ -471,7 +436,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_面取りプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int spin)
+        public void 正常系_面取りプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int expectedSpin)
         {
             // given
             // when
@@ -483,32 +448,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             };
             MainProgramParametersRecord parametersRecord =
                 TestMainProgramParametersRecordFactory.Create();
+            #endregion
+
             decimal diameter = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.SkillReamerParameter)!
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
-            decimal fastDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.PreparedHoleDiameter)
-                .FirstOrDefault();
-            decimal secondDrill = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.SecondPreparedHoleDiameter)
-                .FirstOrDefault();
-            decimal centerDrillDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.CenterDrillDepth)
-                .FirstOrDefault();
-            decimal? chamferingDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
-                .Cast<ReamingProgramPrameter>()
-                .Select(x => x.ChamferingDepth)
-                .FirstOrDefault();
-            #endregion
-
             IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
             var expected = skillReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
@@ -520,9 +465,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual(spin, rewritedSpin);
+            Assert.AreEqual(expectedSpin, rewritedSpin);
+
             var rewritedDepth = NCWordから値を取得する(expected, 'Z');
-            Assert.AreEqual(chamferingDepth, rewritedDepth);
+            decimal? expectedChamferingDepth = parametersRecord.Parameters
+                .GetValueOrDefault(ParameterType.SkillReamerParameter)!
+                .Cast<ReamingProgramPrameter>()
+                .Select(x => x.ChamferingDepth)
+                .FirstOrDefault();
+            Assert.AreEqual(expectedChamferingDepth, rewritedDepth);
         }
 
         [TestMethod]
@@ -556,6 +507,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                     }
                 });
             #endregion
+
             IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
             var expected = skillReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
@@ -572,7 +524,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 10.5, 1130, 140)]
         [DataRow(MaterialType.Iron, 12.4, 360, 40)]
-        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double thickness, double spin, double feed)
+        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double expectedThickness, int expectedSpin, int expectedFeed)
         {
             // given
             // when
@@ -595,18 +547,19 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var expected = skillReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
                 materialType,
-                (decimal)thickness,
+                (decimal)expectedThickness,
                 diameter,
                 parametersRecord
                 );
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual((decimal)spin, rewritedSpin);
+            Assert.AreEqual(expectedSpin, rewritedSpin);
+
             var rewritedDepth = NCWordから値を取得する(expected, 'Z');
-            Assert.AreEqual((decimal)-thickness - 5m, rewritedDepth);
+            Assert.AreEqual((decimal)-expectedThickness - 5m, rewritedDepth);
             decimal rewritedFeed = NCWordから値を取得する(expected, 'F');
-            Assert.AreEqual((decimal)feed, rewritedFeed);
+            Assert.AreEqual(expectedFeed, rewritedFeed);
         }
     }
 }
