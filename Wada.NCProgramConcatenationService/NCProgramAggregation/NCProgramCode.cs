@@ -13,6 +13,13 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             NCBlocks = ncBlocks;
         }
 
+        private NCProgramCode(Ulid id, string programName, IEnumerable<NCBlock?> ncBlocks)
+        {
+            ID = id;
+            ProgramName = programName;
+            NCBlocks = ncBlocks;
+        }
+
         public override string ToString()
         {
             var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
@@ -66,6 +73,8 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
 
             return hasOperationType.First(x => x != DirectedOperationType.Undetected);
         }
+
+        public static NCProgramCode ReConstruct(string id, string programName, IEnumerable<NCBlock?> ncBlocks) => new(Ulid.Parse(id), programName, ncBlocks);
 
         public Ulid ID { get; }
 

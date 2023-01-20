@@ -293,7 +293,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
         public ReactiveProperty<string> NCProgramFileName { get; }
 
-        public ReactiveProperty<DirectedOperationType> FetchedOperationType { get; }
+        public ReactiveProperty<NCProgramConcatenationService.ValueObjects.DirectedOperationType> FetchedOperationType { get; }
 
         [Display(Name = "加工機")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
