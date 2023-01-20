@@ -209,9 +209,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             var editedCodes = await _editNCProgramUseCase.ExecuteAsync(
                 new EditNCProgramPram(
                     _mainProgramCodes,
-                    (EditNCProgramApplication.MachineToolType)MachineTool.Value,
-                    (EditNCProgramApplication.MaterialType)Material.Value,
-                    (EditNCProgramApplication.ReamerType)Reamer.Value,
+                    (EditNCProgramApplication.MachineToolTypeAttempt)MachineTool.Value,
+                    (EditNCProgramApplication.MaterialTypeAttempt)Material.Value,
+                    (EditNCProgramApplication.ReamerTypeAttempt)Reamer.Value,
                     decimal.Parse(Thickness.Value)));
 
             // 結合する

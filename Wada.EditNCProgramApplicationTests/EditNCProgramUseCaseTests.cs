@@ -9,11 +9,11 @@ namespace Wada.EditNCProgramApplication.Tests
     public class EditNCProgramUseCaseTests
     {
         [DataTestMethod()]
-        [DataRow(DirectedOperationType.Tapping, ReamerType.Undefined)]
-        [DataRow(DirectedOperationType.Reaming, ReamerType.Crystal)]
-        [DataRow(DirectedOperationType.Reaming, ReamerType.Skill)]
-        [DataRow(DirectedOperationType.Drilling, ReamerType.Undefined)]
-        public async Task 正常系_ユースケースを実行するとリポジトリが実行されること(DirectedOperationType directedOperation, ReamerType reamer)
+        [DataRow(DirectedOperationTypeAttempt.Tapping, ReamerTypeAttempt.Undefined)]
+        [DataRow(DirectedOperationTypeAttempt.Reaming, ReamerTypeAttempt.Crystal)]
+        [DataRow(DirectedOperationTypeAttempt.Reaming, ReamerTypeAttempt.Skill)]
+        [DataRow(DirectedOperationTypeAttempt.Drilling, ReamerTypeAttempt.Undefined)]
+        public async Task 正常系_ユースケースを実行するとリポジトリが実行されること(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
             // given
             // when
@@ -40,28 +40,28 @@ namespace Wada.EditNCProgramApplication.Tests
                 It.IsAny<decimal>(),
                 It.IsAny<decimal>(),
                 It.IsAny<MainProgramParametersRecord>()),
-                reamer == ReamerType.Crystal && directedOperation == DirectedOperationType.Reaming ? Times.Once() : Times.Never());
+                reamer == ReamerTypeAttempt.Crystal && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
             mock_skill.Verify(x => x.RewriteByTool(
                 It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
                 It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
                 It.IsAny<decimal>(),
                 It.IsAny<decimal>(),
                 It.IsAny<MainProgramParametersRecord>()),
-                reamer == ReamerType.Skill && directedOperation == DirectedOperationType.Reaming ? Times.Once() : Times.Never());
+                reamer == ReamerTypeAttempt.Skill && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
             mock_tap.Verify(x => x.RewriteByTool(
                 It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
                 It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
                 It.IsAny<decimal>(),
                 It.IsAny<decimal>(),
                 It.IsAny<MainProgramParametersRecord>()),
-                directedOperation == DirectedOperationType.Tapping ? Times.Once() : Times.Never());
+                directedOperation == DirectedOperationTypeAttempt.Tapping ? Times.Once() : Times.Never());
             mock_drill.Verify(x => x.RewriteByTool(
                 It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
                 It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
                 It.IsAny<decimal>(),
                 It.IsAny<decimal>(),
                 It.IsAny<MainProgramParametersRecord>()),
-                directedOperation == DirectedOperationType.Drilling ? Times.Once() : Times.Never());
+                directedOperation == DirectedOperationTypeAttempt.Drilling ? Times.Once() : Times.Never());
         }
     }
 }

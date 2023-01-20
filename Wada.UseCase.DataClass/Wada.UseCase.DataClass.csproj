@@ -8,14 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
-    <PackageReference Include="Ulid" Version="1.2.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.AOP.Logging\Wada.AOP.Logging.csproj" />
     <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
-    <ProjectReference Include="..\Wada.Param\Wada.UseCase.DataClass.csproj" />
-    <ProjectReference Include="..\Wada.UseCase.DataClass\Wada.UseCase.DataClass.csproj" />
   </ItemGroup>
 
 </Project>

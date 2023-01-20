@@ -3,7 +3,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.NCProgramConcatenationService.ValueObjects;
-
+using Wada.UseCase.DataClass;
 
 namespace Wada.EditNCProgramApplication
 {
@@ -37,9 +37,9 @@ namespace Wada.EditNCProgramApplication
             // EditNCProgramPramのValidateで不整合状態は確認済み
             IMainProgramParameterRewriter rewriter = editNCProgramPram.DirectedOperation switch
             {
-                DirectedOperationType.Tapping => _tappingParameterRewriter,
-                DirectedOperationType.Reaming => editNCProgramPram.Reamer == ReamerType.Crystal ? _crystalReamingParameterRewriter : _skillReamingParameterRewriter,
-                DirectedOperationType.Drilling => _drillingParameterRewriter,
+                DirectedOperationTypeAttempt.Tapping => _tappingParameterRewriter,
+                DirectedOperationTypeAttempt.Reaming => editNCProgramPram.Reamer == ReamerTypeAttempt.Crystal ? _crystalReamingParameterRewriter : _skillReamingParameterRewriter,
+                DirectedOperationTypeAttempt.Drilling => _drillingParameterRewriter,
                 _ => throw new NotImplementedException(),
             };
 
@@ -53,123 +53,83 @@ namespace Wada.EditNCProgramApplication
     }
 
     public record class EditNCProgramPram(
-        DirectedOperationType DirectedOperation,
+        DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
         decimal TargetToolDiameter,
-        Dictionary<MainProgramType, NCProgramCode> RewritableCodeDic,
-        MaterialType Material,
-        ReamerType Reamer,
+        IEnumerable<NCProgramCodeAttempt> RewritableCoded,
+        MaterialTypeAttempt Material,
+        ReamerTypeAttempt Reamer,
         decimal Thickness,
         MainNCProgramParametersPram MainNCProgramParameters)
     {
-        private static ReamerType Validate(DirectedOperationType directedOperation, ReamerType reamer)
+        private static ReamerTypeAttempt Validate(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
-            if (directedOperation != DirectedOperationType.Reaming)
+            if (directedOperation != DirectedOperationTypeAttempt.Reaming)
             {
-                if (reamer != ReamerType.Undefined)
+                if (reamer != ReamerTypeAttempt.Undefined)
                     throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
 
                 return reamer;
             }
 
-            if (reamer == ReamerType.Undefined)
+            if (reamer == ReamerTypeAttempt.Undefined)
                 throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
 
             return reamer;
         }
 
-        public ReamerType Reamer { get; init; } = Validate(DirectedOperation, Reamer);
+        public ReamerTypeAttempt Reamer { get; init; } = Validate(DirectedOperation, Reamer);
     }
 
     public class TestEditNCProgramPramFactory
     {
         public static EditNCProgramPram Create(
-            DirectedOperationType directedOperation = DirectedOperationType.Drilling,
+            DirectedOperationTypeAttempt directedOperation = DirectedOperationTypeAttempt.Drilling,
             string subProgramNumger = "8000",
             decimal targetToolDiameter = 13.2m,
-            Dictionary<MainProgramType, NCProgramCodePram>? rewritableCodes = default,
-            MaterialType material = MaterialType.Aluminum,
-            ReamerType reamer = ReamerType.Crystal,
+            IEnumerable<NCProgramCodeAttempt>? rewritableCodes = default,
+            MaterialTypeAttempt material = MaterialTypeAttempt.Aluminum,
+            ReamerTypeAttempt reamer = ReamerTypeAttempt.Crystal,
             decimal thickness = 15,
             MainNCProgramParametersPram? mainNCProgramParameters = default)
         {
-            rewritableCodes ??= new Dictionary<MainProgramType, NCProgramCodePram>()
+            rewritableCodes ??= new List<NCProgramCodeAttempt>
             {
-                {
-                    MainProgramType.CenterDrilling,
-                    TestNCProgramCodePramFactory.Create(
-                        programName: "O1000",
-                        new List<NCBlockPram>
-                        {
-                            TestNCBlockFactory.Create(
-                                new List<INCWord>
-                                {
-                                    TestNCWordFactory.Create(
-                                        TestAddressFactory.Create(),
-                                        TestNumericalValueFactory.Create()),
-                                }),
-                        })
-                },
-                {
-                    MainProgramType.Drilling,
-                    TestNCProgramCodePramFactory.Create(
-                        programName: "O2000",
-                        new List<NCBlockPram>
-                        {
-                            TestNCBlockPramFactory.Create(
-                                new List<INCWord>
-                                {
-                                    TestNCWordFactory.Create(
-                                        TestAddressFactory.Create(),
-                                        TestNumericalValueFactory.Create()),
-                                }),
-                        })
-                },
-                {
-                    MainProgramType.Chamfering,
-                    TestNCProgramCodePramFactory.Create(
-                        programName: "O3000",
-                        new List<NCBlockPram>
-                        {
-                            TestNCBlockPramFactory.Create(
-                                new List<INCWord>
-                                {
-                                    TestNCWordFactory.Create(
-                                        TestAddressFactory.Create(),
-                                        TestNumericalValueFactory.Create()),
-                                }),
-                        })
-                },
-                {
-                    MainProgramType.Reaming,
-                    TestNCProgramCodePramFactory.Create(
-                        programName: "O4000",
-                        new List<NCBlockPram>
-                        {
-                            TestNCBlockPramFactory.Create(
-                                new List<INCWord>
-                                {
-                                    TestNCWordFactory.Create(
-                                        TestAddressFactory.Create(),
-                                        TestNumericalValueFactory.Create()),
-                                }),
-                        })
-                },
-                {
-                    MainProgramType.Tapping,
-                    TestNCProgramCodePramFactory.Create(
-                        programName: "O5000",
-                        new List<NCBlockPram>
-                        {
-                            TestNCBlockPramFactory.Create(
-                                new List<INCWord>
-                                {
-                                    TestNCWordFactory.Create(
-                                        TestAddressFactory.Create(),
-                                        TestNumericalValueFactory.Create()),
-                                }),
-                        })
-                },
+                new(Ulid.NewUlid().ToString(),
+                    MainProgramTypeAttempt.CenterDrilling,
+                    ProgramName: "O1000",
+                    new List<NCBlockAttempt>
+                    {
+                        TestNCBlockAttemptFactory.Create(),
+                    }),
+                new(Ulid.NewUlid().ToString(),
+                    MainProgramTypeAttempt.Drilling,
+                    ProgramName: "O2000",
+                    new List<NCBlockAttempt>
+                    {
+                        TestNCBlockAttemptFactory.Create(),
+                    }),
+                new(Ulid.NewUlid().ToString(),
+                    MainProgramTypeAttempt.Chamfering,
+                    ProgramName: "O3000",
+                    new List<NCBlockAttempt>
+                    {
+                        TestNCBlockAttemptFactory.Create(),
+                    }),
+                new(Ulid.NewUlid().ToString(),
+                    MainProgramTypeAttempt.Reaming,
+                    ProgramName: "O4000",
+                    new List<NCBlockAttempt>
+                    {
+                        TestNCBlockAttemptFactory.Create(),
+                    }),
+                new(Ulid.NewUlid().ToString(),
+                    MainProgramTypeAttempt.Tapping,
+                    ProgramName: "O5000",
+                    new List<NCBlockAttempt>
+                    {
+                        TestNCBlockAttemptFactory.Create(),
+                    }),
             };
 
             mainNCProgramParameters ??= TestMainNCProgramParametersPramFactory.Create();
@@ -185,27 +145,28 @@ namespace Wada.EditNCProgramApplication
         }
     }
 
-    //public record class NCProgramCodePram(string ID, string ProgramName, IEnumerable<NCBlockPram?> NCBlocks);
-
-    public record class NCBlockPram(IEnumerable<INCWord> NCWords, OptionalBlockSkip HasBlockSkip);
-
-    //public enum DirectedOperationType
+    //public record class NCProgramCodePram(string ID, string ProgramName, IEnumerable<NCBlockPram?> NCBlocks)
     //{
-    //    Tapping,
-    //    Reaming,
-    //    Drilling,
+    //    internal NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, ProgramName, NCBlocks.Select(x => x?.Convert());
     //}
 
-    //public enum MainProgramType
+    //public record class NCBlockPram(IEnumerable<INCWord> NCWords, OptionalBlockSkip HasBlockSkip)
     //{
-    //    CenterDrilling,
-    //    Drilling,
-    //    Chamfering,
-    //    Reaming,
-    //    Tapping,
+    //    internal NCBlock? Convert()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
     //}
 
-    public enum MachineToolType
+    public enum DirectedOperationTypeAttempt
+    {
+        Tapping,
+        Reaming,
+        Drilling,
+    }
+
+
+    public enum MachineToolTypeAttempt
     {
         Undefined,
         RB250F,
@@ -213,14 +174,14 @@ namespace Wada.EditNCProgramApplication
         Triaxial,
     }
 
-    //public enum MaterialType
-    //{
-    //    Undefined,
-    //    Aluminum,
-    //    Iron,
-    //}
+    public enum MaterialTypeAttempt
+    {
+        Undefined,
+        Aluminum,
+        Iron,
+    }
 
-    public enum ReamerType
+    public enum ReamerTypeAttempt
     {
         Undefined,
         Crystal,
