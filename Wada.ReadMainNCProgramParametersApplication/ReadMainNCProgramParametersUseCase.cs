@@ -10,7 +10,33 @@ namespace Wada.ReadMainNCProgramParametersApplication
         Task<MainNCProgramParametersDTO> ExecuteAsync();
     }
 
-    public record class MainNCProgramParametersDTO(IEnumerable<ReamingProgramPrameter> CrystalReamerParameters, IEnumerable<ReamingProgramPrameter> SkillReamerParameters, IEnumerable<TappingProgramPrameter> TapParameters, IEnumerable<DrillingProgramPrameter> DrillingPrameters);
+    public record class MainNCProgramParametersDTO(IEnumerable<ReamingProgramPrameterDTO> CrystalReamerParameters, IEnumerable<ReamingProgramPrameterDTO> SkillReamerParameters, IEnumerable<TappingProgramPrameterDTO> TapParameters, IEnumerable<DrillingProgramPrameter> DrillingPrameters);
+
+    public record class ReamingProgramPrameterDTO(
+        string DiameterKey,
+        decimal PreparedHoleDiameter,
+        decimal SecondPreparedHoleDiameter,
+        decimal CenterDrillDepth,
+        decimal? ChamferingDepth);
+
+    public record class TappingProgramPrameterDTO(
+        string DiameterKey,
+        decimal PreparedHoleDiameter,
+        decimal CenterDrillDepth,
+        decimal? ChamferingDepth,
+        decimal SpinForAluminum,
+        decimal FeedForAluminum,
+        decimal SpinForIron,
+        decimal FeedForIron);
+
+    public record class DrillingProgramPrameterDTO(
+        string DiameterKey,
+        decimal CenterDrillDepth,
+        decimal CutDepth,
+        decimal SpinForAluminum,
+        decimal FeedForAluminum,
+        decimal SpinForIron,
+        decimal FeedForIron);
 
     public class ReadMainNCProgramParametersUseCase : IReadMainNCProgramParametersUseCase
     {

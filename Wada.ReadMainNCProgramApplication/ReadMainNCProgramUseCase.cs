@@ -25,6 +25,7 @@ namespace Wada.ReadMainNCProgramApplication
         [Logging]
         public async Task<IEnumerable<MainNCProgramDTO>> ExecuteAsync()
         {
+            // TODO: 設備ごとメインプログラム　引数付けてる必要あり
             List<string> _mainProgramNames = new()
             {
                 "CD.txt",
