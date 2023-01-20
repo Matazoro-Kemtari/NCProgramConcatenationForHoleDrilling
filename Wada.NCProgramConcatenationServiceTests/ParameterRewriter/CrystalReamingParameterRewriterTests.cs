@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_センタードリルプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int expectedSpin, int expectedFeed)
+        public void 正常系_センタードリルプログラムがリーマパラメータで書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
@@ -30,28 +30,28 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             #endregion
 
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-            var expected = crystalReamingParameterRewriter.RewriteByTool(
+            var actual = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
-                materialType,
+                material,
                 10m,
                 diameter,
                 parametersRecord
                 );
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual(expectedSpin, rewritedSpin);
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
+            Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             decimal expectedCenterDrillDepth = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
-            var rewritedDepth = NCWordから値を取得する(expected, 'Z');
-            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth);
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z');
+            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値");
 
-            var rewritedFeed = NCWordから値を取得する(expected, 'F');
-            Assert.AreEqual(expectedFeed, rewritedFeed);
+            var rewritedFeed = NCWordから値を取得する(actual, 'F');
+            Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
 
         private static decimal NCWordから値を取得する(IEnumerable<NCProgramCode> expected, char address, int skip = 0)
@@ -194,7 +194,6 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             {
                 { MainProgramType.CenterDrilling, rewritableCode },
             };
-            decimal diameter = 15m;
             decimal fastDrill = 10m;
             decimal secondDrill = 11.8m;
             MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create(
@@ -217,6 +216,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                     }
                 });
             #endregion
+
+            decimal diameter = 15m;
             void target()
             {
                 IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
@@ -256,7 +257,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
             var crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-            var expected = crystalReamingParameterRewriter.RewriteByTool(
+            var actual = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
                 material,
                 (decimal)thickness,
@@ -265,41 +266,41 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 );
 
             // then
-            var rewritedSpin = NCWordから値を取得する(expected, 'S');
+            var rewritedSpin = NCWordから値を取得する(actual, 'S');
             var expectedSpin = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum)
                 : ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron);
             Assert.AreEqual(expectedSpin, rewritedSpin, "下穴1の回転数");
 
-            rewritedSpin = NCWordから値を取得する(expected, 'S', 1);
+            rewritedSpin = NCWordから値を取得する(actual, 'S', 1);
             expectedSpin = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum, 1)
                 : ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron, 1);
             Assert.AreEqual(expectedSpin, rewritedSpin, "下穴2の回転数");
 
-            decimal rewritedDepth = NCWordから値を取得する(expected, 'Z');
+            decimal rewritedDepth = NCWordから値を取得する(actual, 'Z');
             decimal expectedDepth = ドリルパラメータから値を取得する(parametersRecord, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(expectedDepth, rewritedDepth, "下穴1のZ");
 
-            rewritedDepth = NCWordから値を取得する(expected, 'Z', 1);
+            rewritedDepth = NCWordから値を取得する(actual, 'Z', 1);
             expectedDepth = ドリルパラメータから値を取得する(parametersRecord, x => -x.DrillTipLength - (decimal)thickness, 1);
             Assert.AreEqual(expectedDepth, rewritedDepth, "下穴2のZ");
 
-            decimal rewritedCutDepth = NCWordから値を取得する(expected, 'Q');
+            decimal rewritedCutDepth = NCWordから値を取得する(actual, 'Q');
             decimal expectedCutDepth = ドリルパラメータから値を取得する(parametersRecord, x => x.CutDepth);
             Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴1の切込");
 
             expectedCutDepth = expectedCutDepth = ドリルパラメータから値を取得する(parametersRecord, x => x.CutDepth, 1);
-            rewritedCutDepth = NCWordから値を取得する(expected, 'Q', 1);
+            rewritedCutDepth = NCWordから値を取得する(actual, 'Q', 1);
             Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴2の切込");
 
-            decimal rewritedFeed = NCWordから値を取得する(expected, 'F');
+            decimal rewritedFeed = NCWordから値を取得する(actual, 'F');
             decimal expectedFeed = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum)
                 : ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron);
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
 
-            rewritedFeed = NCWordから値を取得する(expected, 'F', 1);
+            rewritedFeed = NCWordから値を取得する(actual, 'F', 1);
             expectedFeed = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum, 1)
                 : ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron, 1);
@@ -430,7 +431,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_面取りプログラムがリーマパラメータで書き換えられること(MaterialType materialType, int expectedSpin)
+        public void 正常系_面取りプログラムがリーマパラメータで書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
@@ -449,24 +450,24 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-            var expected = crystalReamingParameterRewriter.RewriteByTool(
+            var actual = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
-                materialType,
+                material,
                 10m,
                 diameter,
                 parametersRecord
                 );
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual(expectedSpin, rewritedSpin);
-            var rewritedDepth = NCWordから値を取得する(expected, 'Z');
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
+            Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z');
             decimal? expectedChamferingDepth = parametersRecord.Parameters
                 .GetValueOrDefault(ParameterType.CrystalReamerParameter)!
                 .Cast<ReamingProgramPrameter>()
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
-            Assert.AreEqual(expectedChamferingDepth, rewritedDepth);
+            Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "Z値");
         }
 
         [TestMethod]
@@ -501,7 +502,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 });
             #endregion
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-            var expected = crystalReamingParameterRewriter.RewriteByTool(
+            var actual = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
                 MaterialType.Aluminum,
                 10m,
@@ -510,13 +511,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 );
 
             // then
-            Assert.AreEqual(0, expected.Count());
+            Assert.AreEqual(0, actual.Count());
         }
 
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 10.5, 380, 80)]
         [DataRow(MaterialType.Iron, 12.4, 290, 40)]
-        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType materialType, double expectedThickness, int expectedSpin, int expectedFeed)
+        public void 正常系_リーマプログラムがリーマパラメータで書き換えられること(MaterialType material, double expectedThickness, int expectedSpin, int expectedFeed)
         {
             // given
             // when
@@ -536,21 +537,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x.TargetToolDiameter)
                 .FirstOrDefault();
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
-            var expected = crystalReamingParameterRewriter.RewriteByTool(
+            var actual = crystalReamingParameterRewriter.RewriteByTool(
                 rewritableCodeDic,
-                materialType,
+                material,
                 (decimal)expectedThickness,
                 diameter,
                 parametersRecord
                 );
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(expected, 'S');
-            Assert.AreEqual(expectedSpin, rewritedSpin);
-            var rewritedDepth = NCWordから値を取得する(expected, 'Z');
-            Assert.AreEqual((decimal)-expectedThickness - 5m, rewritedDepth);
-            decimal rewritedFeed = NCWordから値を取得する(expected, 'F');
-            Assert.AreEqual(expectedFeed, rewritedFeed);
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
+            Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z');
+            Assert.AreEqual((decimal)-expectedThickness - 5m, rewritedDepth, "Z値");
+            decimal rewritedFeed = NCWordから値を取得する(actual, 'F');
+            Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
     }
 }

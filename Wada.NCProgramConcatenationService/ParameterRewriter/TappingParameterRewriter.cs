@@ -55,8 +55,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                         ncPrograms.Add(RewriteCNCProgramForDrilling(value, material, thickness, drillingParameters, tappingParameter));
                         break;
                     case MainProgramType.Chamfering:
-                        if (tappingParameter.ChamferingDepth != null)
-                            ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, tappingParameter));
+                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, tappingParameter));
                         break;
                     case MainProgramType.Tapping:
                         ncPrograms.Add(TappingProgramRewriter.Rewrite(value, material, thickness, tappingParameter));

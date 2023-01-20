@@ -19,9 +19,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             MaterialType material,
             decimal thickness,
             decimal targetToolDiameter,
-            MainProgramParametersRecord prameters);
+            MainProgramParametersRecord prameterRecord);
     }
 
+    // TODO: Dicじゃなくても良いのでは?
     public record class MainProgramParametersRecord(Dictionary<ParameterType, IEnumerable<IMainProgramPrameter>> Parameters);
 
     public class TestMainProgramParametersRecordFactory
