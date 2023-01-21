@@ -9,7 +9,7 @@ namespace Wada.NCProgramFile
     public class NCProgramRepository : INCProgramRepository
     {
         [Logging]
-        public async Task<NCProgramCode> ReadAllAsync(StreamReader reader, string programName)
+        public async Task<NCProgramCode> ReadAllAsync(StreamReader reader, NCProgramType ncProgram, string programName)
         {
             List<NCBlock?> ncBlocks = new();
 
@@ -82,7 +82,7 @@ namespace Wada.NCProgramFile
                 ncBlocks.Add(new NCBlock(ncWords, hasBlockSkip));
             }
 
-            return new(programName, ncBlocks);
+            return new(ncProgram, programName, ncBlocks);
         }
 
         private static OptionalBlockSkip ExistsOptionalBlockSkip(string line)

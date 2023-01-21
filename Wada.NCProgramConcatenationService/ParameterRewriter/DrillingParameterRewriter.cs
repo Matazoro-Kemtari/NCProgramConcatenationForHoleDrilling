@@ -2,61 +2,53 @@
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter.Process;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.ParameterRewriter
 {
     public class DrillingParameterRewriter : IMainProgramParameterRewriter
     {
         [Logging]
-        public IEnumerable<NCProgramCode> RewriteByTool(
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodes,
-            MaterialType material,
-            decimal thickness,
-            decimal targetToolDiameter,
-            MainProgramParametersRecord prameterRecord)
+        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord RewriteByToolRecord)
         {
-            if (material == MaterialType.Undefined)
+            if (RewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
 
             // ドリルのパラメータを受け取る
-            if (!prameterRecord.Parameters.TryGetValue(ParameterType.DrillParameter, out var drillingParameters)
-            || drillingParameters == null)
-                throw new NCProgramConcatenationServiceException(
-                    $"パラメータが受け取れません ParameterType: {nameof(ParameterType.DrillParameter)}");
+            var drillingParameters = RewriteByToolRecord.DrillingPrameters;
 
             // メインプログラムを工程ごとに取り出す
-            List<NCProgramCode> ncPrograms = new();
-            foreach (var (key, value) in rewritableCodes)
+            List<NCProgramCode> rewritedNCPrograms = new();
+            foreach (var rewritableCode in RewriteByToolRecord.RewritableCodes)
             {
                 DrillingProgramPrameter drillingParameter;
                 try
                 {
                     drillingParameter = drillingParameters
-                        .Cast<DrillingProgramPrameter>()
-                        .First(x => x.TargetToolDiameter == targetToolDiameter);
+                        .First(x => x.TargetToolDiameter == RewriteByToolRecord.TargetToolDiameter);
                 }
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"ドリル径 {targetToolDiameter}のリストがありません", ex);
+                        $"ドリル径 {RewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
                 }
 
-                switch (key)
+                switch (rewritableCode.MainProgramClassification)
                 {
-                    case MainProgramType.CenterDrilling:
-                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(value, material, drillingParameter));
+                    case NCProgramType.CenterDrilling:
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, drillingParameter));
                         break;
-                    case MainProgramType.Drilling:
-                        ncPrograms.Add(DrillingProgramRewriter.Rewrite(value, material, targetToolDiameter, thickness, drillingParameter));
+                    case NCProgramType.Drilling:
+                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, RewriteByToolRecord.TargetToolDiameter, RewriteByToolRecord.Thickness, drillingParameter));
                         break;
-                    case MainProgramType.Chamfering:
-                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(value, material, drillingParameter));
+                    case NCProgramType.Chamfering:
+                        rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, drillingParameter));
                         break;
                     default:
                         throw new NotImplementedException();
                 }
             }
-            return ncPrograms;
+            return rewritedNCPrograms;
         }
     }
 }

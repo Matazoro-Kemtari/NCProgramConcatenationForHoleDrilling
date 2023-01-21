@@ -1,5 +1,6 @@
 ﻿using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.ParameterRewriter
 {
@@ -8,112 +9,75 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <summary>
         /// メインプログラムのパラメータを書き換える
         /// </summary>
-        /// <param name="rewritableCodes">元NCプログラム</param>
-        /// <param name="material">素材</param>
-        /// <param name="thickness">板厚</param>
-        /// <param name="targetToolDiameter">目標工具径 :サブプログラムで指定した工具径</param>
-        /// <param name="prameters">パラメータ</param>
+        /// <param name="RewriteByToolRecord"></param>
         /// <returns></returns>
-        IEnumerable<NCProgramCode> RewriteByTool(
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodes,
-            MaterialType material,
-            decimal thickness,
-            decimal targetToolDiameter,
-            MainProgramParametersRecord prameterRecord);
+        IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord RewriteByToolRecord);
     }
 
-    // TODO: Dicじゃなくても良いのでは?
-    public record class MainProgramParametersRecord(Dictionary<ParameterType, IEnumerable<IMainProgramPrameter>> Parameters);
+    /// <summary>
+    /// RewriteByToolの引数用データクラス
+    /// </summary>
+    /// <param name="RewritableCodes">書き換え元NCプログラム</param>
+    /// <param name="Material">素材</param>
+    /// <param name="Thickness">板厚</param>
+    /// <param name="TargetToolDiameter">目標工具径 :サブプログラムで指定した工具径</param>
+    /// <param name="CrystalReamerParameters">クリスタルリーマパラメータ</param>
+    /// <param name="SkillReamerParameters">スキルリーマパラメータ</param>
+    /// <param name="TapParameters">タップパラメータ</param>
+    /// <param name="DrillingPrameters">ドリルパラメータ</param>
+    public record class RewriteByToolRecord(
+        IEnumerable<NCProgramCode> RewritableCodes,
+        MaterialType Material,
+        decimal Thickness,
+        decimal TargetToolDiameter,
+        IEnumerable<ReamingProgramPrameter> CrystalReamerParameters,
+        IEnumerable<ReamingProgramPrameter> SkillReamerParameters,
+        IEnumerable<TappingProgramPrameter> TapParameters,
+        IEnumerable<DrillingProgramPrameter> DrillingPrameters);
 
-    public class TestMainProgramParametersRecordFactory
+    public class TestRewriteByToolRecordFactory
     {
-        public static MainProgramParametersRecord Create(
-            Dictionary<ParameterType, IEnumerable<IMainProgramPrameter>>? parameters = default)
+        public static RewriteByToolRecord Create(
+            IEnumerable<NCProgramCode>? rewritableCodes = default,
+            MaterialType material = MaterialType.Aluminum,
+            decimal thickness = 12.3m,
+            decimal targetToolDiameter = 8.3m,
+            IEnumerable<ReamingProgramPrameter>? crystalReamerParameters = default,
+            IEnumerable<ReamingProgramPrameter>? skillReamerParameters = default,
+            IEnumerable<TappingProgramPrameter>? tapParameters = default,
+            IEnumerable<DrillingProgramPrameter>? drillingPrameters = default)
         {
-            decimal reamerDiameter = 13.3m;
-            decimal fastDrill = 10m;
-            decimal secondDrill = 11.8m;
-            decimal centerDrillDepth = -1.5m;
-            decimal? chamferingDepth = -6.1m;
-            parameters ??= new()
+            rewritableCodes ??= new List<NCProgramCode>
             {
-                {
-                    ParameterType.CrystalReamerParameter,
-                    new List<IMainProgramPrameter>
-                    {
-                        new ReamingProgramPrameter(reamerDiameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
-                    }
-                },
-                {
-                    ParameterType.SkillReamerParameter,
-                    new List<IMainProgramPrameter>
-                    {
-                        new ReamingProgramPrameter(reamerDiameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth)
-                    }
-                },
-                {
-                    ParameterType.DrillParameter,
-                    new List<IMainProgramPrameter>
-                    {
-                        new DrillingProgramPrameter(DiameterKey: fastDrill.ToString(),
-                                                    CenterDrillDepth: -1.5m,
-                                                    CutDepth: 3m,
-                                                    SpinForAluminum: 960m,
-                                                    FeedForAluminum: 130m,
-                                                    SpinForIron: 640m,
-                                                    FeedForIron: 90m),
-                        new DrillingProgramPrameter(DiameterKey: secondDrill.ToString(),
-                                                    CenterDrillDepth: -1.5m,
-                                                    CutDepth: 3.5m,
-                                                    SpinForAluminum: 84m,
-                                                    FeedForAluminum: 110m,
-                                                    SpinForIron: 560m,
-                                                    FeedForIron: 80m)
-                    }
-                },
-                {
-                    ParameterType.TapParameter,
-                    new List<IMainProgramPrameter>
-                    {
-                        new TappingProgramPrameter(DiameterKey: "M12",
-                                                   PreparedHoleDiameter: fastDrill,
-                                                   CenterDrillDepth: centerDrillDepth,
-                                                   ChamferingDepth: -6.3m,
-                                                   SpinForAluminum: 160m,
-                                                   FeedForAluminum: 280m,
-                                                   SpinForIron: 120m,
-                                                   FeedForIron: 210m)
-                    }
-                }
+                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.CenterDrilling),
+                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Drilling),
+                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Chamfering),
+                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Reaming),
+                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Tapping),
             };
-            return new(parameters);
+            crystalReamerParameters ??= new List<ReamingProgramPrameter>
+            {
+                TestReamingProgramPrameterFactory.Create(),
+            };
+            skillReamerParameters ??= new List<ReamingProgramPrameter>
+            {
+                TestReamingProgramPrameterFactory.Create(),
+            };
+            tapParameters ??= new List<TappingProgramPrameter>
+            {
+                TestTappingProgramPrameterFactory.Create(),
+            };
+            drillingPrameters ??= new List<DrillingProgramPrameter>
+            {
+                TestDrillingProgramPrameterFactory.Create("9.1"),
+                TestDrillingProgramPrameterFactory.Create("11.1"),
+                TestDrillingProgramPrameterFactory.Create(),
+                TestDrillingProgramPrameterFactory.Create(DiameterKey: "13.3"),
+            };
+
+            return new(rewritableCodes, material, thickness, targetToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
         }
     }
-
-    public enum MainProgramType
-    {
-        /// <summary>
-        /// センタードリル
-        /// </summary>
-        CenterDrilling,
-        /// <summary>
-        /// ドリル
-        /// </summary>
-        Drilling,
-        /// <summary>
-        /// 面取り
-        /// </summary>
-        Chamfering,
-        /// <summary>
-        /// リーマ
-        /// </summary>
-        Reaming,
-        /// <summary>
-        /// タップ
-        /// </summary>
-        Tapping,
-    }
-
     public enum MaterialType
     {
         Undefined,

@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Wada.AOP.Logging\Wada.AOP.Logging.csproj" />
     <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
-    <ProjectReference Include="..\Wada.Param\Wada.UseCase.DataClass.csproj" />
     <ProjectReference Include="..\Wada.UseCase.DataClass\Wada.UseCase.DataClass.csproj" />
   </ItemGroup>
 

@@ -66,6 +66,17 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         public DrillTipLength SecondPreparedHoleDrillTipLength => new(SecondPreparedHoleDiameter);
     }
 
+    public class TestReamingProgramPrameterFactory
+    {
+        // TODO: リストを見てデフォルト値を変更
+        public static ReamingProgramPrameter Create(
+            string DiameterKey = "12.3",
+            decimal PreparedHoleDiameter = 9.1m,
+            decimal SecondPreparedHoleDiameter = 11.1m,
+            decimal CenterDrillDepth = 3.1m,
+            decimal? ChamferingDepth = 1.7m) => new(DiameterKey, PreparedHoleDiameter, SecondPreparedHoleDiameter, CenterDrillDepth, ChamferingDepth);
+    }
+
     /// <summary>
     /// タップパラメータ
     /// </summary>
@@ -109,6 +120,18 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         public DrillTipLength PreparedHoleDrillTipLength => new(PreparedHoleDiameter);
     }
 
+    public class TestTappingProgramPrameterFactory
+    {
+        public static TappingProgramPrameter Create(
+            string DiameterKey = "M12.3",
+            decimal PreparedHoleDiameter = 11.1m,
+            decimal CenterDrillDepth = 3.1m,
+            decimal? ChamferingDepth = 1.7m,
+            decimal SpinForAluminum = 700m,
+            decimal FeedForAluminum = 300m,
+            decimal SpinForIron = 700m,
+            decimal FeedForIron = 300m) => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+    }
     /// <summary>
     /// ドリルパラメータ
     /// </summary>
@@ -139,5 +162,17 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         public decimal? ChamferingDepth => CalcChamferingDepth(TargetToolDiameter);
 
         public decimal DrillTipLength => new DrillTipLength(TargetToolDiameter).Value;
+    }
+
+    public class TestDrillingProgramPrameterFactory
+    {
+        public static DrillingProgramPrameter Create(
+        string DiameterKey="12.3",
+        decimal CenterDrillDepth = 700m,
+        decimal CutDepth = 700m,
+        decimal SpinForAluminum = 700m,
+        decimal FeedForAluminum = 700m,
+        decimal SpinForIron = 700m,
+        decimal FeedForIron = 700m) => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
     }
 }

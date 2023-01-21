@@ -1,15 +1,21 @@
-﻿using Wada.AOP.Logging;
+﻿using NLog.LayoutRenderers;
+using System.Linq;
+using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.UseCase.DataClass;
 
 namespace Wada.ReadMainNCProgramApplication
 {
     public interface IReadMainNCProgramUseCase
     {
-        Task<IEnumerable<MainNCProgramDTO>> ExecuteAsync();
+        Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync();
     }
 
-    public record class MainNCProgramDTO(string ID, NCProgramCode NCProgramCode);
+    public record class MainNCProgramCodeDTO(
+        MachineToolTypeAttempt MachineToolClassification,
+        IEnumerable<NCProgramCodeAttempt> NCProgramCodeAttempts);
 
     public class ReadMainNCProgramUseCase : IReadMainNCProgramUseCase
     {
@@ -23,16 +29,22 @@ namespace Wada.ReadMainNCProgramApplication
         }
 
         [Logging]
-        public async Task<IEnumerable<MainNCProgramDTO>> ExecuteAsync()
+        public async Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync()
         {
-            // TODO: 設備ごとメインプログラム　引数付けてる必要あり
-            List<string> _mainProgramNames = new()
+            List<(string FileName, NCProgramType NCProgramType)> mainPrograms = new()
             {
-                "CD.txt",
-                "DR.txt",
-                "MENTORI.txt",
-                "REAMER.txt",
-                "TAP.txt",
+                ("CD.txt",NCProgramType.CenterDrilling),
+                ("DR.txt",NCProgramType.Drilling),
+                ("MENTORI.txt",NCProgramType.Chamfering),
+                ("REAMER.txt",NCProgramType.Reaming),
+                ("TAP.txt",NCProgramType.Tapping),
+            };
+
+            List<string> machineName = new()
+            {
+                "RB250F",
+                "RB260",
+                "3軸立型",
             };
 
             string directory = Path.Combine(
@@ -40,15 +52,30 @@ namespace Wada.ReadMainNCProgramApplication
                 "..",
                 "メインプログラム");
 
-            var task = _mainProgramNames.Select(async x =>
+            var task = machineName.Select(async machine =>
             {
-                var fileName = Path.GetFileNameWithoutExtension(x);
-                var path = Path.Combine(directory, x);
+                var ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(program.FileName);
+                    var path = Path.Combine(directory, $"{machine}_{program.FileName}");
 
-                // サブプログラムを読み込む
-                using StreamReader reader = _streamReaderOpener.Open(path);
-                var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, fileName);
-                return new MainNCProgramDTO(fileName, ncProgramCode);
+                    // サブプログラムを読み込む
+                    using StreamReader reader = _streamReaderOpener.Open(path);
+                    var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
+                    return NCProgramCodeAttempt.Parse(ncProgramCode);
+                }));
+
+                MachineToolTypeAttempt machineClassification = machine switch
+                {
+                    "RB250F" => MachineToolTypeAttempt.RB250F,
+                    "RB260" => MachineToolTypeAttempt.RB260,
+                    "3軸立型" => MachineToolTypeAttempt.Triaxial,
+                    _ => throw new NotImplementedException(),
+                };
+
+                return new MainNCProgramCodeDTO(
+                    machineClassification,
+                    ncProgramCodeAttempts);
             });
 
             return await Task.WhenAll(task);

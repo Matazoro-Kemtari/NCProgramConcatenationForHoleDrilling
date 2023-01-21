@@ -29,5 +29,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
         public ReactivePropertySlim<ReamerType> Reamer { get; } = new();
 
         public ReactivePropertySlim<string> Thickness { get; } = new(string.Empty);
+
+        public ReactivePropertySlim<string> SubProgramNumber { get; } = new(string.Empty);
+        
+        public ReactivePropertySlim<decimal> TargetToolDiameter { get; } = new();
     }
 }

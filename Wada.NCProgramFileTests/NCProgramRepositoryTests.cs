@@ -22,11 +22,12 @@ namespace Wada.NCProgramFile.Tests
 
             // when
             string pgName = "O0150";
+            NCProgramType ncProgram = NCProgramType.SubProgram;
             INCProgramRepository ncProgramRepository = new NCProgramRepository();
-            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, pgName);
+            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, pgName);
 
             // then
-            NCProgramCode expected = new(pgName, testNCBlocks);
+            NCProgramCode expected = new(ncProgram, pgName, testNCBlocks);
             Assert.AreEqual(pgName, actual.ProgramName);
 
             CollectionAssert.AreEqual(
@@ -127,10 +128,11 @@ M02
 
             // when
             INCProgramRepository ncProgramRepository = new NCProgramRepository();
-            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, string.Empty);
+            NCProgramType ncProgram = NCProgramType.CenterDrilling;
+            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, string.Empty);
 
             // then
-            NCProgramCode expected = new(string.Empty, testNCBlocks);
+            NCProgramCode expected = new(ncProgram, string.Empty, testNCBlocks);
             Assert.AreEqual(string.Empty, actual.ProgramName);
             Assert.AreEqual(count, actual.NCBlocks.Count());
             Assert.AreEqual(sourceType, actual.NCBlocks.FirstOrDefault()?.ToString());

@@ -15,36 +15,16 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.CenterDrilling, rewritableCode },
-            };
-            MainProgramParametersRecord parametersRecord =
-                TestMainProgramParametersRecordFactory.Create();
-            #endregion
-
-            decimal diameter = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.DrillParameter)!
-                .Select(x => x.TargetToolDiameter)
-                .FirstOrDefault();
+            var param = TestRewriteByToolRecordFactory.Create(material: material);
             IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
-            var actual = drillingParameterRewriter.RewriteByTool(
-                rewritableCodes: rewritableCodeDic,
-                material: material,
-                thickness: 10m,
-                targetToolDiameter: diameter,
-                prameterRecord: parametersRecord
-                );
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            decimal expectedCenterDrillDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.DrillParameter)!
+            decimal expectedCenterDrillDepth = param.DrillingPrameters
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値");
@@ -73,25 +53,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.CenterDrilling, rewritableCode },
-            };
-            MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create();
-            #endregion
+            var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
             void target()
             {
                 IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
-                decimal diameter = 15m;
-                _ = drillingParameterRewriter.RewriteByTool(
-                    rewritableCodeDic,
-                    MaterialType.Undefined,
-                    10m,
-                    diameter,
-                    parametersRecord
-                    );
+                _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
             // then
@@ -100,79 +66,16 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_ドリルのパラメータを渡さないとき例外を返すこと()
-        {
-            // given
-            // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.CenterDrilling, rewritableCode },
-            };
-            MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create(
-                new()
-                {
-                    {
-                        ParameterType.TapParameter,
-                        new List<IMainProgramPrameter>
-                        {
-                            new TappingProgramPrameter(DiameterKey: "M12",
-                                                       PreparedHoleDiameter: 10m,
-                                                       CenterDrillDepth: 10.3m,
-                                                       ChamferingDepth: -6.3m,
-                                                       SpinForAluminum: 160m,
-                                                       FeedForAluminum: 280m,
-                                                       SpinForIron: 120m,
-                                                       FeedForIron: 210m)
-                        }
-                    }
-                });
-            #endregion
-            void target()
-            {
-                IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
-                decimal diameter = 15m;
-                _ = drillingParameterRewriter.RewriteByTool(
-                    rewritableCodeDic,
-                    MaterialType.Aluminum,
-                    10m,
-                    diameter,
-                    parametersRecord
-                    );
-            }
-
-            // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
-            Assert.AreEqual($"パラメータが受け取れません ParameterType: {nameof(ParameterType.DrillParameter)}",
-                ex.Message);
-        }
-
-        [TestMethod]
         public void 異常系_リストに一致するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.CenterDrilling, rewritableCode },
-            };
-            MainProgramParametersRecord parametersRecord = TestMainProgramParametersRecordFactory.Create();
-            #endregion
-
-            decimal diameter = 9m;
+            decimal diameter = 3m;
+            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
             void target()
             {
                 IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
-                _ = drillingParameterRewriter.RewriteByTool(
-                    rewritableCodeDic,
-                    MaterialType.Aluminum,
-                    10m,
-                    diameter,
-                    parametersRecord
-                    );
+                _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
             // then
@@ -188,57 +91,35 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.Drilling, rewritableCode },
-            };
-            var parametersRecord = TestMainProgramParametersRecordFactory.Create();
-            #endregion
-
-            var diameter = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.DrillParameter)!
-                .Select(x => x.TargetToolDiameter)
-                .FirstOrDefault();
+            var param = TestRewriteByToolRecordFactory.Create();
             var drillingParameterRewriter = new DrillingParameterRewriter();
-            var actual = drillingParameterRewriter.RewriteByTool(
-                rewritableCodeDic,
-                material,
-                (decimal)thickness,
-                diameter,
-                parametersRecord
-                );
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             var rewritedSpin = NCWordから値を取得する(actual, 'S');
             var expectedSpin = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForAluminum)
-                : ドリルパラメータから値を取得する(parametersRecord, x => x.SpinForIron);
+                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForAluminum)
+                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForIron);
             Assert.AreEqual(expectedSpin, rewritedSpin, "下穴の回転数");
 
             decimal rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            decimal expectedDepth = ドリルパラメータから値を取得する(parametersRecord, x => -x.DrillTipLength - (decimal)thickness);
+            decimal expectedDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(expectedDepth, rewritedDepth, "下穴のZ");
 
             decimal rewritedCutDepth = NCWordから値を取得する(actual, 'Q');
-            decimal expectedCutDepth = ドリルパラメータから値を取得する(parametersRecord, x => x.CutDepth);
+            decimal expectedCutDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.CutDepth);
             Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴の切込");
 
             decimal rewritedFeed = NCWordから値を取得する(actual, 'F');
             decimal expectedFeed = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForAluminum)
-                : ドリルパラメータから値を取得する(parametersRecord, x => x.FeedForIron);
+                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForAluminum)
+                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForIron);
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(MainProgramParametersRecord parametersRecord, Func<DrillingProgramPrameter, decimal> select, int skip = 0)
+        private static decimal ドリルパラメータから値を取得する(IEnumerable<DrillingProgramPrameter> drillingProgramPrameter, Func<DrillingProgramPrameter, decimal> select, int skip = 0)
         {
-            return parametersRecord.Parameters.GetValueOrDefault(ParameterType.DrillParameter)!
-                .Where(x => x.GetType() == typeof(DrillingProgramPrameter))
-                .Where(x => x != null)
-                .Cast<DrillingProgramPrameter>()
-                .Skip(skip)
+            return drillingProgramPrameter.Skip(skip)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -246,40 +127,20 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_面取りプログラムがドリルパラメータで書き換えられること(MaterialType materialType, int expectedSpin)
+        public void 正常系_面取りプログラムがドリルパラメータで書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
-            #region テストデータ
-            NCProgramCode rewritableCode = TestNCProgramCodeFactory.Create();
-            Dictionary<MainProgramType, NCProgramCode> rewritableCodeDic = new()
-            {
-                { MainProgramType.Chamfering, rewritableCode },
-            };
-            MainProgramParametersRecord parametersRecord =
-                TestMainProgramParametersRecordFactory.Create();
-            #endregion
-
-            decimal diameter = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.DrillParameter)!
-                .Select(x => x.TargetToolDiameter)
-                .FirstOrDefault();
+            var param = TestRewriteByToolRecordFactory.Create(material: material);
             IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
-            var actual = drillingParameterRewriter.RewriteByTool(
-                rewritableCodeDic,
-                materialType,
-                10m,
-                diameter,
-                parametersRecord
-                );
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            decimal? expectedChamferingDepth = parametersRecord.Parameters
-                .GetValueOrDefault(ParameterType.DrillParameter)!
+            decimal? expectedChamferingDepth = param.DrillingPrameters
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "面取り深さ");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.ReadSubNCProgramApplication.Tests
 {
@@ -20,7 +21,7 @@ namespace Wada.ReadSubNCProgramApplication.Tests
 
             // then
             mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Once);
-            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Once);
+            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NCProgramType>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

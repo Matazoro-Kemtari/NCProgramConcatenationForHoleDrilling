@@ -1,8 +1,6 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
-using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 
 namespace Wada.EditNCProgramApplication
@@ -43,12 +41,15 @@ namespace Wada.EditNCProgramApplication
                 _ => throw new NotImplementedException(),
             };
 
-            return await Task.Run(() => rewriter.RewriteByTool(
-                editNCProgramPram.RewritableCodeDic,
-                (NCProgramConcatenationService.ParameterRewriter.MaterialType)editNCProgramPram.Material,
+            return await Task.Run(() => rewriter.RewriteByTool(new(
+                editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
+                (MaterialType)editNCProgramPram.Material,
                 editNCProgramPram.Thickness,
                 editNCProgramPram.TargetToolDiameter,
-                editNCProgramPram.MainNCProgramParameters.ConvertMainProgramParametersRecord()));
+                editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()))));
         }
     }
 
@@ -56,11 +57,11 @@ namespace Wada.EditNCProgramApplication
         DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
         decimal TargetToolDiameter,
-        IEnumerable<NCProgramCodeAttempt> RewritableCoded,
+        IEnumerable<NCProgramCodeAttempt> RewritableCodeds,
         MaterialTypeAttempt Material,
         ReamerTypeAttempt Reamer,
         decimal Thickness,
-        MainNCProgramParametersPram MainNCProgramParameters)
+        MainNCProgramParametersAttempt MainNCProgramParameters)
     {
         private static ReamerTypeAttempt Validate(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
@@ -91,7 +92,7 @@ namespace Wada.EditNCProgramApplication
             MaterialTypeAttempt material = MaterialTypeAttempt.Aluminum,
             ReamerTypeAttempt reamer = ReamerTypeAttempt.Crystal,
             decimal thickness = 15,
-            MainNCProgramParametersPram? mainNCProgramParameters = default)
+            MainNCProgramParametersAttempt? mainNCProgramParameters = default)
         {
             rewritableCodes ??= new List<NCProgramCodeAttempt>
             {
@@ -145,19 +146,7 @@ namespace Wada.EditNCProgramApplication
         }
     }
 
-    //public record class NCProgramCodePram(string ID, string ProgramName, IEnumerable<NCBlockPram?> NCBlocks)
-    //{
-    //    internal NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, ProgramName, NCBlocks.Select(x => x?.Convert());
-    //}
-
-    //public record class NCBlockPram(IEnumerable<INCWord> NCWords, OptionalBlockSkip HasBlockSkip)
-    //{
-    //    internal NCBlock? Convert()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
+    // TODO: 列挙型を移動するかどうか
     public enum DirectedOperationTypeAttempt
     {
         Tapping,
@@ -166,13 +155,6 @@ namespace Wada.EditNCProgramApplication
     }
 
 
-    public enum MachineToolTypeAttempt
-    {
-        Undefined,
-        RB250F,
-        RB260,
-        Triaxial,
-    }
 
     public enum MaterialTypeAttempt
     {
@@ -186,109 +168,5 @@ namespace Wada.EditNCProgramApplication
         Undefined,
         Crystal,
         Skill
-    }
-
-    public record class MainNCProgramParametersPram(
-        IEnumerable<ReamingProgramPrameterPram> CrystalReamerParameters,
-        IEnumerable<ReamingProgramPrameterPram> SkillReamerParameters,
-        IEnumerable<TappingProgramPrameterPram> TapParameters,
-        IEnumerable<DrillingProgramPrameterPram> DrillingPrameters)
-    {
-        public MainProgramParametersRecord ConvertMainProgramParametersRecord() => new(new()
-        {
-            { ParameterType.CrystalReamerParameter, CrystalReamerParameters.Select(x => x.ConvertReamingProgramPrameter()) },
-            { ParameterType.SkillReamerParameter, SkillReamerParameters.Select(x => x.ConvertReamingProgramPrameter()) },
-            { ParameterType.TapParameter, TapParameters.Select(x => x.ConvertTappingProgramPrameter()) },
-            { ParameterType.DrillParameter, DrillingPrameters.Select(x => x.ConvertDrillingProgramPrameter()) },
-        });
-    }
-
-    public class TestMainNCProgramParametersPramFactory
-    {
-        public static MainNCProgramParametersPram Create(
-            IEnumerable<ReamingProgramPrameterPram>? crystalReamerParameters = default,
-            IEnumerable<ReamingProgramPrameterPram>? skillReamerParameters = default,
-            IEnumerable<TappingProgramPrameterPram>? tapParameters = default,
-            IEnumerable<DrillingProgramPrameter>? drillingPrameters = default)
-        {
-            decimal reamerDiameter = 13.3m;
-            decimal fastDrill = 10m;
-            decimal secondDrill = 11.8m;
-            decimal centerDrillDepth = -1.5m;
-            decimal? chamferingDepth = -6.1m;
-
-            crystalReamerParameters ??= new List<ReamingProgramPrameterPram>
-            {
-                new(reamerDiameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth),
-            };
-            skillReamerParameters ??= new List<ReamingProgramPrameterPram>
-            {
-                new(reamerDiameter.ToString(), fastDrill, secondDrill, centerDrillDepth, chamferingDepth),
-            };
-            tapParameters ??= new List<TappingProgramPrameterPram>
-            {
-                new(DiameterKey: "M12",
-                    PreparedHoleDiameter: fastDrill,
-                    CenterDrillDepth: centerDrillDepth,
-                    ChamferingDepth: -6.3m,
-                    SpinForAluminum: 160m,
-                    FeedForAluminum: 280m,
-                    SpinForIron: 120m,
-                    FeedForIron: 210m),
-            };
-            drillingPrameters ??= new List<DrillingProgramPrameter>
-            {
-                new(DiameterKey: fastDrill.ToString(),
-                    CenterDrillDepth: -1.5m,
-                    CutDepth: 3m,
-                    SpinForAluminum: 960m,
-                    FeedForAluminum: 130m,
-                    SpinForIron: 640m,
-                    FeedForIron: 90m),
-                new(DiameterKey: secondDrill.ToString(),
-                    CenterDrillDepth: -1.5m,
-                    CutDepth: 3.5m,
-                    SpinForAluminum: 84m,
-                    FeedForAluminum: 110m,
-                    SpinForIron: 560m,
-                    FeedForIron: 80m)
-            };
-
-            return new(crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
-        }
-    }
-    public record class ReamingProgramPrameterPram(
-        string DiameterKey,
-        decimal PreparedHoleDiameter,
-        decimal SecondPreparedHoleDiameter,
-        decimal CenterDrillDepth,
-        decimal? ChamferingDepth)
-    {
-        public ReamingProgramPrameter ConvertReamingProgramPrameter() => new(DiameterKey, PreparedHoleDiameter, SecondPreparedHoleDiameter, CenterDrillDepth, ChamferingDepth);
-    }
-
-    public record class TappingProgramPrameterPram(
-        string DiameterKey,
-        decimal PreparedHoleDiameter,
-        decimal CenterDrillDepth,
-        decimal? ChamferingDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron)
-    {
-        public TappingProgramPrameter ConvertTappingProgramPrameter() => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
-    }
-
-    public record class DrillingProgramPrameterPram(
-        string DiameterKey,
-        decimal CenterDrillDepth,
-        decimal CutDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron)
-    {
-        public DrillingProgramPrameter ConvertDrillingProgramPrameter() => new DrillingProgramPrameter(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
     }
 }

@@ -23,7 +23,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
-            NCProgramCode ncProgramCode = new("hoge", ncBlocks);
+            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
             DirectedOperationType actual = ncProgramCode.FetchOperationType();
 
             // then
@@ -57,7 +57,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
-            NCProgramCode ncProgramCode = new("hoge", ncBlocks);
+            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
                 _ = ncProgramCode.FetchOperationType();
@@ -87,7 +87,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
-            NCProgramCode ncProgramCode = new("hoge", ncBlocks);
+            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
                 _ = ncProgramCode.FetchOperationType();

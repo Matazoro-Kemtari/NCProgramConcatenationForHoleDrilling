@@ -4,9 +4,27 @@ using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
-    public record class NCProgramCodeAttempt(string ID, MainProgramTypeAttempt MainProgramClassification, string ProgramName, IEnumerable<NCBlockAttempt?> NCBlocks)
+    public enum MachineToolTypeAttempt
     {
-        public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, ProgramName, NCBlocks.Select(x => x?.Convert()));
+        //Undefined, 使わない
+        RB250F = 1,
+        RB260,
+        Triaxial,
+    }
+
+    public record class NCProgramCodeAttempt(
+        string ID,
+        MainProgramTypeAttempt MainProgramClassification,
+        string ProgramName,
+        IEnumerable<NCBlockAttempt?> NCBlocks)
+    {
+        public static NCProgramCodeAttempt Parse(NCProgramCode ncProgramCode) => new(
+            ncProgramCode.ID.ToString(),
+            (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
+            ncProgramCode.ProgramName,
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)));
+
+        public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
 
     public enum MainProgramTypeAttempt
@@ -38,6 +56,26 @@ namespace Wada.UseCase.DataClass
     public record class NCBlockAttempt(IEnumerable<INCWordAttempt> NCWords, OptionalBlockSkipAttempt HasBlockSkip)
     {
         public NCBlock? Convert() => new(NCWords.Select(x => x.Convert()), (OptionalBlockSkip)HasBlockSkip);
+
+        public static NCBlockAttempt Parse(NCBlock ncBlock)
+        {
+            IEnumerable<INCWordAttempt> ncWords = ncBlock.NCWords
+                .Select(x =>
+                {
+                    INCWordAttempt ncWordAttempt;
+                    if (x.GetType() == typeof(NCComment))
+                        ncWordAttempt = NCCommentAttempt.Parse((NCComment)x);
+                    else if (x.GetType() == typeof(NCWord))
+                        ncWordAttempt = NCWordAttempt.Parse((NCWord)x);
+                    else if (x.GetType() == typeof(NCVariable))
+                        ncWordAttempt = NCVariableAttempt.Parse((NCVariable)x);
+                    else
+                        throw new NotImplementedException();
+
+                    return ncWordAttempt;
+                });
+            return new(ncWords, (OptionalBlockSkipAttempt)ncBlock.HasBlockSkip);
+        }
     }
 
     public class TestNCBlockAttemptFactory
@@ -86,6 +124,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="Comment"></param>
     public record class NCCommentAttempt(string Comment) : INCWordAttempt
     {
+        public static NCCommentAttempt Parse(NCComment ncComment) => new(ncComment.Comment);
+
         public INCWord Convert() => new NCComment(Comment);
     }
 
@@ -96,6 +136,19 @@ namespace Wada.UseCase.DataClass
     /// <param name="ValueData"></param>
     public record class NCWordAttempt(AddressAttempt Address, IValueDataAttempt ValueData) : INCWordAttempt
     {
+        public static NCWordAttempt Parse(NCWord ncWord)
+        {
+            IValueDataAttempt valueDataAttempt;
+            if (ncWord.ValueData.GetType() == typeof(NumericalValue))
+                valueDataAttempt = NumericalValueAttempt.Parse((NumericalValue)ncWord.ValueData);
+            else if (ncWord.ValueData.GetType() == typeof(CoordinateValue))
+                valueDataAttempt = CoordinateValueAttempt.Parse((CoordinateValue)ncWord.ValueData);
+            else
+                throw new NotImplementedException();
+
+            return new(AddressAttempt.Parse(ncWord.Address), valueDataAttempt);
+        }
+
         public INCWord Convert()
         => new NCWord(Address.Convert(), ValueData.Convert());
     }
@@ -115,6 +168,8 @@ namespace Wada.UseCase.DataClass
     /// </summary>
     public record class AddressAttempt(char Value)
     {
+        public static AddressAttempt Parse(Address address) => new AddressAttempt(address.Value);
+
         internal Address Convert() => new Address(Value);
     }
 
@@ -154,6 +209,8 @@ namespace Wada.UseCase.DataClass
 
         public IValueData Convert() => new NumericalValue(Value);
 
+        public static NumericalValueAttempt Parse(NumericalValue valueData) => new(valueData.Value);
+
         public decimal Number => ConvertNumber(Value);
 
         public bool Indefinite => Value.Contains('*');
@@ -187,6 +244,8 @@ namespace Wada.UseCase.DataClass
 
         public IValueData Convert() => new CoordinateValue(Value);
 
+        internal static CoordinateValueAttempt Parse(CoordinateValue valueData) => new(valueData.Value);
+
         public decimal Number => ConvertNumber(Value);
 
         public bool Indefinite => Value.Contains('*');
@@ -204,6 +263,19 @@ namespace Wada.UseCase.DataClass
     /// <param name="ValueData"></param>
     public record class NCVariableAttempt(VariableAddressAttempt VariableAddress, IValueDataAttempt ValueData) : INCWordAttempt
     {
+        public static NCVariableAttempt Parse(NCVariable ncVariable)
+        {
+            IValueDataAttempt valueDataAttempt;
+            if (ncVariable.ValueData.GetType() == typeof(NumericalValue))
+                valueDataAttempt = NumericalValueAttempt.Parse((NumericalValue)ncVariable.ValueData);
+            else if (ncVariable.ValueData.GetType() == typeof(CoordinateValue))
+                valueDataAttempt = CoordinateValueAttempt.Parse((CoordinateValue)ncVariable.ValueData);
+            else
+                throw new NotImplementedException();
+
+            return new(VariableAddressAttempt.Parse(ncVariable.VariableAddress), valueDataAttempt);
+        }
+
         public INCWord Convert() => new NCVariable(VariableAddress.Convert(), ValueData.Convert());
     }
 
@@ -225,6 +297,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="Value"></param>
     public record class VariableAddressAttempt(uint Value)
     {
+        internal static VariableAddressAttempt Parse(VariableAddress variableAddress) => new(variableAddress.Value);
+
         internal VariableAddress Convert() => new VariableAddress(Value);
     }
 

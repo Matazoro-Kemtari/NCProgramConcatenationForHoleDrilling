@@ -1,6 +1,7 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.ReadSubNCProgramApplication
 {
@@ -26,7 +27,7 @@ namespace Wada.ReadSubNCProgramApplication
             var fileName = Path.GetFileNameWithoutExtension(path);
             // サブプログラムを読み込む
             using StreamReader reader = _streamReaderOpener.Open(path);
-            return await _ncProgramRepository.ReadAllAsync(reader, fileName);
+            return await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
         }
     }
 }

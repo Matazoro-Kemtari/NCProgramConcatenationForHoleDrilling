@@ -26,6 +26,7 @@ using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
+using Wada.UseCase.DataClass;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
@@ -39,9 +40,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly IReadMainNCProgramParametersUseCase _readMainNCProgramParametersUseCase;
         private readonly IEditNCProgramUseCase _editNCProgramUseCase;
 
-        private Dictionary<string, NCProgramCode>? _mainProgramCodes = null;
+        private IEnumerable<MainNCProgramCodeDTO>? _mainProgramCodes = null;
 
-        private MainNCProgramParametersDTO? _mainNCProgramParametersDTO = null;
+        private MainNCProgramParametersAttempt? _mainNCProgramParameters = null;
 
         public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase)
         {
@@ -148,8 +149,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             {
                 try
                 {
-                    var ncCodes = await _readMainNCProgramUseCase.ExecuteAsync();
-                    _mainProgramCodes = ncCodes.ToDictionary(x => x.ID, x => x.NCProgramCode);
+                    _mainProgramCodes = await _readMainNCProgramUseCase.ExecuteAsync();
                 }
                 catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
                 {
@@ -173,7 +173,12 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             {
                 try
                 {
-                    _mainNCProgramParametersDTO = await _readMainNCProgramParametersUseCase.ExecuteAsync();
+                    var _dto = await _readMainNCProgramParametersUseCase.ExecuteAsync();
+                    _mainNCProgramParameters = _dto != null
+                    ? _dto.Convert()
+                    : throw new NCProgramConcatenationForHoleDrillingException(
+                        "リストを読み込もうとしましたが、失敗しました\n" +
+                        "リストの内容を確認してください");
                 }
                 catch (NCProgramConcatenationServiceException ex)
                 {
@@ -195,7 +200,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Logging]
         private async Task MoveNextViewAsync()
         {
-            if (_mainProgramCodes == null)
+            if (_mainProgramCodes == null || _mainNCProgramParameters == null)
             {
                 var message = MessageNotificationViaLivet.MakeInformationMessage(
                     "設定ファイルの準備ができていません\n" +
@@ -208,11 +213,16 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             // メインプログラムを編集する
             var editedCodes = await _editNCProgramUseCase.ExecuteAsync(
                 new EditNCProgramPram(
-                    _mainProgramCodes,
-                    (EditNCProgramApplication.MachineToolTypeAttempt)MachineTool.Value,
-                    (EditNCProgramApplication.MaterialTypeAttempt)Material.Value,
-                    (EditNCProgramApplication.ReamerTypeAttempt)Reamer.Value,
-                    decimal.Parse(Thickness.Value)));
+                    (DirectedOperationTypeAttempt)_concatenation.FetchedOperationType.Value,
+                    _concatenation.SubProgramNumber.Value,
+                    _concatenation.TargetToolDiameter.Value,
+                    _mainProgramCodes.Where(x => x.MachineToolClassification == (MachineToolTypeAttempt)MachineTool.Value)
+                                     .Select(x => x.NCProgramCodeAttempts)
+                                     .First(),
+                    (MaterialTypeAttempt)Material.Value,
+                    (ReamerTypeAttempt)Reamer.Value,
+                    decimal.Parse(Thickness.Value),
+                    _mainNCProgramParameters));
 
             // 結合する
 
@@ -231,6 +241,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             {
                 // 読み込んだサブプログラムの作業指示を取得する
                 _concatenation.FetchedOperationType.Value = ncProcramCode.FetchOperationType();
+                _concatenation.TargetToolDiameter.Value = ncProcramCode.FetchTargetToolDiameter();
             }
             catch (NCProgramConcatenationServiceException ex)
             {
@@ -255,6 +266,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 _concatenation.Clear();
                 return;
             }
+
+            _concatenation.SubProgramNumber.Value = Path.GetFileNameWithoutExtension(path);
+
         }
 
         [Logging]

@@ -2,6 +2,7 @@
 using Moq;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.EditNCProgramApplication.Tests
 {
@@ -34,33 +35,13 @@ namespace Wada.EditNCProgramApplication.Tests
             _ = await editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
 
             // then
-            mock_crystal.Verify(x => x.RewriteByTool(
-                It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
-                It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
-                It.IsAny<decimal>(),
-                It.IsAny<decimal>(),
-                It.IsAny<MainProgramParametersRecord>()),
+            mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
                 reamer == ReamerTypeAttempt.Crystal && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_skill.Verify(x => x.RewriteByTool(
-                It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
-                It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
-                It.IsAny<decimal>(),
-                It.IsAny<decimal>(),
-                It.IsAny<MainProgramParametersRecord>()),
+            mock_skill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
                 reamer == ReamerTypeAttempt.Skill && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_tap.Verify(x => x.RewriteByTool(
-                It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
-                It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
-                It.IsAny<decimal>(),
-                It.IsAny<decimal>(),
-                It.IsAny<MainProgramParametersRecord>()),
+            mock_tap.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
                 directedOperation == DirectedOperationTypeAttempt.Tapping ? Times.Once() : Times.Never());
-            mock_drill.Verify(x => x.RewriteByTool(
-                It.IsAny<Dictionary<NCProgramConcatenationService.ParameterRewriter.MainProgramType, NCProgramCode>>(),
-                It.IsAny<NCProgramConcatenationService.ParameterRewriter.MaterialType>(),
-                It.IsAny<decimal>(),
-                It.IsAny<decimal>(),
-                It.IsAny<MainProgramParametersRecord>()),
+            mock_drill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
                 directedOperation == DirectedOperationTypeAttempt.Drilling ? Times.Once() : Times.Never());
         }
     }
