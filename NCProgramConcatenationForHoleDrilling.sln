@@ -58,7 +58,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.CombineMainNCProgramAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.CombineMainNCProgramApplicationTests", "Wada.CombineMainNCProgramApplicationTests\Wada.CombineMainNCProgramApplicationTests.csproj", "{F9B98D5B-A185-4EF4-B55A-3A614DCA4686}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.StoreNCProgramCodeApplication", "Wada.StoreNCProgramCodeApplication\Wada.StoreNCProgramCodeApplication.csproj", "{74633620-388C-4573-B6D8-AE32D5AE957D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNCProgramCodeApplication", "Wada.StoreNCProgramCodeApplication\Wada.StoreNCProgramCodeApplication.csproj", "{74633620-388C-4573-B6D8-AE32D5AE957D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.StoreNCProgramCodeApplicationTests", "Wada.StoreNCProgramCodeApplicationTests\Wada.StoreNCProgramCodeApplicationTests.csproj", "{9D663703-E241-4158-865F-C584749A495D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -158,6 +160,10 @@ Global
 		{74633620-388C-4573-B6D8-AE32D5AE957D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74633620-388C-4573-B6D8-AE32D5AE957D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74633620-388C-4573-B6D8-AE32D5AE957D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D663703-E241-4158-865F-C584749A495D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D663703-E241-4158-865F-C584749A495D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -185,6 +191,7 @@ Global
 		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{F9B98D5B-A185-4EF4-B55A-3A614DCA4686} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{74633620-388C-4573-B6D8-AE32D5AE957D} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{9D663703-E241-4158-865F-C584749A495D} = {D3D9615A-1602-44DB-883B-5D520011579A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}
