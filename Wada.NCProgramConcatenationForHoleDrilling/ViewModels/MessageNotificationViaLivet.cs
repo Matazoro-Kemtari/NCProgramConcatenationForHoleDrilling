@@ -1,4 +1,5 @@
 ﻿using Livet.Messaging;
+using Livet.Messaging.IO;
 using System.Windows;
 using Wada.AOP.Logging;
 
@@ -22,5 +23,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         public static ConfirmationMessage MakeQuestionMessage(string message, string title = "穴加工用結合ソフト") => new(
             message, title, MessageBoxImage.Question, "Confirm")
         { Button = MessageBoxButton.YesNo };
+
+        [Logging]
+        public static SavingFileSelectionMessage MakeSaveFileDialog() => new("SaveFiling");
     }
 }

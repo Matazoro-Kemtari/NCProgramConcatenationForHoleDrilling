@@ -15,11 +15,12 @@
              xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
              FontSize="16">
     <i:Interaction.Triggers>
-        <l:InteractionMessageTrigger MessageKey="Info" Messenger="{Binding Messenger}">
-            <l:InformationDialogInteractionMessageAction/>
-        </l:InteractionMessageTrigger>
-        <l:InteractionMessageTrigger MessageKey="Confirm" Messenger="{Binding Messenger}">
-            <l:ConfirmationDialogInteractionMessageAction/>
+        <l:InteractionMessageTrigger MessageKey="SaveFiling" Messenger="{Binding Messenger}">
+            <l:SaveFileDialogInteractionMessageAction>
+                <l:DirectInteractionMessage CallbackMethodTarget="{Binding}" CallbackMethodName="SaveDialogClosed">
+                    <l:SavingFileSelectionMessage Filter="NCファイル|*"/>
+                </l:DirectInteractionMessage>
+            </l:SaveFileDialogInteractionMessageAction>
         </l:InteractionMessageTrigger>
     </i:Interaction.Triggers>
 

@@ -1,16 +1,16 @@
-﻿using Prism.Commands;
+﻿using Livet.Messaging;
+using Livet.Messaging.IO;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Regions;
-using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
-using System.Linq;
 using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
-using Wada.UseCase.DataClass;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
@@ -26,9 +26,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 .AddTo(Disposables);
 
             ExecCommand = new ReactiveCommand()
-                .WithSubscribe(() =>
-                    // ダイアログクローズイベントをキック
-                    RequestClose?.Invoke(new DialogResult(ButtonResult.OK)))
+                .WithSubscribe(() => SaveNCProgramCodeAsync())
                 .AddTo(Disposables);
 
             PreviousViewCommand = new DelegateCommand(
@@ -36,9 +34,23 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 () => _regionNavigationService?.Journal?.CanGoBack ?? false);
         }
 
-        public event Action<IDialogResult>? RequestClose;
-
         [Logging]
+        private async Task SaveNCProgramCodeAsync()
+        {
+            var message = MessageNotificationViaLivet.MakeSaveFileDialog();
+            Messenger.Raise(message);
+        }
+
+        public void SaveDialogClosed(SavingFileSelectionMessage message)
+        {
+            if (message.Response == null)
+                // キャンセル
+                return;
+
+            var savingFilePath = message.Response[0];
+            // TODO: 保存
+        }
+
         public void Destroy() => Disposables.Dispose();
 
         /// <summary>表示するViewを判別します</summary>
@@ -69,6 +81,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         /// Disposeが必要なReactivePropertyやReactiveCommandを集約させるための仕掛け
         /// </summary>
         private CompositeDisposable Disposables { get; } = new CompositeDisposable();
+
+        public InteractionMessenger Messenger { get; } = new InteractionMessenger();
 
         public ReactivePropertySlim<string> CombinedProgramSource { get; }
 
