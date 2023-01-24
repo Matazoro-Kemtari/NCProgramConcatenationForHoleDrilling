@@ -1,4 +1,5 @@
-﻿using Wada.AOP.Logging;
+﻿using System.Text;
+using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
@@ -18,6 +19,12 @@ namespace Wada.UseCase.DataClass
         string ProgramName,
         IEnumerable<NCBlockAttempt?> NCBlocks)
     {
+        public override string ToString()
+        {
+            var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
+            return $"%\n{ncBlocksString}\n%\n";
+        }
+
         public static NCProgramCodeAttempt Parse(NCProgramCode ncProgramCode) => new(
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
@@ -55,6 +62,21 @@ namespace Wada.UseCase.DataClass
 
     public record class NCBlockAttempt(IEnumerable<INCWordAttempt> NCWords, OptionalBlockSkipAttempt HasBlockSkip)
     {
+        public override string ToString()
+        {
+            StringBuilder buf = new();
+            if (HasBlockSkip != OptionalBlockSkipAttempt.None)
+            {
+                if (HasBlockSkip == OptionalBlockSkipAttempt.BDT1)
+                    buf.Append('/');
+                else
+                    buf.Append("/" + (int)HasBlockSkip);
+            }
+
+            NCWords.ToList().ForEach(x => buf.Append(x.ToString()));
+            return buf.ToString();
+        }
+
         public NCBlock? Convert() => new(NCWords.Select(x => x.Convert()), (OptionalBlockSkip)HasBlockSkip);
 
         public static NCBlockAttempt Parse(NCBlock ncBlock)
@@ -124,6 +146,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="Comment"></param>
     public record class NCCommentAttempt(string Comment) : INCWordAttempt
     {
+        public override string ToString() => $"({Comment})";
+        
         public static NCCommentAttempt Parse(NCComment ncComment) => new(ncComment.Comment);
 
         public INCWord Convert() => new NCComment(Comment);
@@ -136,6 +160,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="ValueData"></param>
     public record class NCWordAttempt(AddressAttempt Address, IValueDataAttempt ValueData) : INCWordAttempt
     {
+        public override string ToString() => Address.ToString() + ValueData.ToString();
+
         public static NCWordAttempt Parse(NCWord ncWord)
         {
             IValueDataAttempt valueDataAttempt;
@@ -168,6 +194,8 @@ namespace Wada.UseCase.DataClass
     /// </summary>
     public record class AddressAttempt(char Value)
     {
+        public override string ToString() => Value.ToString();
+
         public static AddressAttempt Parse(Address address) => new AddressAttempt(address.Value);
 
         internal Address Convert() => new Address(Value);
@@ -193,6 +221,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="Value"></param>
     public record class NumericalValueAttempt(string Value) : IValueDataAttempt
     {
+        public override string ToString() => Value;
+
         [Logging]
         private static decimal ConvertNumber(string value)
         {
@@ -227,6 +257,8 @@ namespace Wada.UseCase.DataClass
     /// /// <param name="Value"></param>
     public record class CoordinateValueAttempt(string Value) : IValueDataAttempt
     {
+        public override string ToString() => Value;
+
         [Logging]
         private static decimal ConvertNumber(string value)
         {
@@ -263,6 +295,8 @@ namespace Wada.UseCase.DataClass
     /// <param name="ValueData"></param>
     public record class NCVariableAttempt(VariableAddressAttempt VariableAddress, IValueDataAttempt ValueData) : INCWordAttempt
     {
+        public override string ToString() => $"#{VariableAddress}={ValueData}";
+
         public static NCVariableAttempt Parse(NCVariable ncVariable)
         {
             IValueDataAttempt valueDataAttempt;

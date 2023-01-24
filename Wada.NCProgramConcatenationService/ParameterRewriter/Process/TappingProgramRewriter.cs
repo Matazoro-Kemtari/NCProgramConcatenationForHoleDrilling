@@ -37,6 +37,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
 
                             TappingProgramPrameter tappingProgramPrameter = (TappingProgramPrameter)rewritingParameter;
                             NCWord ncWord = (NCWord)y;
+                            if (!ncWord.ValueData.Indefinite)
+                                return y;
+
                             return ncWord.Address.Value switch
                             {
                                 'S' => RewriteSpin(material, tappingProgramPrameter, ncWord),
@@ -60,10 +63,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var feed = (NumericalValue)ncWord.ValueData;
+
             return ncWord with
             {
-                ValueData = RewriteFeedValueData(material, tappingProgramPrameter, feed)
+                ValueData = RewriteFeedValueData(material, tappingProgramPrameter)
             };
         }
 
@@ -72,8 +75,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var depth = (CoordinateValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteTappingDepthValueData(thickness, depth) };
+
+            return ncWord with { ValueData = RewriteTappingDepthValueData(thickness) };
         }
 
         [Logging]
@@ -81,12 +84,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var spin = (NumericalValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteSpinValueData(material, TappingParameter, spin) };
+
+            return ncWord with { ValueData = RewriteSpinValueData(material, TappingParameter) };
         }
 
         [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter, NumericalValue valueData)
+        private static IValueData RewriteFeedValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter)
         {
             var feedValue = material switch
             {
@@ -94,17 +97,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => tappingProgramPrameter.FeedForIron.ToString(),
                 _ => throw new AggregateException(nameof(material)),
             };
-            return valueData with { Value = feedValue };
+            return new NumericalValue(feedValue);
         }
 
         [Logging]
-        private static IValueData RewriteTappingDepthValueData(decimal thickness, CoordinateValue valueData)
+        private static IValueData RewriteTappingDepthValueData(decimal thickness)
         {
-            return valueData with { Value = Convert.ToString(-(thickness + 5m)) };
+            return new CoordinateValue(Convert.ToString(-(thickness + 5m)));
         }
 
         [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter)
         {
             var spinValue = material switch
             {
@@ -112,7 +115,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => tappingProgramPrameter.SpinForIron.ToString(),
                 _ => throw new AggregateException(nameof(material)),
             };
-            return valueData with { Value = spinValue };
+            return new NumericalValue(spinValue);
         }
     }
 }

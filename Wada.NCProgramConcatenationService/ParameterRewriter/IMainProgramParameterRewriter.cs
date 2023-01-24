@@ -9,9 +9,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <summary>
         /// メインプログラムのパラメータを書き換える
         /// </summary>
-        /// <param name="RewriteByToolRecord"></param>
+        /// <param name="rewriteByToolRecord"></param>
         /// <returns></returns>
-        IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord RewriteByToolRecord);
+        IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord);
     }
 
     /// <summary>

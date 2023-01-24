@@ -9,49 +9,50 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     public class TappingParameterRewriter : IMainProgramParameterRewriter
     {
         [Logging]
-        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord RewriteByToolRecord)
+        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
-            if (RewriteByToolRecord.Material == MaterialType.Undefined)
+            if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
 
             // タップのパラメータを受け取る
-            var tappingParameters = RewriteByToolRecord.TapParameters;
+            var tappingParameters = rewriteByToolRecord.TapParameters;
 
             // ドリルのパラメータを受け取る
-            var drillingParameters = RewriteByToolRecord.DrillingPrameters;
+            var drillingParameters = rewriteByToolRecord.DrillingPrameters;
 
             // メインプログラムを工程ごとに取り出す
             List<NCProgramCode> ncPrograms = new();
-            foreach (var rewritableCode in RewriteByToolRecord.RewritableCodes)
+            foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
                 TappingProgramPrameter tappingParameter;
                 try
                 {
                     tappingParameter = tappingParameters
-                        .First(x => x.TargetToolDiameter == RewriteByToolRecord.TargetToolDiameter);
+                        .First(x => x.TargetToolDiameter == rewriteByToolRecord.TargetToolDiameter);
                 }
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"タップ径 {RewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
+                        $"タップ径 {rewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
                 }
 
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, tappingParameter));
+                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter));
                         break;
                     case NCProgramType.Drilling:
-                        ncPrograms.Add(RewriteCNCProgramForDrilling(rewritableCode, RewriteByToolRecord.Material, RewriteByToolRecord.Thickness, drillingParameters, tappingParameter));
+                        ncPrograms.Add(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, tappingParameter));
                         break;
                     case NCProgramType.Chamfering:
-                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, tappingParameter));
+                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter));
                         break;
                     case NCProgramType.Tapping:
-                        ncPrograms.Add(TappingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, RewriteByToolRecord.Thickness, tappingParameter));
+                        ncPrograms.Add(TappingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, tappingParameter));
                         break;
                     default:
-                        throw new NotImplementedException();
+                        // 何もしない
+                        break;
                 }
             }
             return ncPrograms;
