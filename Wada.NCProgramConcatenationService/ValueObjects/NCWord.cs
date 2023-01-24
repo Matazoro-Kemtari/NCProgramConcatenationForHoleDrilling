@@ -266,6 +266,10 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         /// <summary>
         /// サブプログラム
         /// </summary>
-        SubProgram = int.MaxValue,
+        SubProgram = int.MaxValue - 1,
+        /// <summary>
+        /// 結合後メインプログラム
+        /// </summary>
+        CombinedProgram = int.MaxValue,
     }
 }

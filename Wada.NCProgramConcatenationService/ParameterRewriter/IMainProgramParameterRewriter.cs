@@ -1,6 +1,5 @@
 ﻿using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.ParameterRewriter
 {

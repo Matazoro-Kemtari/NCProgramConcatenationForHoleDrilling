@@ -54,6 +54,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.EditNCProgramApplicati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.UseCase.DataClass", "Wada.UseCase.DataClass\Wada.UseCase.DataClass.csproj", "{74A8A3D3-19D0-408F-AA0A-2000D3F5DFD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.CombineMainNCProgramApplication", "Wada.CombineMainNCProgramApplication\Wada.CombineMainNCProgramApplication.csproj", "{A1DE181D-C360-4928-9E5A-7CBB2B5717AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +142,10 @@ Global
 		{74A8A3D3-19D0-408F-AA0A-2000D3F5DFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74A8A3D3-19D0-408F-AA0A-2000D3F5DFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74A8A3D3-19D0-408F-AA0A-2000D3F5DFD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +170,7 @@ Global
 		{8191BE41-90B6-4093-AE45-50AE3E940D9C} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{433EE816-AB16-4FAA-B37C-3C28B385BA67} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{74A8A3D3-19D0-408F-AA0A-2000D3F5DFD8} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{A1DE181D-C360-4928-9E5A-7CBB2B5717AE} = {D3D9615A-1602-44DB-883B-5D520011579A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}
