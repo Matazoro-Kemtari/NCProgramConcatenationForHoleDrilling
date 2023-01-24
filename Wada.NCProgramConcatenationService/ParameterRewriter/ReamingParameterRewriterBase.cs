@@ -65,53 +65,54 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         }
 
         [Logging]
-        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord RewriteByToolRecord)
+        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
-            if (RewriteByToolRecord.Material == MaterialType.Undefined)
+            if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
 
             // _parameterTypeリーマのパラメータを受け取る
             IEnumerable<ReamingProgramPrameter> reamingParameters;
             if (_parameterType == ParameterType.CrystalReamerParameter)
-                reamingParameters = RewriteByToolRecord.CrystalReamerParameters;
+                reamingParameters = rewriteByToolRecord.CrystalReamerParameters;
             else
-                reamingParameters = RewriteByToolRecord.SkillReamerParameters;
+                reamingParameters = rewriteByToolRecord.SkillReamerParameters;
 
             // ドリルのパラメータを受け取る
-            var drillingParameters = RewriteByToolRecord.DrillingPrameters;
+            var drillingParameters = rewriteByToolRecord.DrillingPrameters;
 
             // メインプログラムを工程ごとに取り出す
             List<NCProgramCode> rewritedNCPrograms = new();
-            foreach (var rewritableCode in RewriteByToolRecord.RewritableCodes)
+            foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
                 ReamingProgramPrameter reamingParameter;
                 try
                 {
-                    reamingParameter = reamingParameters.First(x => x.TargetToolDiameter == RewriteByToolRecord.TargetToolDiameter);
+                    reamingParameter = reamingParameters.First(x => x.TargetToolDiameter == rewriteByToolRecord.TargetToolDiameter);
                 }
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"リーマ径 {RewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
+                        $"リーマ径 {rewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
                 }
 
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, reamingParameter));
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter));
                         break;
                     case NCProgramType.Drilling:
-                        rewritedNCPrograms.AddRange(RewriteCNCProgramForDrilling(rewritableCode, RewriteByToolRecord.Material, RewriteByToolRecord.Thickness, drillingParameters, reamingParameter));
+                        rewritedNCPrograms.AddRange(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, reamingParameter));
                         break;
                     case NCProgramType.Chamfering:
                         if (reamingParameter.ChamferingDepth != null)
-                            rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, reamingParameter));
+                            rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter));
                         break;
                     case NCProgramType.Reaming:
-                        rewritedNCPrograms.Add(ReamingProgramRewriter.Rewrite(rewritableCode, RewriteByToolRecord.Material, _reamerType, RewriteByToolRecord.Thickness, reamingParameter));
+                        rewritedNCPrograms.Add(ReamingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, _reamerType, rewriteByToolRecord.Thickness, reamingParameter));
                         break;
                     default:
-                        throw new NotImplementedException();
+                        // 何もしない
+                        break;
                 }
             }
             return rewritedNCPrograms;

@@ -35,6 +35,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
     {
         private readonly ConcatenationPageModel _concatenation = new();
         private readonly IRegionNavigationService _regionNavigationService;
+        private readonly IRegionManager _regionManager;
         private readonly IDialogService _dialogService;
         private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
@@ -46,9 +47,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         private MainNCProgramParametersAttempt? _mainNCProgramParameters = null;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IRegionManager regionManager, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
+            _regionManager = regionManager;
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
@@ -229,6 +231,13 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
             // 結合する
             var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes);
+
+            // 画面遷移
+            var navigationParams = new NavigationParameters
+            {
+                { nameof(combinedCode), combinedCode.NCProgramCode.ToString() }
+            };
+            _regionManager.RequestNavigate("ContentRegion", nameof(PreviewPage), navigationParams);
         }
 
         [Logging]
@@ -297,6 +306,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 dragFileList.FirstOrDefault(x => Path.GetExtension(x) == string.Empty) ?? string.Empty;
         }
 
+        [Logging]
         public void Destroy() => Disposables.Dispose();
 
         /// <summary>

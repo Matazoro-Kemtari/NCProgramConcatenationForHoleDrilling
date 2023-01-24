@@ -37,6 +37,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 return y;
 
                             NCWord ncWord = (NCWord)y;
+                            if (!ncWord.ValueData.Indefinite)
+                                return y;
+
                             return ncWord.Address.Value switch
                             {
                                 'S' => RewriteSpin(material, ncWord),
@@ -59,8 +62,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var depth = (CoordinateValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteChamferingDepthValueData(chamferDepth, depth) };
+
+            return ncWord with { ValueData = RewriteChamferingDepthValueData(chamferDepth) };
         }
 
         [Logging]
@@ -68,18 +71,18 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var spin = (NumericalValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteSpinValueData(material, spin) };
+            
+            return ncWord with { ValueData = RewriteSpinValueData(material) };
         }
 
         [Logging]
-        private static IValueData RewriteChamferingDepthValueData(decimal chamferDepth, CoordinateValue valueData)
+        private static IValueData RewriteChamferingDepthValueData(decimal chamferDepth)
         {
-            return valueData with { Value = Convert.ToString(chamferDepth) };
+            return new CoordinateValue(Convert.ToString(chamferDepth));
         }
 
         [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material)
         {
             string spinValue = material switch
             {
@@ -87,7 +90,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => "1100",
                 _ => throw new AggregateException(nameof(material)),
             };
-            return valueData with { Value = spinValue };
+            return new NumericalValue(spinValue);
         }
     }
 }

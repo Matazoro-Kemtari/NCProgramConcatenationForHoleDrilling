@@ -38,6 +38,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 return y;
 
                             NCWord ncWord = (NCWord)y;
+                            if (!ncWord.ValueData.Indefinite)
+                                return y;
+
                             return ncWord.Address.Value switch
                             {
                                 'S' => RewriteSpin(material, reamer, rewritingParameter.TargetToolDiameter, ncWord),
@@ -61,12 +64,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var spin = new NumericalValue("*");
-            var spinValue = RewriteSpinValueData(material, reamer, diameter, spin);
-            var feed = (NumericalValue)ncWord.ValueData;
+            
+            var spinValue = RewriteSpinValueData(material, reamer, diameter);
+
             return ncWord with
             {
-                ValueData = RewriteFeedValueData(material, reamer, spinValue.Number, feed)
+                ValueData = RewriteFeedValueData(material, reamer, spinValue.Number)
             };
         }
 
@@ -75,8 +78,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var depth = (CoordinateValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteReamingDepthValueData(thickness, depth) };
+
+            return ncWord with { ValueData = RewriteReamingDepthValueData(thickness) };
         }
 
         [Logging]
@@ -84,12 +87,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var spin = (NumericalValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteSpinValueData(material, reamer, diameter, spin) };
+            
+            return ncWord with { ValueData = RewriteSpinValueData(material, reamer, diameter) };
         }
 
         [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material, ReamerType reamer, decimal spin, NumericalValue valueData)
+        private static IValueData RewriteFeedValueData(MaterialType material, ReamerType reamer, decimal spin)
         {
             decimal figures = material switch
             {
@@ -108,17 +111,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 _ => throw new AggregateException(nameof(material)),
             };
             var feedValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
-            return valueData with { Value = feedValue };
+            return new NumericalValue(feedValue);
         }
 
         [Logging]
-        private static IValueData RewriteReamingDepthValueData(decimal thickness, CoordinateValue valueData)
+        private static IValueData RewriteReamingDepthValueData(decimal thickness)
         {
-            return valueData with { Value = Convert.ToString(-(thickness + 5m)) };
+            return new CoordinateValue(Convert.ToString(-(thickness + 5m)));
         }
 
         [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, ReamerType reamer, decimal diameter, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material, ReamerType reamer, decimal diameter)
         {
             decimal figures = material switch
             {
@@ -137,7 +140,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 _ => throw new AggregateException(nameof(material)),
             };
             var spinValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
-            return valueData with { Value = spinValue };
+            return new NumericalValue(spinValue);
         }
 
         /// <summary>

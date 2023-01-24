@@ -34,6 +34,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                     return y;
 
                                 NCWord ncWord = (NCWord)y;
+                                if (!ncWord.ValueData.Indefinite)
+                                    return y;
+
                                 return ncWord.Address.Value switch
                                 {
                                     'S' => RewriteSpin(material, ncWord),
@@ -57,8 +60,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var feed = (NumericalValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteFeedValueData(material, feed) };
+            
+            return ncWord with { ValueData = RewriteFeedValueData(material) };
         }
 
         [Logging]
@@ -66,8 +69,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var depth = (CoordinateValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteCenterDrillDepthValueData(centerDrillDepth, depth) };
+
+            return ncWord with { ValueData = RewriteCenterDrillDepthValueData(centerDrillDepth) };
         }
 
         [Logging]
@@ -75,12 +78,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            var spin = (NumericalValue)ncWord.ValueData;
-            return ncWord with { ValueData = RewriteSpinValueData(material, spin) };
+            
+            return ncWord with { ValueData = RewriteSpinValueData(material) };
         }
 
         [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material, NumericalValue valueData)
+        private static IValueData RewriteFeedValueData(MaterialType material)
         {
             string feedValue = material switch
             {
@@ -88,17 +91,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => "100",
                 _ => throw new AggregateException(nameof(material)),
             };
-            return valueData with { Value = feedValue };
+            return new NumericalValue(feedValue);
         }
 
         [Logging]
-        private static IValueData RewriteCenterDrillDepthValueData(decimal centerDrillDepth, CoordinateValue valueData)
+        private static IValueData RewriteCenterDrillDepthValueData(decimal centerDrillDepth)
         {
-            return valueData with { Value = Convert.ToString(centerDrillDepth) };
+            return new CoordinateValue(Convert.ToString(centerDrillDepth));
         }
 
         [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, NumericalValue valueData)
+        private static IValueData RewriteSpinValueData(MaterialType material)
         {
             string spinValue = material switch
             {
@@ -106,7 +109,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => "1500",
                 _ => throw new AggregateException(nameof(material)),
             };
-            return valueData with { Value = spinValue };
+            return new NumericalValue(spinValue);
         }
     }
 }

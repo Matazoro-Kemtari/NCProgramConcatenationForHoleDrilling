@@ -15,7 +15,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            // ViewをDIコンテナに登録する
             containerRegistry.RegisterDialog<NotationContentConfirmationDialog>();
+            containerRegistry.RegisterForNavigation<PreviewPage>();
         }
     }
 }
