@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNCProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNCProgramParametersApplication.csproj" />
     <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.StoreNCProgramCodeApplication\Wada.StoreNCProgramCodeApplication.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update=".env">
