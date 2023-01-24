@@ -2,10 +2,12 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
+using Wada.CombineMainNCProgramApplication;
 using Wada.EditNCProgramApplication;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationForHoleDrilling;
 using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.MainProgramCombiner;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.NCProgramFile;
 using Wada.ReadMainNCProgramApplication;
@@ -42,7 +44,13 @@ namespace NCProgramConcatenationForHoleDrilling
             // メインプログラムの編集
             _ = containerRegistry.Register<CrystalReamingParameterRewriter>();
             _ = containerRegistry.Register<SkillReamingParameterRewriter>();
+            _ = containerRegistry.Register<TappingParameterRewriter>();
+            _ = containerRegistry.Register<DrillingParameterRewriter>();
             _ = containerRegistry.Register<IEditNCProgramUseCase, EditNCProgramUseCase>();
+
+            // メインプログラムの結合
+            _ = containerRegistry.Register<IMainProgramCombiner, MainProgramCombiner>();
+            _ = containerRegistry.Register<ICombineMainNCProgramUseCase, CombineMainNCProgramUseCase>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
