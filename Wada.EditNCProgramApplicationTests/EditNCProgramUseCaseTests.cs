@@ -14,7 +14,7 @@ namespace Wada.EditNCProgramApplication.Tests
         [DataRow(DirectedOperationTypeAttempt.Reaming, ReamerTypeAttempt.Crystal)]
         [DataRow(DirectedOperationTypeAttempt.Reaming, ReamerTypeAttempt.Skill)]
         [DataRow(DirectedOperationTypeAttempt.Drilling, ReamerTypeAttempt.Undefined)]
-        public async Task 正常系_ユースケースを実行するとリポジトリが実行されること(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
+        public async Task 正常系_ユースケースを実行するとドメインサービスが実行されること(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
             // given
             // when
