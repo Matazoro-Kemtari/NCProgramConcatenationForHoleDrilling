@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.UseCase.DataClass;
 
 namespace Wada.StoreNCProgramCodeApplication.Tests
@@ -20,11 +21,11 @@ namespace Wada.StoreNCProgramCodeApplication.Tests
                 new StoreNCProgramCodeUseCase(mock_writer.Object, mock_nc.Object);
             var path = "testfile";
             var ncProgram = TestNCProgramCodeAttemptFactory.Create();
-            _ = await useCase.ExecuteAsync(path, ncProgram);
+            await useCase.ExecuteAsync(path, ncProgram);
 
             // then
             mock_writer.Verify(x => x.Open(It.IsAny<string>(), It.IsAny<bool>()), Times.Once);
-            mock_nc.Verify(x => x.WriteAllAsync(It.IsAny<StreamWriter>()), Times.Once);
+            mock_nc.Verify(x => x.WriteAllAsync(It.IsAny<StreamWriter>(), It.IsAny<NCProgramCode>()), Times.Once);
         }
     }
 }

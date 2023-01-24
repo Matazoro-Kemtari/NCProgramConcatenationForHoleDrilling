@@ -37,12 +37,27 @@ namespace Wada.UseCase.DataClass
     public class TestNCProgramCodeAttemptFactory
     {
         public static NCProgramCodeAttempt Create(
-            string ID = "ABCD012345",
-            MainProgramTypeAttempt? MainProgramClassification = null,
+            string ID = "01GQK2ATZNJTVTGC6A0SD00JB6",
+            MainProgramTypeAttempt MainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
             string ProgramName = "O1234",
             IEnumerable<NCBlockAttempt?>? NCBlocks = null)
         {
+            NCBlocks ??= new List<NCBlockAttempt?>
+            {
+                TestNCBlockAttemptFactory.Create(
+                    ncWords:new List<INCWordAttempt>
+                    {
+                        TestNCCommentAttemptFactory.Create(),
+                    }),
+                TestNCBlockAttemptFactory.Create(),
+                null,
+            };
 
+            return new NCProgramCodeAttempt(
+                ID,
+                MainProgramClassification,
+                ProgramName,
+                NCBlocks);
         }
     }
 
@@ -163,6 +178,12 @@ namespace Wada.UseCase.DataClass
         public static NCCommentAttempt Parse(NCComment ncComment) => new(ncComment.Comment);
 
         public INCWord Convert() => new NCComment(Comment);
+    }
+
+    public class TestNCCommentAttemptFactory
+    {
+        public static NCCommentAttempt Create(string comment = "SAMPLE")
+            => new NCCommentAttempt(comment);
     }
 
     /// <summary>

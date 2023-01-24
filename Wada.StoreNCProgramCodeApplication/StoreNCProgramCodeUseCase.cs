@@ -19,9 +19,11 @@ namespace Wada.StoreNCProgramCodeApplication
             _ncProgramRepository = ncProgramRepository;
         }
 
-        public Task ExecuteAsync(string path, NCProgramCodeAttempt storableCode)
+        public async Task ExecuteAsync(string path, NCProgramCodeAttempt storableCode)
         {
-            throw new NotImplementedException();
+            // 結合プログラムを書き込む
+            using var writer = _streamWriterOpener.Open(path);
+            await _ncProgramRepository.WriteAllAsync(writer, storableCode.Convert());
         }
     }
 }

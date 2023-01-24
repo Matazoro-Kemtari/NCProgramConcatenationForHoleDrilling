@@ -7,6 +7,6 @@ namespace Wada.NCProgramConcatenationService
     {
         Task<NCProgramCode> ReadAllAsync(StreamReader reader, NCProgramType ncProgram, string programName);
         
-        Task WriteAllAsync(StreamWriter writer);
+        Task WriteAllAsync(StreamWriter writer, NCProgramCode ncProgramCode);
     }
 }
