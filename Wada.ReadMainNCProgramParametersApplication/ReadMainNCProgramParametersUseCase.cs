@@ -2,6 +2,7 @@
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.UseCase.DataClass;
 
 namespace Wada.ReadMainNCProgramParametersApplication
 {
@@ -10,7 +11,18 @@ namespace Wada.ReadMainNCProgramParametersApplication
         Task<MainNCProgramParametersDTO> ExecuteAsync();
     }
 
-    public record class MainNCProgramParametersDTO(IEnumerable<ReamingProgramPrameter> CrystalReamerParameters, IEnumerable<ReamingProgramPrameter> SkillReamerParameters, IEnumerable<TappingProgramPrameter> TapParameters, IEnumerable<DrillingProgramPrameter> DrillingPrameters);
+    public record class MainNCProgramParametersDTO(
+        IEnumerable<ReamingProgramPrameterAttempt> CrystalReamerParameters,
+        IEnumerable<ReamingProgramPrameterAttempt> SkillReamerParameters,
+        IEnumerable<TappingProgramPrameterAttempt> TapParameters,
+        IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters)
+    {
+        public MainNCProgramParametersAttempt Convert()
+            => new(CrystalReamerParameters,
+                   SkillReamerParameters,
+                   TapParameters,
+                   DrillingPrameters);
+    }
 
     public class ReadMainNCProgramParametersUseCase : IReadMainNCProgramParametersUseCase
     {
@@ -73,10 +85,10 @@ namespace Wada.ReadMainNCProgramParametersApplication
             IEnumerable<IMainProgramPrameter>[] parameters =
                 await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);
             return new MainNCProgramParametersDTO(
-                (IEnumerable<ReamingProgramPrameter>)parameters[0],
-                (IEnumerable<ReamingProgramPrameter>)parameters[1],
-                (IEnumerable<TappingProgramPrameter>)parameters[2],
-                (IEnumerable<DrillingProgramPrameter>)parameters[3]);
+                parameters[0].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
+                parameters[1].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
+                parameters[2].Select(x => TappingProgramPrameterAttempt.Parse((TappingProgramPrameter)x)),
+                parameters[3].Select(x => DrillingProgramPrameterAttempt.Parse((DrillingProgramPrameter)x)));
         }
     }
 }

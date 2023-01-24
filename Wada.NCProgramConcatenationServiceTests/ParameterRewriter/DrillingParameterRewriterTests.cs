@@ -6,25 +6,25 @@ using Wada.NCProgramConcatenationService.ValueObjects;
 namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 {
     [TestClass()]
-    public class TappingParameterRewriterTests
+    public class DrillingParameterRewriterTests
     {
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_センタードリルプログラムがタップパラメータで書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public void 正常系_センタードリルプログラムがドリルパラメータで書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            decimal expectedCenterDrillDepth = param.TapParameters
+            decimal expectedCenterDrillDepth = param.DrillingPrameters
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値");
@@ -54,11 +54,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
-
             void target()
             {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-                _ = tappingParameterRewriter.RewriteByTool(param);
+                IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+                _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
             // then
@@ -67,35 +66,34 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_リストに一致するタップ径が無いとき例外を返すこと()
+        public void 異常系_リストに一致するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
             decimal diameter = 3m;
             var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
-
             void target()
             {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-                _ = tappingParameterRewriter.RewriteByTool(param);
+                IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+                _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
-            Assert.AreEqual($"タップ径 {diameter}のリストがありません",
+            Assert.AreEqual($"ドリル径 {diameter}のリストがありません",
                 ex.Message);
         }
 
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_下穴プログラムがタップパラメータで書き換えられること(MaterialType material, double thickness)
+        public void 正常系_下穴プログラムがドリルパラメータで書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
-            var tappingParameterRewriter = new TappingParameterRewriter();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            var param = TestRewriteByToolRecordFactory.Create();
+            var drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             var rewritedSpin = NCWordから値を取得する(actual, 'S');
@@ -106,11 +104,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             decimal rewritedDepth = NCWordから値を取得する(actual, 'Z');
             decimal expectedDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => -x.DrillTipLength - (decimal)thickness);
-            Assert.AreEqual(expectedDepth, rewritedDepth, "下穴1のZ");
+            Assert.AreEqual(expectedDepth, rewritedDepth, "下穴のZ");
 
             decimal rewritedCutDepth = NCWordから値を取得する(actual, 'Q');
             decimal expectedCutDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.CutDepth);
-            Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴1の切込");
+            Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴の切込");
 
             decimal rewritedFeed = NCWordから値を取得する(actual, 'F');
             decimal expectedFeed = material == MaterialType.Aluminum
@@ -126,87 +124,26 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .FirstOrDefault();
         }
 
-        [TestMethod]
-        public void 異常系_下穴に該当するドリル径が無いとき例外を返すこと()
-        {
-            // given
-            // when
-            decimal reamerDiameter = 5.5m;
-            var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
-                crystalReamerParameters: new List<ReamingProgramPrameter>
-                {
-                    TestReamingProgramPrameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
-                },
-                drillingPrameters: new List<DrillingProgramPrameter>
-                {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
-                });
-
-            void target()
-            {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-                _ = tappingParameterRewriter.RewriteByTool(param);
-            }
-
-            // then
-            var fastDrill = param.TapParameters
-                .Select(x => x.PreparedHoleDiameter)
-                .FirstOrDefault();
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
-            Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
-                ex.Message);
-        }
-
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_面取りプログラムがタップパラメータで書き換えられること(MaterialType material, int expectedSpin)
+        public void 正常系_面取りプログラムがドリルパラメータで書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            decimal? expectedChamferingDepth = param.TapParameters
+            decimal? expectedChamferingDepth = param.DrillingPrameters
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
-            Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "Z値");
-        }
-
-        [DataTestMethod()]
-        [DataRow(MaterialType.Aluminum, 10.5)]
-        [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_タッププログラムがタップパラメータで書き換えられること(MaterialType material, double expectedThickness)
-        {
-            // given
-            // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material, thickness: (decimal)expectedThickness);
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
-
-            // then
-            decimal rewritedSpin = NCWordから値を取得する(actual, 'S');
-            decimal expectedSpin = param.TapParameters
-                .Select(x => material == MaterialType.Aluminum ? x.SpinForAluminum : x.SpinForIron)
-                .FirstOrDefault();
-            Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
-
-            var rewritedDepth = NCWordから値を取得する(actual, 'Z');
-            Assert.AreEqual((decimal)-expectedThickness - 5m, rewritedDepth, "Z値");
-
-            decimal rewritedFeed = NCWordから値を取得する(actual, 'F');
-            decimal expectedFeed = param.TapParameters
-                .Select(x => material == MaterialType.Aluminum ? x.FeedForAluminum : x.FeedForIron)
-                .FirstOrDefault();
-            Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
+            Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "面取り深さ");
         }
     }
 }

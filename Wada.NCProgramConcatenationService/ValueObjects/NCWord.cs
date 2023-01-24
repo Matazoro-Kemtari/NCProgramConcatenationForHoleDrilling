@@ -239,4 +239,33 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     {
         public static VariableAddress Create(uint value = 1) => new(value);
     }
+
+    public enum NCProgramType
+    {
+        /// <summary>
+        /// センタードリル
+        /// </summary>
+        CenterDrilling,
+        /// <summary>
+        /// ドリル
+        /// </summary>
+        Drilling,
+        /// <summary>
+        /// 面取り
+        /// </summary>
+        Chamfering,
+        /// <summary>
+        /// リーマ
+        /// </summary>
+        Reaming,
+        /// <summary>
+        /// タップ
+        /// </summary>
+        Tapping,
+
+        /// <summary>
+        /// サブプログラム
+        /// </summary>
+        SubProgram = int.MaxValue,
+    }
 }

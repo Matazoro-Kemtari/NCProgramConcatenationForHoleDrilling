@@ -1,14 +1,24 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.NCProgramAggregation
 {
     public record class NCProgramCode
     {
-        public NCProgramCode(string programName, IEnumerable<NCBlock?> ncBlocks)
+        public NCProgramCode(NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
         {
             ID = Ulid.NewUlid();
+            MainProgramClassification = mainProgramClassification;
+            ProgramName = programName;
+            NCBlocks = ncBlocks;
+        }
+
+        private NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
+        {
+            ID = id;
+            MainProgramClassification = mainProgramClassification;
             ProgramName = programName;
             NCBlocks = ncBlocks;
         }
@@ -25,6 +35,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         /// <exception cref="NotImplementedException"></exception>
+        [Logging]
         public DirectedOperationType FetchOperationType()
         {
             // 作業指示を探す
@@ -35,11 +46,11 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 .Select(w =>
                 {
                     DirectedOperationType responce;
-                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d{1,2}"))
+                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
                         responce = DirectedOperationType.Tapping;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?[HG]\d+"))
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?[HG]\d+"))
                         responce = DirectedOperationType.Reaming;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d{1,2}(\.?\d{1,2})?DR"))
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?DR"))
                         responce = DirectedOperationType.Drilling;
                     else
                         responce = DirectedOperationType.Undetected;
@@ -67,7 +78,65 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             return hasOperationType.First(x => x != DirectedOperationType.Undetected);
         }
 
+        [Logging]
+        public decimal FetchTargetToolDiameter()
+        {
+            // 作業指示を探す
+            IEnumerable<decimal> hasOperationType = NCBlocks
+                .Where(x => x != null)
+                .Select(block => block!.NCWords
+                .Where(w => w.GetType() == typeof(NCComment))
+                .Select(w =>
+                {
+                    var tapMatch = Regex.Match(w.ToString()!, @"(?<=-M)\d+(\.\d+)?");
+                    var reamerMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=[HG]\d+)");
+                    var drillMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=DR)");
+
+                    decimal diameter;
+                    if (tapMatch.Success)
+                        diameter = decimal.Parse(tapMatch.Value);
+                    else if (reamerMatch.Success)
+                        diameter = decimal.Parse(reamerMatch.Value);
+                    else if (drillMatch.Success)
+                        diameter = decimal.Parse(drillMatch.Value);
+                    else
+                        diameter = decimal.MinValue;
+
+                    return diameter;
+                }))
+                .SelectMany(x => x);
+
+            if (!hasOperationType.Any(x => x != decimal.MinValue))
+            {
+                // 有効な指示がない場合
+                string msg = "作業指示が見つかりません\n" +
+                    "サブプログラムを確認して、作業指示を1件追加してください";
+                throw new NCProgramConcatenationServiceException(msg);
+            }
+
+            if (hasOperationType.Count(x => x != decimal.MinValue) > 1)
+            {
+                // 有効な指示が複数ある場合
+                string msg = $"作業指示が{hasOperationType.Count(x => x != decimal.MinValue)}件あります\n" +
+                    $"サブプログラムを確認して、作業指示は1件にしてください";
+                throw new NCProgramConcatenationServiceException(msg);
+            }
+
+            return hasOperationType.First(x => x != decimal.MinValue);
+        }
+
+        public static NCProgramCode ReConstruct(
+            string id,
+            NCProgramType mainProgramClassification,
+            string programName,
+            IEnumerable<NCBlock?> ncBlocks) => new(Ulid.Parse(id), mainProgramClassification, programName, ncBlocks);
+
         public Ulid ID { get; }
+
+        /// <summary>
+        /// メインプログラム種別
+        /// </summary>
+        public NCProgramType MainProgramClassification { get; init; }
 
         /// <summary>
         /// プログラム番号
@@ -103,6 +172,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
     public class TestNCProgramCodeFactory
     {
         public static NCProgramCode Create(
+            NCProgramType mainProgramType = NCProgramType.Reaming,
             string programName = "O0001",
             IEnumerable<NCBlock?>? ncBlocks = default)
         {
@@ -125,7 +195,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                     }),
                 TestNCBlockFactory.Create(),
             };
-            return new(programName, ncBlocks);
+            return new(mainProgramType, programName, ncBlocks);
         }
     }
 
