@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
+﻿using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.MainProgramCombiner
 {
@@ -16,7 +12,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
     {
         public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode)
         {
-            throw new NotImplementedException();
+            var combinedBlocks = combinableCode.Select(x => x.NCBlocks)
+                .SelectMany(x => x);
+            return new(
+                NCProgramType.CombinedProgram,
+                string.Join('>', combinableCode.Select(x => x.ProgramName)),
+                combinedBlocks);
         }
     }
 }
