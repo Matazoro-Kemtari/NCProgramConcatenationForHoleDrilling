@@ -16,6 +16,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
+using Wada.CombineMainNCProgramApplication;
 using Wada.EditNCProgramApplication;
 using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
@@ -39,12 +40,13 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
         private readonly IReadMainNCProgramParametersUseCase _readMainNCProgramParametersUseCase;
         private readonly IEditNCProgramUseCase _editNCProgramUseCase;
+        private readonly ICombineMainNCProgramUseCase _combineMainNCProgramUseCase;
 
         private IEnumerable<MainNCProgramCodeDTO>? _mainProgramCodes = null;
 
         private MainNCProgramParametersAttempt? _mainNCProgramParameters = null;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase)
+        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
         {
             _regionNavigationService = regionNavigationService;
             _dialogService = dialogService;
@@ -52,6 +54,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
             _readMainNCProgramParametersUseCase = readMainNCProgramParametersUseCase;
             _editNCProgramUseCase = editNCProgramUseCase;
+            _combineMainNCProgramUseCase = combineMainNCProgramUseCase;
 
             NCProgramFileName = _concatenation
                 .NCProgramFile
@@ -225,7 +228,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     _mainNCProgramParameters));
 
             // 結合する
-
+            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes);
         }
 
         [Logging]
