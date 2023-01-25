@@ -230,7 +230,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     _mainNCProgramParameters));
 
             // 結合する
-            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes);
+            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes.NCProgramCodes);
 
             // 画面遷移
             var navigationParams = new NavigationParameters

@@ -7,7 +7,7 @@ namespace Wada.EditNCProgramApplication
 {
     public interface IEditNCProgramUseCase
     {
-        Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram);
+        Task<EditNCProgramDTO> ExecuteAsync(EditNCProgramPram editNCProgramPram);
     }
 
     public class EditNCProgramUseCase : IEditNCProgramUseCase
@@ -30,7 +30,7 @@ namespace Wada.EditNCProgramApplication
         }
 
         [Logging]
-        public async Task<IEnumerable<NCProgramCode>> ExecuteAsync(EditNCProgramPram editNCProgramPram)
+        public async Task<EditNCProgramDTO> ExecuteAsync(EditNCProgramPram editNCProgramPram)
         {
             // EditNCProgramPramのValidateで不整合状態は確認済み
             IMainProgramParameterRewriter rewriter = editNCProgramPram.DirectedOperation switch
@@ -41,15 +41,18 @@ namespace Wada.EditNCProgramApplication
                 _ => throw new NotImplementedException(),
             };
 
-            return await Task.Run(() => rewriter.RewriteByTool(new(
-                editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
-                (MaterialType)editNCProgramPram.Material,
-                editNCProgramPram.Thickness,
-                editNCProgramPram.TargetToolDiameter,
-                editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()))));
+            return await Task.Run(
+                () => new EditNCProgramDTO(
+                    rewriter.RewriteByTool(
+                        new(editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
+                            (MaterialType)editNCProgramPram.Material,
+                            editNCProgramPram.Thickness,
+                            editNCProgramPram.TargetToolDiameter,
+                            editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
+                            editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
+                            editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
+                            editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert())))
+                    .Select(x => NCProgramCodeAttempt.Parse(x))));
         }
     }
 
@@ -67,7 +70,7 @@ namespace Wada.EditNCProgramApplication
         {
             if (directedOperation == DirectedOperationTypeAttempt.Reaming
                 && reamer == ReamerTypeAttempt.Undefined)
-                    throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
+                throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
 
             return reamer;
         }
@@ -138,6 +141,8 @@ namespace Wada.EditNCProgramApplication
                        mainNCProgramParameters);
         }
     }
+
+    public record class EditNCProgramDTO(IEnumerable<NCProgramCodeAttempt> NCProgramCodes);
 
     // TODO: 列挙型を移動するかどうか
     public enum DirectedOperationTypeAttempt

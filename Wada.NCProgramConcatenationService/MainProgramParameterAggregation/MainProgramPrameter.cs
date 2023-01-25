@@ -68,13 +68,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
 
     public class TestReamingProgramPrameterFactory
     {
-        // TODO: リストを見てデフォルト値を変更
         public static ReamingProgramPrameter Create(
-            string DiameterKey = "12.3",
+            string DiameterKey = "13.3",
             decimal PreparedHoleDiameter = 9.1m,
             decimal SecondPreparedHoleDiameter = 11.1m,
-            decimal CenterDrillDepth = 3.1m,
-            decimal? ChamferingDepth = 1.7m) => new(DiameterKey, PreparedHoleDiameter, SecondPreparedHoleDiameter, CenterDrillDepth, ChamferingDepth);
+            decimal CenterDrillDepth = -3.1m,
+            decimal? ChamferingDepth = -1.7m) => new(DiameterKey, PreparedHoleDiameter, SecondPreparedHoleDiameter, CenterDrillDepth, ChamferingDepth);
     }
 
     /// <summary>
@@ -101,7 +100,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         [Logging]
         private static decimal Validate(string value)
         {
-            var matchedDiameter = Regex.Match(value, @"(?<=M)\d+");
+            var matchedDiameter = Regex.Match(value, @"(?<=M)\d+(\.\d)?");
             if (!matchedDiameter.Success)
                 throw new NCProgramConcatenationServiceException(
                     "タップ径の値が読み取れません\n" +
@@ -123,10 +122,10 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     public class TestTappingProgramPrameterFactory
     {
         public static TappingProgramPrameter Create(
-            string DiameterKey = "M12.3",
+            string DiameterKey = "M13.3",
             decimal PreparedHoleDiameter = 11.1m,
-            decimal CenterDrillDepth = 3.1m,
-            decimal? ChamferingDepth = 1.7m,
+            decimal CenterDrillDepth = -3.1m,
+            decimal? ChamferingDepth = -1.7m,
             decimal SpinForAluminum = 700m,
             decimal FeedForAluminum = 300m,
             decimal SpinForIron = 700m,
@@ -167,12 +166,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
     public class TestDrillingProgramPrameterFactory
     {
         public static DrillingProgramPrameter Create(
-        string DiameterKey="12.3",
-        decimal CenterDrillDepth = 700m,
-        decimal CutDepth = 700m,
-        decimal SpinForAluminum = 700m,
-        decimal FeedForAluminum = 700m,
-        decimal SpinForIron = 700m,
-        decimal FeedForIron = 700m) => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+        string DiameterKey="13.3",
+        decimal CenterDrillDepth = -1.5m,
+        decimal CutDepth = 3.5m,
+        decimal SpinForAluminum = 740m,
+        decimal FeedForAluminum = 100m,
+        decimal SpinForIron = 490m,
+        decimal FeedForIron = 70m) => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
     }
 }

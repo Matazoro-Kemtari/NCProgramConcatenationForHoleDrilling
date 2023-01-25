@@ -76,8 +76,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             if (drillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
-            var hoge = DrillingProgramRewriter.Rewrite(rewritableCode, material, tappingParameter.PreparedHoleDiameter, thickness, drillingParameter);
-            return hoge;
+
+            return DrillingProgramRewriter.Rewrite(rewritableCode, material, tappingParameter.PreparedHoleDiameter, thickness, drillingParameter);
         }
     }
 }

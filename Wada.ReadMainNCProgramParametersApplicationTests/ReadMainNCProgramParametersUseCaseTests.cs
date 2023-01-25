@@ -3,6 +3,7 @@ using Moq;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.UseCase.DataClass;
 
 namespace Wada.ReadMainNCProgramParametersApplication.Tests
 {
@@ -34,9 +35,9 @@ namespace Wada.ReadMainNCProgramParametersApplication.Tests
             var actual = await useCase.ExecuteAsync();
 
             // then
-            Assert.IsInstanceOfType(actual.CrystalReamerParameters, typeof(IEnumerable<ReamingProgramPrameter>));
-            Assert.IsInstanceOfType(actual.SkillReamerParameters,typeof(IEnumerable<ReamingProgramPrameter>));
-            Assert.IsInstanceOfType(actual.TapParameters, typeof(IEnumerable<TappingProgramPrameter>));
+            Assert.IsInstanceOfType(actual.CrystalReamerParameters, typeof(IEnumerable<ReamingProgramPrameterAttempt>));
+            Assert.IsInstanceOfType(actual.SkillReamerParameters,typeof(IEnumerable<ReamingProgramPrameterAttempt>));
+            Assert.IsInstanceOfType(actual.TapParameters, typeof(IEnumerable<TappingProgramPrameterAttempt>));
             mock_stream.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(4));
             mock_reamer.Verify(x => x.ReadAll(It.IsAny<Stream>()), Times.Exactly(2));
             mock_tap.Verify(x => x.ReadAll(It.IsAny<Stream>()), Times.Once());
