@@ -23,7 +23,7 @@ namespace Wada.StoreNCProgramCodeApplication
         {
             // 結合プログラムを書き込む
             using var writer = _streamWriterOpener.Open(path);
-            await _ncProgramRepository.WriteAllAsync(writer, storableCode.Convert());
+            await _ncProgramRepository.WriteAllAsync(writer, storableCode.ToString());
         }
     }
 }

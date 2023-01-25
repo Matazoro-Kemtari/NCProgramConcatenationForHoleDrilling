@@ -54,6 +54,7 @@ namespace NCProgramConcatenationForHoleDrilling
             _ = containerRegistry.Register<ICombineMainNCProgramUseCase, CombineMainNCProgramUseCase>();
 
             // メインプログラムの保存
+            _ = containerRegistry.Register<IStreamWriterOpener, StreamWriterOpener>();
             _ = containerRegistry.Register<IStoreNCProgramCodeUseCase, StoreNCProgramCodeUseCase>();
         }
 

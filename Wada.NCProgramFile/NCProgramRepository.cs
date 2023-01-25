@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
@@ -102,6 +103,12 @@ namespace Wada.NCProgramFile
             }
 
             return hasBlockSkip;
+        }
+
+        public async Task WriteAllAsync(StreamWriter writer, string ncProgramCode)
+        {
+            await writer.WriteAsync(ncProgramCode);
+            await writer.FlushAsync();
         }
     }
 }
