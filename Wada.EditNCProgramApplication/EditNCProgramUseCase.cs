@@ -65,16 +65,9 @@ namespace Wada.EditNCProgramApplication
     {
         private static ReamerTypeAttempt Validate(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
-            if (directedOperation != DirectedOperationTypeAttempt.Reaming)
-            {
-                if (reamer != ReamerTypeAttempt.Undefined)
+            if (directedOperation == DirectedOperationTypeAttempt.Reaming
+                && reamer == ReamerTypeAttempt.Undefined)
                     throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
-
-                return reamer;
-            }
-
-            if (reamer == ReamerTypeAttempt.Undefined)
-                throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
 
             return reamer;
         }

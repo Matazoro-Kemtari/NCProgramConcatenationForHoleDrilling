@@ -9,7 +9,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     public class TappingParameterRewriter : IMainProgramParameterRewriter
     {
         [Logging]
-        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
+        public virtual IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
             if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
