@@ -13,6 +13,7 @@ using Wada.NCProgramFile;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
+using Wada.StoreNCProgramCodeApplication;
 
 namespace NCProgramConcatenationForHoleDrilling
 {
@@ -51,6 +52,10 @@ namespace NCProgramConcatenationForHoleDrilling
             // メインプログラムの結合
             _ = containerRegistry.Register<IMainProgramCombiner, MainProgramCombiner>();
             _ = containerRegistry.Register<ICombineMainNCProgramUseCase, CombineMainNCProgramUseCase>();
+
+            // メインプログラムの保存
+            _ = containerRegistry.Register<IStreamWriterOpener, StreamWriterOpener>();
+            _ = containerRegistry.Register<IStoreNCProgramCodeUseCase, StoreNCProgramCodeUseCase>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

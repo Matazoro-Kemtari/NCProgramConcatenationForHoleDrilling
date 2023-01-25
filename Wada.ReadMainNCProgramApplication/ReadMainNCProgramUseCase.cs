@@ -1,8 +1,5 @@
-﻿using NLog.LayoutRenderers;
-using System.Linq;
-using Wada.AOP.Logging;
+﻿using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 

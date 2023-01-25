@@ -9,8 +9,10 @@ using Reactive.Bindings.Extensions;
 using System;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using System.Windows;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
+using Wada.NCProgramConcatenationService;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
@@ -18,14 +20,19 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
     {
         private readonly PreviewPageModel _previewPageModel = new();
         private IRegionNavigationService? _regionNavigationService;
+        private readonly IStreamWriterOpener _streamWriterOpener;
+        private readonly INCProgramRepository _ncProgramRepository;
 
-        public PreviewPageViewModel()
+        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INCProgramRepository ncProgramRepository)
         {
+            _streamWriterOpener = streamWriterOpener;
+            _ncProgramRepository = ncProgramRepository;
+
             CombinedProgramSource = _previewPageModel
                 .CombinedProgramSource
                 .AddTo(Disposables);
 
-            ExecCommand = new ReactiveCommand()
+            ExecCommand = new AsyncReactiveCommand()
                 .WithSubscribe(() => SaveNCProgramCodeAsync())
                 .AddTo(Disposables);
 
@@ -38,17 +45,26 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         private async Task SaveNCProgramCodeAsync()
         {
             var message = MessageNotificationViaLivet.MakeSaveFileDialog();
-            Messenger.Raise(message);
+            await Messenger.RaiseAsync(message);
+
+            // アプリケーション終了
+            Application.Current.Shutdown();
         }
 
-        public void SaveDialogClosed(SavingFileSelectionMessage message)
+        /// <summary>
+        /// Livet.SavingFileSelectionDialogを呼び出した後のコールバック関数
+        /// 非同期だがコールバック関数のためvoid
+        /// </summary>
+        /// <param name="message"></param>
+        public async void SaveDialogClosed(SavingFileSelectionMessage message)
         {
             if (message.Response == null)
                 // キャンセル
                 return;
 
             var savingFilePath = message.Response[0];
-            // TODO: 保存
+            using var writer = _streamWriterOpener.Open(savingFilePath);
+            await _ncProgramRepository.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
         }
 
         public void Destroy() => Disposables.Dispose();
@@ -86,7 +102,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         public ReactivePropertySlim<string> CombinedProgramSource { get; }
 
-        public ReactiveCommand ExecCommand { get; }
+        public AsyncReactiveCommand ExecCommand { get; }
 
         public DelegateCommand PreviousViewCommand { get; }
     }

@@ -34,6 +34,33 @@ namespace Wada.UseCase.DataClass
         public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
 
+    public class TestNCProgramCodeAttemptFactory
+    {
+        public static NCProgramCodeAttempt Create(
+            string ID = "01GQK2ATZNJTVTGC6A0SD00JB6",
+            MainProgramTypeAttempt MainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
+            string ProgramName = "O1234",
+            IEnumerable<NCBlockAttempt?>? NCBlocks = null)
+        {
+            NCBlocks ??= new List<NCBlockAttempt?>
+            {
+                TestNCBlockAttemptFactory.Create(
+                    ncWords:new List<INCWordAttempt>
+                    {
+                        TestNCCommentAttemptFactory.Create(),
+                    }),
+                TestNCBlockAttemptFactory.Create(),
+                null,
+            };
+
+            return new NCProgramCodeAttempt(
+                ID,
+                MainProgramClassification,
+                ProgramName,
+                NCBlocks);
+        }
+    }
+
     public enum MainProgramTypeAttempt
     {
         CenterDrilling,
@@ -147,10 +174,16 @@ namespace Wada.UseCase.DataClass
     public record class NCCommentAttempt(string Comment) : INCWordAttempt
     {
         public override string ToString() => $"({Comment})";
-        
+
         public static NCCommentAttempt Parse(NCComment ncComment) => new(ncComment.Comment);
 
         public INCWord Convert() => new NCComment(Comment);
+    }
+
+    public class TestNCCommentAttemptFactory
+    {
+        public static NCCommentAttempt Create(string comment = "SAMPLE")
+            => new NCCommentAttempt(comment);
     }
 
     /// <summary>

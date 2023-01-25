@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Wada.NCProgramFile;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
@@ -277,5 +278,26 @@ M9
 G91G28G0Z0.
 M1
 ";
+
+        [TestMethod()]
+        public async Task 正常系_ストリームに書き込まれること()
+        {
+            // given
+            // when
+            using MemoryStream stream = new();
+            using StreamWriter writer = new(stream);
+            var expected = TestNCProgramCodeFactory.Create().ToString();
+            INCProgramRepository repository = new NCProgramRepository();
+            await repository.WriteAllAsync(writer, expected);
+
+            // then
+            // ストリームの位置を戻す
+            stream.Seek(0, SeekOrigin.Begin);
+            // 書き込んだ内容を取得する
+            using StreamReader reader = new(stream);
+            var actual = await reader.ReadToEndAsync();
+
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

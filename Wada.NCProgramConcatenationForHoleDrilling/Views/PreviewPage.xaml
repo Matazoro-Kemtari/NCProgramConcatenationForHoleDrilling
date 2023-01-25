@@ -18,7 +18,7 @@
         <l:InteractionMessageTrigger MessageKey="SaveFiling" Messenger="{Binding Messenger}">
             <l:SaveFileDialogInteractionMessageAction>
                 <l:DirectInteractionMessage CallbackMethodTarget="{Binding}" CallbackMethodName="SaveDialogClosed">
-                    <l:SavingFileSelectionMessage Filter="NCファイル|*"/>
+                    <l:SavingFileSelectionMessage Filter="NCファイル|*" OverwritePrompt="True"/>
                 </l:DirectInteractionMessage>
             </l:SaveFileDialogInteractionMessageAction>
         </l:InteractionMessageTrigger>
