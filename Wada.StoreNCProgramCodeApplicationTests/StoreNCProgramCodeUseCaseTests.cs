@@ -25,7 +25,7 @@ namespace Wada.StoreNCProgramCodeApplication.Tests
 
             // then
             mock_writer.Verify(x => x.Open(It.IsAny<string>(), It.IsAny<bool>()), Times.Once);
-            mock_nc.Verify(x => x.WriteAllAsync(It.IsAny<StreamWriter>(), It.IsAny<NCProgramCode>()), Times.Once);
+            mock_nc.Verify(x => x.WriteAllAsync(It.IsAny<StreamWriter>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

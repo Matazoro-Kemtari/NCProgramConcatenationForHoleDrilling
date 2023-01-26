@@ -9,7 +9,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     public class TappingParameterRewriter : IMainProgramParameterRewriter
     {
         [Logging]
-        public IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
+        public virtual IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
             if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
@@ -76,8 +76,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             if (drillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
-            var hoge = DrillingProgramRewriter.Rewrite(rewritableCode, material, tappingParameter.PreparedHoleDiameter, thickness, drillingParameter);
-            return hoge;
+
+            return DrillingProgramRewriter.Rewrite(rewritableCode, material, tappingParameter.PreparedHoleDiameter, thickness, drillingParameter);
         }
     }
 }

@@ -17,13 +17,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
 using Wada.CombineMainNCProgramApplication;
-using Wada.EditNCProgramApplication;
 using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
 using Wada.ReadMainNCProgramApplication;
 using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
@@ -137,7 +133,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 Material.ObserveHasErrors,
                 FetchedOperationType.CombineLatest(
                     Reamer,
-                    (x, y) => x == DirectedOperationType.Reaming && y == ReamerType.Undefined),
+                    (x, y) => x == DirectedOperationTypeAttempt.Reaming && y == ReamerType.Undefined),
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
@@ -156,17 +152,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 {
                     _mainProgramCodes = await _readMainNCProgramUseCase.ExecuteAsync();
                 }
-                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                catch (ReadMainNCProgramApplicationException ex)
                 {
-                    var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容が正しくありません\n{ex.Message}");
-                    await Messenger.RaiseAsync(message);
-                    Environment.Exit(0);
-                }
-                catch (OpenFileStreamReaderException ex)
-                {
-                    var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"メインプログラムの内容を読み込もうとしましたが\n{ex.Message}");
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
@@ -185,17 +173,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                         "リストを読み込もうとしましたが、失敗しました\n" +
                         "リストの内容を確認してください");
                 }
-                catch (NCProgramConcatenationServiceException ex)
+                catch (ReadMainNCProgramParametersApplicationException ex)
                 {
-                    var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容が正しくありません\n{ex.Message}");
-                    await Messenger.RaiseAsync(message);
-                    Environment.Exit(0);
-                }
-                catch (OpenFileStreamException ex)
-                {
-                    var message = MessageNotificationViaLivet.MakeErrorMessage(
-                        $"リストの内容を読み込もうとしましたが\n{ex.Message}");
+                    var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);
                     Environment.Exit(0);
                 }
@@ -230,7 +210,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     _mainNCProgramParameters));
 
             // 結合する
-            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes);
+            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes.NCProgramCodes);
 
             // 画面遷移
             var navigationParams = new NavigationParameters
@@ -247,24 +227,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 return;
 
             // サブプログラムを読み込む
-            NCProgramCode ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
+            var ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
 
-            try
-            {
-                // 読み込んだサブプログラムの作業指示を取得する
-                _concatenation.FetchedOperationType.Value = ncProcramCode.FetchOperationType();
-                _concatenation.TargetToolDiameter.Value = ncProcramCode.FetchTargetToolDiameter();
-            }
-            catch (NCProgramConcatenationServiceException ex)
-            {
-                _concatenation.Clear();
-
-                var message = MessageNotificationViaLivet.MakeExclamationMessage(
-                    ex.Message);
-                await Messenger.RaiseAsync(message);
-
-                return;
-            }
+            // 読み込んだサブプログラムの作業指示を取得する
+            _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
+            _concatenation.TargetToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
 
             IDialogParameters parameters = new DialogParameters(
                 $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
@@ -320,7 +287,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
         public ReactiveProperty<string> NCProgramFileName { get; }
 
-        public ReactiveProperty<NCProgramConcatenationService.ValueObjects.DirectedOperationType> FetchedOperationType { get; }
+        public ReactiveProperty<DirectedOperationTypeAttempt> FetchedOperationType { get; }
 
         [Display(Name = "加工機")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]

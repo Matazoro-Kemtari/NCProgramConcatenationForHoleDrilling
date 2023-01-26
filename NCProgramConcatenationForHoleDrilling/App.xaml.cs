@@ -3,7 +3,6 @@ using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
 using Wada.CombineMainNCProgramApplication;
-using Wada.EditNCProgramApplication;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NCProgramConcatenationForHoleDrilling;
 using Wada.NCProgramConcatenationService;
@@ -14,6 +13,7 @@ using Wada.ReadMainNCProgramApplication;
 using Wada.ReadMainNCProgramParametersApplication;
 using Wada.ReadSubNCProgramApplication;
 using Wada.StoreNCProgramCodeApplication;
+using Wada.UseCase.DataClass;
 
 namespace NCProgramConcatenationForHoleDrilling
 {

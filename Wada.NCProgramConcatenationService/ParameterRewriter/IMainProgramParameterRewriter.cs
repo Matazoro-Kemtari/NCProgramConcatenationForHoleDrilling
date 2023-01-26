@@ -41,7 +41,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             IEnumerable<NCProgramCode>? rewritableCodes = default,
             MaterialType material = MaterialType.Aluminum,
             decimal thickness = 12.3m,
-            decimal targetToolDiameter = 8.3m,
+            decimal targetToolDiameter = 13.3m,
             IEnumerable<ReamingProgramPrameter>? crystalReamerParameters = default,
             IEnumerable<ReamingProgramPrameter>? skillReamerParameters = default,
             IEnumerable<TappingProgramPrameter>? tapParameters = default,
@@ -69,10 +69,31 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             };
             drillingPrameters ??= new List<DrillingProgramPrameter>
             {
-                TestDrillingProgramPrameterFactory.Create("9.1"),
-                TestDrillingProgramPrameterFactory.Create("11.1"),
+                TestDrillingProgramPrameterFactory.Create(
+                    DiameterKey: "9.1",
+                    CenterDrillDepth: -1.5m,
+                    CutDepth: 2.5m,
+                    SpinForAluminum: 1100m,
+                    FeedForAluminum: 130m,
+                    SpinForIron: 710m,
+                    FeedForIron: 100m),
+                TestDrillingProgramPrameterFactory.Create(
+                    DiameterKey: "11.1",
+                    CenterDrillDepth: -1.5m,
+                    CutDepth: 3,
+                    SpinForAluminum: 870,
+                    FeedForAluminum: 110,
+                    SpinForIron: 580,
+                    FeedForIron: 80),
                 TestDrillingProgramPrameterFactory.Create(),
-                TestDrillingProgramPrameterFactory.Create(DiameterKey: "13.3"),
+                TestDrillingProgramPrameterFactory.Create(
+                    DiameterKey: "15.3",
+                    CenterDrillDepth: -1.5m,
+                    CutDepth: 3.5m,
+                    SpinForAluminum: 740m,
+                    FeedForAluminum: 100m,
+                    SpinForIron: 490m,
+                    FeedForIron: 70m),
             };
 
             return new(rewritableCodes, material, thickness, targetToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);

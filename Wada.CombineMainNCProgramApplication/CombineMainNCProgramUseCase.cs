@@ -1,12 +1,11 @@
 ﻿using Wada.NCProgramConcatenationService.MainProgramCombiner;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.UseCase.DataClass;
 
 namespace Wada.CombineMainNCProgramApplication
 {
     public interface ICombineMainNCProgramUseCase
     {
-        Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCode> combinableCodes);
+        Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCodeAttempt> combinableCodes);
     }
 
     public class CombineMainNCProgramUseCase : ICombineMainNCProgramUseCase
@@ -18,8 +17,12 @@ namespace Wada.CombineMainNCProgramApplication
             _mainProgramCombiner = mainProgramCombiner;
         }
 
-        public async Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCode> combinableCodes)
-            => await Task.Run(() => new CombineMainNCProgramDTO(NCProgramCodeAttempt.Parse(_mainProgramCombiner.Combine(combinableCodes))));
+        public async Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCodeAttempt> combinableCodes)
+            => await Task.Run(
+                () => new CombineMainNCProgramDTO(
+                    NCProgramCodeAttempt.Parse(
+                        _mainProgramCombiner.Combine(
+                            combinableCodes.Select(x => x.Convert())))));
     }
 
     public record class CombineMainNCProgramDTO(NCProgramCodeAttempt NCProgramCode);

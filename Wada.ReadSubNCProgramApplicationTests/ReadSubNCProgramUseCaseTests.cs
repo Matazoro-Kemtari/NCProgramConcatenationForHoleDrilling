@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.NCProgramConcatenationService;
+using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.ReadSubNCProgramApplication.Tests
@@ -14,6 +15,9 @@ namespace Wada.ReadSubNCProgramApplication.Tests
             // given
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INCProgramRepository> mock_nc = new();
+            mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NCProgramType>(), It.IsAny<string>()))
+                .ReturnsAsync(TestNCProgramCodeFactory.Create());
+            
 
             // when
             IReadSubNCProgramUseCase readSubNCProgramUseCase = new ReadSubNCProgramUseCase(mock_reader.Object, mock_nc.Object);

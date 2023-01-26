@@ -56,7 +56,7 @@ namespace Wada.UseCase.DataClass
                     SpinForAluminum: 84m,
                     FeedForAluminum: 110m,
                     SpinForIron: 560m,
-                    FeedForIron: 80m)
+                    FeedForIron: 80m),
             };
 
             return new(crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);

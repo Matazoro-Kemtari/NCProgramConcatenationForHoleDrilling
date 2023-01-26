@@ -2,6 +2,7 @@
 using Moq;
 using Wada.NCProgramConcatenationService.MainProgramCombiner;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.UseCase.DataClass;
 
 namespace Wada.CombineMainNCProgramApplication.Tests
 {
@@ -14,16 +15,18 @@ namespace Wada.CombineMainNCProgramApplication.Tests
             // given
             // when
             Mock<IMainProgramCombiner> mock_comviner = new();
+            mock_comviner.Setup(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>()))
+                .Returns(TestNCProgramCodeFactory.Create());
             ICombineMainNCProgramUseCase useCase = new CombineMainNCProgramUseCase(mock_comviner.Object);
 
-            List<NCProgramCode> combinableCodes = new()
+            List<NCProgramCodeAttempt> combinableCodesInUseCase = new()
             {
-                TestNCProgramCodeFactory.Create(),
+                TestNCProgramCodeAttemptFactory.Create(),
             };
-            _ = await useCase.ExecuteAsync(combinableCodes);
+            _ = await useCase.ExecuteAsync(combinableCodesInUseCase);
 
             // then
-            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>()), Times.Once);
+            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>()), Times.Once());
         }
     }
 }

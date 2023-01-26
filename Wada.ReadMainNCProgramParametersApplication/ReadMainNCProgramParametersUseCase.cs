@@ -46,41 +46,58 @@ namespace Wada.ReadMainNCProgramParametersApplication
                 AppDomain.CurrentDomain.BaseDirectory,
                 "..",
                 "リスト");
-            var crystalReamerTask = Task.Run(() =>
-            {
-                var path = Path.Combine(
-                    directory,
-                    "クリスタルリーマー.xlsx");
-                using Stream stream = _streamOpener.Open(path);
-                return _reamingPrameterRepository.ReadAll(stream);
-            });
 
-            var skillReamerTask = Task.Run(() =>
+            Task<IEnumerable<IMainProgramPrameter>> crystalReamerTask;
+            Task<IEnumerable<IMainProgramPrameter>> skillReamerTask;
+            Task<IEnumerable<IMainProgramPrameter>> tapTask;
+            Task<IEnumerable<IMainProgramPrameter>> drillTask;
+            try
             {
-                var path = Path.Combine(
-                    directory,
-                    "スキルリーマー.xlsx");
-                using Stream stream = _streamOpener.Open(path);
-                return _reamingPrameterRepository.ReadAll(stream);
-            });
+                crystalReamerTask = Task.Run(() =>
+                {
+                    var path = Path.Combine(
+                        directory,
+                        "クリスタルリーマー.xlsx");
+                    using Stream stream = _streamOpener.Open(path);
+                    return _reamingPrameterRepository.ReadAll(stream);
+                });
 
-            var tapTask = Task.Run(() =>
-            {
-                var path = Path.Combine(
-                    directory,
-                    "タップ.xlsx");
-                using Stream stream = _streamOpener.Open(path);
-                return _tappingPrameterRepository.ReadAll(stream);
-            });
+                skillReamerTask = Task.Run(() =>
+                {
+                    var path = Path.Combine(
+                        directory,
+                        "スキルリーマー.xlsx");
+                    using Stream stream = _streamOpener.Open(path);
+                    return _reamingPrameterRepository.ReadAll(stream);
+                });
 
-            var drillTask = Task.Run(() =>
+                tapTask = Task.Run(() =>
+                {
+                    var path = Path.Combine(
+                        directory,
+                        "タップ.xlsx");
+                    using Stream stream = _streamOpener.Open(path);
+                    return _tappingPrameterRepository.ReadAll(stream);
+                });
+
+                drillTask = Task.Run(() =>
+                {
+                    var path = Path.Combine(
+                        directory,
+                        "ドリル.xlsx");
+                    using Stream stream = _streamOpener.Open(path);
+                    return _drillingPrameterRepository.ReadAll(stream);
+                });
+            }
+            catch (OpenFileStreamException ex)
             {
-                var path = Path.Combine(
-                    directory,
-                    "ドリル.xlsx");
-                using Stream stream = _streamOpener.Open(path);
-                return _drillingPrameterRepository.ReadAll(stream);
-            });
+                throw new ReadMainNCProgramParametersApplicationException(ex.Message);
+            }
+            catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+            {
+                throw new ReadMainNCProgramParametersApplicationException(
+                    $"リストの読み込みでエラーが発生しました\n{ex.Message}", ex);
+            }
 
             IEnumerable<IMainProgramPrameter>[] parameters =
                 await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);

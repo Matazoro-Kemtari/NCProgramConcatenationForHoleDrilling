@@ -1,7 +1,7 @@
 ﻿using Reactive.Bindings;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.ViewModels;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.UseCase.DataClass;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 {
@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
         internal void Clear()
         {
             NCProgramFile.Value = string.Empty;
-            FetchedOperationType.Value = DirectedOperationType.Undetected;
+            FetchedOperationType.Value = DirectedOperationTypeAttempt.Undetected;
             MachineTool.Value = MachineToolType.Undefined;
             Material.Value = MaterialType.Undefined;
             Reamer.Value = ReamerType.Undefined;
@@ -20,7 +20,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 
         public ReactivePropertySlim<string> NCProgramFile { get; } = new();
 
-        public ReactivePropertySlim<DirectedOperationType> FetchedOperationType { get; } = new(DirectedOperationType.Undetected);
+        public ReactivePropertySlim<DirectedOperationTypeAttempt> FetchedOperationType { get; } = new(DirectedOperationTypeAttempt.Undetected);
 
         public ReactivePropertySlim<MachineToolType> MachineTool { get; } = new();
 
