@@ -90,7 +90,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = new CoordinateValue(Convert.ToString(-(thickness + 5m))) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(Convert.ToString(-(thickness + 5m))))
+            };
         }
 
         [Logging]
@@ -164,6 +168,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             // 小数部桁数の10の累乗を取得
             decimal pow = (decimal)Math.Pow(10, decimals);
             return Math.Round(value * pow, mode) / pow;
+        }
+
+        /// <summary>
+        /// 座標数値はドットがないと1/1000されるためドットを付加
+        /// パラメータリストはドットが省略されている
+        /// </summary>
+        /// <param name="value">座標値</param>
+        /// <returns></returns>
+        [Logging]
+
+        static string AddDecimalPoint(string value)
+        {
+            if (!value.Contains('.'))
+                value += ".";
+            return value;
         }
     }
 }

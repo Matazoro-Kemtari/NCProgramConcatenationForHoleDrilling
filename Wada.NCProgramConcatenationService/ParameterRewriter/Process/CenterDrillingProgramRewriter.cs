@@ -62,7 +62,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
+
             return ncWord with { ValueData = new NumericalValue(subProgramNumber) };
         }
 
@@ -71,7 +71,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
+
             string feedValue = material switch
             {
                 MaterialType.Aluminum => "150",
@@ -88,7 +88,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = new CoordinateValue(Convert.ToString(centerDrillDepth)) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(centerDrillDepth.ToString()))
+            };
         }
 
         [Logging]
@@ -96,7 +100,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
+
             string spinValue = material switch
             {
                 MaterialType.Aluminum => "2000",
@@ -105,6 +109,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             };
 
             return ncWord with { ValueData = new NumericalValue(spinValue) };
+        }
+
+        /// <summary>
+        /// 座標数値はドットがないと1/1000されるためドットを付加
+        /// パラメータリストはドットが省略されている
+        /// </summary>
+        /// <param name="value">座標値</param>
+        /// <returns></returns>
+        [Logging]
+
+        static string AddDecimalPoint(string value)
+        {
+            if (!value.Contains('.'))
+                value += ".";
+            return value;
         }
     }
 }

@@ -95,7 +95,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = new CoordinateValue(AddDecimalPoint(drillingParameter.CutDepth.ToString())) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(drillingParameter.CutDepth.ToString()))
+            };
         }
 
         [Logging]
