@@ -3,6 +3,7 @@ using Moq;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.UseCase.DataClass;
 
 namespace Wada.EditNCProgramApplication.Tests
 {

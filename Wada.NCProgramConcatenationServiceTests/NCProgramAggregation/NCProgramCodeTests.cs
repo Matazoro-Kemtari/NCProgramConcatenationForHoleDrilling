@@ -11,7 +11,6 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         public void 正常系_作業指示が返ってくること(NCBlock ncBlock, DirectedOperationType expected)
         {
             // given
-
             // when
             List<NCBlock?> ncBlocks = new()
             {
@@ -43,31 +42,45 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         };
 
         [TestMethod]
-        public void 異常系_作業指示が無いとき例外を返すこと()
+        public void 正常系_作業指示がすべて無いときUndetectedを返すこと()
         {
             // given
             // when
             List<NCBlock?> ncBlocks = new()
             {
-                TestNCBlockFactory.Create(),
+                TestNCBlockFactory.Create(new List<INCWord>
+                {
+                    TestNCCommentFactory.Create(),
+                    TestNCWordFactory.Create(),
+                }),
                 null,
-                TestNCBlockFactory.Create(),
-                null,
-                TestNCBlockFactory.Create(),
+                TestNCBlockFactory.Create(new List<INCWord>
+                {
+                    TestNCCommentFactory.Create(),
+                    TestNCWordFactory.Create(),
+                }),
+                TestNCBlockFactory.Create(new List<INCWord>
+                {
+                    TestNCCommentFactory.Create(),
+                    TestNCWordFactory.Create(),
+                }),
+                TestNCBlockFactory.Create(new List<INCWord>
+                {
+                    TestNCCommentFactory.Create(),
+                    TestNCWordFactory.Create(),
+                }),
                 null,null,null,
-                TestNCBlockFactory.Create(),
+                TestNCBlockFactory.Create(new List<INCWord>
+                {
+                    TestNCCommentFactory.Create(),
+                    TestNCWordFactory.Create(),
+                }),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            void target()
-            {
-                _ = ncProgramCode.FetchOperationType();
-            }
+            DirectedOperationType actual = ncProgramCode.FetchOperationType();
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
-            string msg = "作業指示が見つかりません\n" +
-                    "サブプログラムを確認して、作業指示を1件追加してください";
-            Assert.AreEqual(msg, ex.Message);
+            Assert.AreEqual(DirectedOperationType.Undetected, actual);
         }
 
         [TestMethod]

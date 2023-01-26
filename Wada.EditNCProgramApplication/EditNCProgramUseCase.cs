@@ -1,9 +1,8 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
-using Wada.UseCase.DataClass;
 
-namespace Wada.EditNCProgramApplication
+namespace Wada.UseCase.DataClass
 {
     public interface IEditNCProgramUseCase
     {
@@ -98,35 +97,45 @@ namespace Wada.EditNCProgramApplication
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    }),
+                    },
+                    DirectedOperationTypeAttempt.Undetected,
+                    0m),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Drilling,
                     ProgramName: "O2000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    }),
+                    },
+                    DirectedOperationTypeAttempt.Undetected,
+                    0m),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Chamfering,
                     ProgramName: "O3000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    }),
+                    },
+                    DirectedOperationTypeAttempt.Undetected,
+                    0m),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Reaming,
                     ProgramName: "O4000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    }),
+                    },
+                    DirectedOperationTypeAttempt.Undetected,
+                    0m),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Tapping,
                     ProgramName: "O5000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    }),
+                    },
+                    DirectedOperationTypeAttempt.Undetected,
+                    0m),
             };
 
             mainNCProgramParameters ??= TestMainNCProgramParametersPramFactory.Create();
@@ -145,12 +154,6 @@ namespace Wada.EditNCProgramApplication
     public record class EditNCProgramDTO(IEnumerable<NCProgramCodeAttempt> NCProgramCodes);
 
     // TODO: 列挙型を移動するかどうか
-    public enum DirectedOperationTypeAttempt
-    {
-        Tapping,
-        Reaming,
-        Drilling,
-    }
 
 
 

@@ -51,16 +51,29 @@ namespace Wada.ReadMainNCProgramApplication
 
             var task = machineName.Select(async machine =>
             {
-                var ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
+                NCProgramCodeAttempt[] ncProgramCodeAttempts;
+                try
                 {
-                    var fileName = Path.GetFileNameWithoutExtension(program.FileName);
-                    var path = Path.Combine(directory, $"{machine}_{program.FileName}");
+                    ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
+                    {
+                        var fileName = Path.GetFileNameWithoutExtension(program.FileName);
+                        var path = Path.Combine(directory, $"{machine}_{program.FileName}");
 
-                    // サブプログラムを読み込む
-                    using StreamReader reader = _streamReaderOpener.Open(path);
-                    var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
-                    return NCProgramCodeAttempt.Parse(ncProgramCode);
-                }));
+                        // メインプログラムを読み込む
+                        using StreamReader reader = _streamReaderOpener.Open(path);
+                        var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
+                        return NCProgramCodeAttempt.Parse(ncProgramCode);
+                    }));
+                }
+                catch (OpenFileStreamReaderException ex)
+                {
+                    throw new ReadMainNCProgramApplicationException(ex.Message);
+                }
+                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                {
+                    throw new ReadMainNCProgramApplicationException(
+                        $"メインプログラムの読み込みでエラーが発生しました\n{ex.Message}", ex);
+                }
 
                 MachineToolTypeAttempt machineClassification = machine switch
                 {

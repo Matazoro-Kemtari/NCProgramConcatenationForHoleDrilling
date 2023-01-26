@@ -13,11 +13,14 @@ namespace Wada.UseCase.DataClass
         Triaxial,
     }
 
+    //　TODO: オブジェクトをメインプログラムとサブプログラムで分けるのもあり
     public record class NCProgramCodeAttempt(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
         string ProgramName,
-        IEnumerable<NCBlockAttempt?> NCBlocks)
+        IEnumerable<NCBlockAttempt?> NCBlocks,
+        DirectedOperationTypeAttempt DirectedOperationClassification,
+        decimal DirectedOperationToolDiameter)
     {
         public override string ToString()
         {
@@ -29,7 +32,9 @@ namespace Wada.UseCase.DataClass
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)));
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
+            (DirectedOperationTypeAttempt)ncProgramCode.FetchOperationType(),
+            ncProgramCode.FetchTargetToolDiameter());
 
         public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
@@ -57,7 +62,9 @@ namespace Wada.UseCase.DataClass
                 ID,
                 MainProgramClassification,
                 ProgramName,
-                NCBlocks);
+                NCBlocks,
+                DirectedOperationTypeAttempt.Reaming,
+                13.3m);
         }
     }
 
@@ -183,7 +190,7 @@ namespace Wada.UseCase.DataClass
     public class TestNCCommentAttemptFactory
     {
         public static NCCommentAttempt Create(string comment = "SAMPLE")
-            => new NCCommentAttempt(comment);
+            => new(comment);
     }
 
     /// <summary>
@@ -229,9 +236,9 @@ namespace Wada.UseCase.DataClass
     {
         public override string ToString() => Value.ToString();
 
-        public static AddressAttempt Parse(Address address) => new AddressAttempt(address.Value);
+        public static AddressAttempt Parse(Address address) => new(address.Value);
 
-        internal Address Convert() => new Address(Value);
+        internal Address Convert() => new(Value);
     }
 
     public class TestAddressAttemptFactory
@@ -366,7 +373,7 @@ namespace Wada.UseCase.DataClass
     {
         internal static VariableAddressAttempt Parse(VariableAddress variableAddress) => new(variableAddress.Value);
 
-        internal VariableAddress Convert() => new VariableAddress(Value);
+        internal VariableAddress Convert() => new(Value);
     }
 
     public class TestVariableAddressAttemptFactory

@@ -34,7 +34,6 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
-        /// <exception cref="NotImplementedException"></exception>
         [Logging]
         public DirectedOperationType FetchOperationType()
         {
@@ -59,14 +58,10 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 }))
                 .SelectMany(x => x);
 
-            if (!hasOperationType.Any(x => x != DirectedOperationType.Undetected))
-            {
-                // 有効な指示がない場合
-                string msg = "作業指示が見つかりません\n" +
-                    "サブプログラムを確認して、作業指示を1件追加してください";
-                throw new NCProgramConcatenationServiceException(msg);
-            }
-
+            if (hasOperationType.All(x => x == DirectedOperationType.Undetected))
+                // 有効な指示が1件もない場合
+                return DirectedOperationType.Undetected;
+            
             if (hasOperationType.Count(x => x != DirectedOperationType.Undetected) > 1)
             {
                 // 有効な指示が複数ある場合
@@ -78,6 +73,11 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             return hasOperationType.First(x => x != DirectedOperationType.Undetected);
         }
 
+        /// <summary>
+        /// ツール径を取得する
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NCProgramConcatenationServiceException"></exception>
         [Logging]
         public decimal FetchTargetToolDiameter()
         {
@@ -106,13 +106,9 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 }))
                 .SelectMany(x => x);
 
-            if (!hasOperationType.Any(x => x != decimal.MinValue))
-            {
-                // 有効な指示がない場合
-                string msg = "作業指示が見つかりません\n" +
-                    "サブプログラムを確認して、作業指示を1件追加してください";
-                throw new NCProgramConcatenationServiceException(msg);
-            }
+            if (hasOperationType.All(x => x == decimal.MinValue))
+                // 有効な指示が1件もない場合
+                return 0m;
 
             if (hasOperationType.Count(x => x != decimal.MinValue) > 1)
             {

@@ -1,13 +1,13 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.UseCase.DataClass;
 
 namespace Wada.ReadSubNCProgramApplication
 {
     public interface IReadSubNCProgramUseCase
     {
-        Task<NCProgramCode> ExecuteAsync(string path);
+        Task<NCProgramCodeAttempt> ExecuteAsync(string path);
     }
 
     public class ReadSubNCProgramUseCase : IReadSubNCProgramUseCase
@@ -22,12 +22,13 @@ namespace Wada.ReadSubNCProgramApplication
         }
 
         [Logging]
-        public async Task<NCProgramCode> ExecuteAsync(string path)
+        public async Task<NCProgramCodeAttempt> ExecuteAsync(string path)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             // サブプログラムを読み込む
             using StreamReader reader = _streamReaderOpener.Open(path);
-            return await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
+            var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
+            return NCProgramCodeAttempt.Parse(ncProgramCode);
         }
     }
 }
