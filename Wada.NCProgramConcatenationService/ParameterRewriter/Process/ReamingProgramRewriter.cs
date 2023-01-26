@@ -1,4 +1,5 @@
-﻿using Wada.AOP.Logging;
+﻿using System;
+using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
@@ -75,13 +76,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
-            var spinValue = RewriteSpinValueData(material, reamer, diameter);
 
-            return ncWord with
-            {
-                ValueData = RewriteFeedValueData(material, reamer, spinValue.Number)
-            };
+            var spinValue = CalculateReamerSpin(material, reamer, diameter);
+
+            decimal feedValue = CalculateReamerSpinFeed(material, reamer, spinValue);
+
+            return ncWord with { ValueData = new NumericalValue(feedValue.ToString()) };
         }
 
         [Logging]
@@ -90,7 +90,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = RewriteReamingDepthValueData(thickness) };
+            return ncWord with { ValueData = new CoordinateValue(Convert.ToString(-(thickness + 5m))) };
         }
 
         [Logging]
@@ -98,12 +98,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
-            return ncWord with { ValueData = RewriteSpinValueData(material, reamer, diameter) };
+
+            decimal spinValue = CalculateReamerSpin(material, reamer, diameter);
+
+            return ncWord with { ValueData = new NumericalValue(spinValue.ToString()) };
         }
 
         [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material, ReamerType reamer, decimal spin)
+        private static decimal CalculateReamerSpinFeed(MaterialType material, ReamerType reamer, decimal spin)
         {
             decimal figures = material switch
             {
@@ -121,18 +123,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var feedValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
-            return new NumericalValue(feedValue);
+            var feedValue = Round(figures, -1, MidpointRounding.AwayFromZero);
+            return feedValue;
         }
 
         [Logging]
-        private static IValueData RewriteReamingDepthValueData(decimal thickness)
-        {
-            return new CoordinateValue(Convert.ToString(-(thickness + 5m)));
-        }
-
-        [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, ReamerType reamer, decimal diameter)
+        private static decimal CalculateReamerSpin(MaterialType material, ReamerType reamer, decimal diameter)
         {
             decimal figures = material switch
             {
@@ -150,8 +146,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var spinValue = Round(figures, -1, MidpointRounding.AwayFromZero).ToString();
-            return new NumericalValue(spinValue);
+            var spinValue = Round(figures, -1, MidpointRounding.AwayFromZero);
+            return spinValue;
         }
 
         /// <summary>
@@ -161,6 +157,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         /// <param name="decimals">小数部桁数</param>
         /// <param name="mode">丸める方法</param>
         /// <returns>丸められた値</returns>
+        [Logging]
         private static decimal Round(decimal value, int decimals,
             MidpointRounding mode)
         {
