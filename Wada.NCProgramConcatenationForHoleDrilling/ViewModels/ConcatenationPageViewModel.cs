@@ -292,7 +292,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         /// <param name="navigationContext">Navigation Requestの情報を表すNavigationContext。
         /// いろいろな画面に遷移した際に前回の値を記憶させるかどうかを決める 記憶させる場合はTrue、毎回新しく表示させたい場合はFalse</param>
         /// <returns>表示するViewかどうかを表すbool。</returns>
-        public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+        public bool IsNavigationTarget(NavigationContext navigationContext) => false;
 
         /// <summary>別のViewに切り替わる前に呼び出されます。</summary>
         /// <param name="navigationContext">Navigation Requestの情報を表すNavigationContext。</param>
