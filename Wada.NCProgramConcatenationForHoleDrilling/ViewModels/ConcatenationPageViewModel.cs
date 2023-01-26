@@ -27,11 +27,10 @@ using Wada.UseCase.DataClass;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 {
-    public class ConcatenationPageViewModel : BindableBase, IDestructible, IDropTarget
+    public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestructible, IDropTarget
     {
         private readonly ConcatenationPageModel _concatenation = new();
-        private readonly IRegionNavigationService _regionNavigationService;
-        private readonly IRegionManager _regionManager;
+        private IRegionNavigationService? _regionNavigationService;
         private readonly IDialogService _dialogService;
         private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
         private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
@@ -43,10 +42,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         private MainNCProgramParametersAttempt? _mainNCProgramParameters = null;
 
-        public ConcatenationPageViewModel(IRegionNavigationService regionNavigationService, IRegionManager regionManager, IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
+        public ConcatenationPageViewModel(IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
         {
-            _regionNavigationService = regionNavigationService;
-            _regionManager = regionManager;
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
             _readSubNCProgramUseCase = readSubNCProgramUseCase;
@@ -198,7 +195,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             // メインプログラムを編集する
             var editedCodes = await _editNCProgramUseCase.ExecuteAsync(
                 new EditNCProgramPram(
-                    (DirectedOperationTypeAttempt)_concatenation.FetchedOperationType.Value,
+                    _concatenation.FetchedOperationType.Value,
                     _concatenation.SubProgramNumber.Value,
                     _concatenation.TargetToolDiameter.Value,
                     _mainProgramCodes.Where(x => x.MachineToolClassification == (MachineToolTypeAttempt)MachineTool.Value)
@@ -217,7 +214,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             {
                 { nameof(combinedCode), combinedCode.NCProgramCode.ToString() }
             };
-            _regionManager.RequestNavigate("ContentRegion", nameof(PreviewPage), navigationParams);
+            _regionNavigationService.RequestNavigate(nameof(PreviewPage), navigationParams);
         }
 
         [Logging]
@@ -227,11 +224,20 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 return;
 
             // サブプログラムを読み込む
-            var ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
+            NCProgramCodeAttempt ncProcramCode;
+            try
+            {
+                ncProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
+            }
+            catch (ReadSubNCProgramApplicationException ex)
+            {
+                var message = MessageNotificationViaLivet.MakeInformationMessage(
+                    $"サブプログラムの読み込みでエラーが発生しました\n{ex.Message}");
+                await Messenger.RaiseAsync(message);
+                _concatenation.Clear();
 
-            // 読み込んだサブプログラムの作業指示を取得する
-            _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
-            _concatenation.TargetToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
+                return;
+            }
 
             IDialogParameters parameters = new DialogParameters(
                 $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
@@ -246,8 +252,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 return;
             }
 
-            _concatenation.SubProgramNumber.Value = Path.GetFileNameWithoutExtension(path);
-
+            // 読み込んだサブプログラムの作業指示を取得する
+            _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
+            _concatenation.TargetToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
+            _concatenation.SubProgramNumber.Value = ncProcramCode.ProgramName;
         }
 
         [Logging]
@@ -275,6 +283,21 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         [Logging]
         public void Destroy() => Disposables.Dispose();
+
+        /// <summary>Viewを表示した後呼び出されます。</summary>
+        /// <param name="navigationContext">Navigation Requestの情報を表すNavigationContext。</param>
+        public void OnNavigatedTo(NavigationContext navigationContext) => _regionNavigationService = navigationContext.NavigationService;
+
+        /// <summary>表示するViewを判別します</summary>
+        /// <param name="navigationContext">Navigation Requestの情報を表すNavigationContext。
+        /// いろいろな画面に遷移した際に前回の値を記憶させるかどうかを決める 記憶させる場合はTrue、毎回新しく表示させたい場合はFalse</param>
+        /// <returns>表示するViewかどうかを表すbool。</returns>
+        public bool IsNavigationTarget(NavigationContext navigationContext) => true;
+
+        /// <summary>別のViewに切り替わる前に呼び出されます。</summary>
+        /// <param name="navigationContext">Navigation Requestの情報を表すNavigationContext。</param>
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        { }
 
         /// <summary>
         /// Disposeが必要なReactivePropertyやReactiveCommandを集約させるための仕掛け

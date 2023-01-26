@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
 
 namespace Wada.UseCase.DataClass
@@ -40,17 +39,19 @@ namespace Wada.UseCase.DataClass
                 _ => throw new NotImplementedException(),
             };
 
+            RewriteByToolRecord param = new(
+                editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
+                (MaterialType)editNCProgramPram.Material,
+                editNCProgramPram.Thickness,
+                editNCProgramPram.SubProgramNumger,
+                editNCProgramPram.TargetToolDiameter,
+                editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()));
+            
             return await Task.Run(
-                () => new EditNCProgramDTO(
-                    rewriter.RewriteByTool(
-                        new(editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
-                            (MaterialType)editNCProgramPram.Material,
-                            editNCProgramPram.Thickness,
-                            editNCProgramPram.TargetToolDiameter,
-                            editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
-                            editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
-                            editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
-                            editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert())))
+                () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
                     .Select(x => NCProgramCodeAttempt.Parse(x))));
         }
     }

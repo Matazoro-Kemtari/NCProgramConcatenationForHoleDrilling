@@ -10,13 +10,14 @@ namespace Wada.NCProgramConcatenationForHoleDrilling
         public void OnInitialized(IContainerProvider containerProvider)
         {
             var regionManager = containerProvider.Resolve<IRegionManager>();
-            regionManager?.RegisterViewWithRegion("ContentRegion", typeof(ConcatenationPage));
+            regionManager?.RequestNavigate("ContentRegion", nameof(ConcatenationPage));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             // ViewをDIコンテナに登録する
             containerRegistry.RegisterDialog<NotationContentConfirmationDialog>();
+            containerRegistry.RegisterForNavigation<ConcatenationPage>();
             containerRegistry.RegisterForNavigation<PreviewPage>();
         }
     }

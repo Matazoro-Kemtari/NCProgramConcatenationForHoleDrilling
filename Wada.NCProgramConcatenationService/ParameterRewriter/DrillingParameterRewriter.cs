@@ -36,13 +36,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter));
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Drilling:
-                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.TargetToolDiameter, rewriteByToolRecord.Thickness, drillingParameter));
+                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Chamfering:
-                        rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter));
+                        rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     default:
                         // 何もしない

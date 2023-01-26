@@ -11,8 +11,23 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         {
             ID = Ulid.NewUlid();
             MainProgramClassification = mainProgramClassification;
-            ProgramName = programName;
+            ProgramName = mainProgramClassification switch
+            {
+                NCProgramType.SubProgram => FetchProgramNumber(programName),
+                _ => programName,
+            };
             NCBlocks = ncBlocks;
+        }
+
+        private static string FetchProgramNumber(string programName)
+        {
+            Match programNumberMatcher = Regex.Match(programName, @"\d+");
+            if (!programNumberMatcher.Success)
+                throw new NCProgramConcatenationServiceException(
+                    "プログラム番号が取得できません" +
+                    $"ファイル名を確認してください ファイル名: {programName}");
+
+            return programNumberMatcher.Value;
         }
 
         private NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)

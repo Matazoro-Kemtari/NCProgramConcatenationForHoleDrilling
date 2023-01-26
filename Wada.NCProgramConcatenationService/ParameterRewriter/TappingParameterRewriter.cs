@@ -39,16 +39,16 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter));
+                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Drilling:
-                        ncPrograms.Add(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, tappingParameter));
+                        ncPrograms.Add(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, tappingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Chamfering:
-                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter));
+                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, tappingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Tapping:
-                        ncPrograms.Add(TappingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, tappingParameter));
+                        ncPrograms.Add(TappingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, tappingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     default:
                         // 何もしない
@@ -68,7 +68,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <param name="tappingParameter"></param>
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
-        private static NCProgramCode RewriteCNCProgramForDrilling(NCProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramPrameter> drillingParameters, TappingProgramPrameter tappingParameter)
+        private static NCProgramCode RewriteCNCProgramForDrilling(NCProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramPrameter> drillingParameters, TappingProgramPrameter tappingParameter, string subProgramNumber)
         {
             var drillingParameter = drillingParameters
                 .Where(x => x.TargetToolDiameter <= tappingParameter.PreparedHoleDiameter)
@@ -77,7 +77,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
 
-            return DrillingProgramRewriter.Rewrite(rewritableCode, material, tappingParameter.PreparedHoleDiameter, thickness, drillingParameter);
+            return DrillingProgramRewriter.Rewrite(rewritableCode, material, thickness, drillingParameter, subProgramNumber);
         }
     }
 }

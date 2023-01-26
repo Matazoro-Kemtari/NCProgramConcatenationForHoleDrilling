@@ -18,7 +18,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         internal static NCProgramCode Rewrite(
             NCProgramCode rewritableCode,
             MaterialType material,
-            IMainProgramPrameter rewritingParameter)
+            IMainProgramPrameter rewritingParameter,
+            string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す
             var rewritedNCBlocks = rewritableCode.NCBlocks
@@ -44,6 +45,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                             {
                                 'S' => RewriteSpin(material, ncWord),
                                 'Z' => RewriteChamferingDepth(rewritingParameter.ChamferingDepth.Value, ncWord),
+                                'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                 _ => y
                             };
                         });
@@ -55,6 +57,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             {
                 NCBlocks = rewritedNCBlocks
             };
+        }
+
+        [Logging]
+        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+
+            return ncWord with { ValueData = new NumericalValue(subProgramNumber) };
         }
 
         [Logging]

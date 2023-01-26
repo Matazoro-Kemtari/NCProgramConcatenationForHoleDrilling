@@ -22,7 +22,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             MaterialType material,
             ReamerType reamer,
             decimal thickness,
-            IMainProgramPrameter rewritingParameter)
+            IMainProgramPrameter rewritingParameter,
+            string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す
             var rewritedNCBlocks = rewritableCode.NCBlocks
@@ -46,6 +47,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 'S' => RewriteSpin(material, reamer, rewritingParameter.TargetToolDiameter, ncWord),
                                 'Z' => RewriteReamingDepth(thickness, ncWord),
                                 'F' => RewriteFeed(material, reamer, rewritingParameter.TargetToolDiameter, ncWord),
+                                'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                 _ => y
                             };
                         });
@@ -57,6 +59,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             {
                 NCBlocks = rewritedNCBlocks
             };
+        }
+
+        [Logging]
+        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+
+            return ncWord with { ValueData = new NumericalValue(subProgramNumber) };
         }
 
         [Logging]

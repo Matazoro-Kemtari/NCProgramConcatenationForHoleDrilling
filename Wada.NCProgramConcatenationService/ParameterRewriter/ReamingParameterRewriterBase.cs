@@ -40,7 +40,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             MaterialType material,
             decimal thickness,
             IEnumerable<DrillingProgramPrameter> drillingParameters,
-            ReamingProgramPrameter reamingParameter)
+            ReamingProgramPrameter reamingParameter,
+            string subProgramNumber)
         {
             List<NCProgramCode> ncPrograms = new();
             // 下穴 1回目
@@ -50,7 +51,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             if (fastDrillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
-            ncPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, material, reamingParameter.PreparedHoleDiameter, thickness, fastDrillingParameter));
+            ncPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, material, thickness, fastDrillingParameter, subProgramNumber));
 
             // 下穴 2回目
             var secondDrillingParameter = drillingParameters
@@ -59,7 +60,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             if (secondDrillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
-            ncPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, material, reamingParameter.SecondPreparedHoleDiameter, thickness, secondDrillingParameter));
+            ncPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, material, thickness, secondDrillingParameter, subProgramNumber));
 
             return ncPrograms;
         }
@@ -98,17 +99,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter));
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Drilling:
-                        rewritedNCPrograms.AddRange(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, reamingParameter));
+                        rewritedNCPrograms.AddRange(RewriteCNCProgramForDrilling(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameters, reamingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Chamfering:
                         if (reamingParameter.ChamferingDepth != null)
-                            rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter));
+                            rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, reamingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Reaming:
-                        rewritedNCPrograms.Add(ReamingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, _reamerType, rewriteByToolRecord.Thickness, reamingParameter));
+                        rewritedNCPrograms.Add(ReamingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, _reamerType, rewriteByToolRecord.Thickness, reamingParameter, rewriteByToolRecord.SubProgramNumber));
                         break;
                     default:
                         // 何もしない
