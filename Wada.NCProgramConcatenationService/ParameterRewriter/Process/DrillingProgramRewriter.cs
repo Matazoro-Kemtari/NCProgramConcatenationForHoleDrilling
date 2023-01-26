@@ -20,9 +20,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         internal static NCProgramCode Rewrite(
             NCProgramCode rewritableCode,
             MaterialType material,
-            decimal diameter,
             decimal thickness,
-            DrillingProgramPrameter drillingParameter)
+            DrillingProgramPrameter drillingParameter,
+            string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す
             var rewritedNCBlocks = rewritableCode.NCBlocks
@@ -47,6 +47,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                     'Z' => RewriteDrillingDepth(thickness, drillingParameter, ncWord),
                                     'Q' => RewriteCutDepth(drillingParameter, ncWord),
                                     'F' => RewriteFeed(material, drillingParameter, ncWord),
+                                    'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                     _ => y
                                 };
                             });
@@ -58,6 +59,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             {
                 NCBlocks = rewritedNCBlocks
             };
+        }
+
+        [Logging]
+        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        {
+            if (!ncWord.ValueData.Indefinite)
+                return ncWord;
+
+            return ncWord with { ValueData = new NumericalValue(subProgramNumber) };
         }
 
         private static INCWord RewriteFeed(MaterialType material, DrillingProgramPrameter drillingParameter, NCWord ncWord)

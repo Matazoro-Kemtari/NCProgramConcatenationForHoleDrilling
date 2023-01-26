@@ -20,6 +20,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     /// <param name="RewritableCodes">書き換え元NCプログラム</param>
     /// <param name="Material">素材</param>
     /// <param name="Thickness">板厚</param>
+    /// <param name="SubProgramNumber">サブプログラム番号</param>
     /// <param name="TargetToolDiameter">目標工具径 :サブプログラムで指定した工具径</param>
     /// <param name="CrystalReamerParameters">クリスタルリーマパラメータ</param>
     /// <param name="SkillReamerParameters">スキルリーマパラメータ</param>
@@ -29,6 +30,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         IEnumerable<NCProgramCode> RewritableCodes,
         MaterialType Material,
         decimal Thickness,
+        string SubProgramNumber,
         decimal TargetToolDiameter,
         IEnumerable<ReamingProgramPrameter> CrystalReamerParameters,
         IEnumerable<ReamingProgramPrameter> SkillReamerParameters,
@@ -41,6 +43,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             IEnumerable<NCProgramCode>? rewritableCodes = default,
             MaterialType material = MaterialType.Aluminum,
             decimal thickness = 12.3m,
+            string subProgramNumber = "O1000",
             decimal targetToolDiameter = 13.3m,
             IEnumerable<ReamingProgramPrameter>? crystalReamerParameters = default,
             IEnumerable<ReamingProgramPrameter>? skillReamerParameters = default,
@@ -96,7 +99,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     FeedForIron: 70m),
             };
 
-            return new(rewritableCodes, material, thickness, targetToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
+            return new(rewritableCodes, material, thickness, subProgramNumber, targetToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
         }
     }
     public enum MaterialType

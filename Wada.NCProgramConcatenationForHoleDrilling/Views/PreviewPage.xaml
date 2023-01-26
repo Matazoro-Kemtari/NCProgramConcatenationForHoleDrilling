@@ -29,16 +29,16 @@
                     Margin="5"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <Button Content="保存(_S)" 
-                    Margin="5" 
-                    Padding="5" 
-                    MinWidth="50"
-                    Command="{Binding ExecCommand}"/>
             <Button Content="戻る(_B)"
                     Margin="5"
                     Padding="5"
                     MinWidth="60"
                     Command="{Binding PreviousViewCommand}"/>
+            <Button Content="保存(_S)" 
+                    Margin="5" 
+                    Padding="5" 
+                    MinWidth="50"
+                    Command="{Binding ExecCommand}"/>
         </StackPanel>
         <Grid>
             <Grid.RowDefinitions>
