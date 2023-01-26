@@ -44,7 +44,7 @@ namespace Wada.UseCase.DataClass
                 (MaterialType)editNCProgramPram.Material,
                 editNCProgramPram.Thickness,
                 editNCProgramPram.SubProgramNumger,
-                editNCProgramPram.TargetToolDiameter,
+                editNCProgramPram.DirectedOperationToolDiameter,
                 editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
                 editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
                 editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
@@ -59,7 +59,7 @@ namespace Wada.UseCase.DataClass
     public record class EditNCProgramPram(
         DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
-        decimal TargetToolDiameter,
+        decimal DirectedOperationToolDiameter,
         IEnumerable<NCProgramCodeAttempt> RewritableCodeds,
         MaterialTypeAttempt Material,
         ReamerTypeAttempt Reamer,
@@ -83,7 +83,7 @@ namespace Wada.UseCase.DataClass
         public static EditNCProgramPram Create(
             DirectedOperationTypeAttempt directedOperation = DirectedOperationTypeAttempt.Drilling,
             string subProgramNumger = "8000",
-            decimal targetToolDiameter = 13.2m,
+            decimal directedOperationToolDiameter = 13.2m,
             IEnumerable<NCProgramCodeAttempt>? rewritableCodes = default,
             MaterialTypeAttempt material = MaterialTypeAttempt.Aluminum,
             ReamerTypeAttempt reamer = ReamerTypeAttempt.Crystal,
@@ -143,7 +143,7 @@ namespace Wada.UseCase.DataClass
 
             return new(directedOperation,
                        subProgramNumger,
-                       targetToolDiameter,
+                       directedOperationToolDiameter,
                        rewritableCodes,
                        material,
                        reamer,

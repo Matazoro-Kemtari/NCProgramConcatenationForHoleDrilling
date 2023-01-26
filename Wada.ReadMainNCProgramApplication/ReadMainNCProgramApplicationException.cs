@@ -6,8 +6,6 @@ namespace Wada.ReadMainNCProgramApplication
     [Serializable]
     public class ReadMainNCProgramApplicationException : Exception
     {
-        private NCProgramConcatenationServiceException ex;
-
         public ReadMainNCProgramApplicationException()
         {
         }

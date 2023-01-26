@@ -74,7 +74,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
+            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
             void target()
             {
                 IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
@@ -125,7 +125,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select)
         {
             return param.DrillingPrameters
-                .Where(x => x.TargetToolDiameter == param.TargetToolDiameter)
+                .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -147,7 +147,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.Chamfering);
             decimal? expectedChamferingDepth = param.DrillingPrameters
-                .Where(x => x.DiameterKey == param.TargetToolDiameter.ToString())
+                .Where(x => x.DiameterKey == param.DirectedOperationToolDiameter.ToString())
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "面取り深さ");

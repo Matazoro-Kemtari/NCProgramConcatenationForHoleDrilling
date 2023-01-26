@@ -45,9 +45,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
 
                             return ncWord.Address.Value switch
                             {
-                                'S' => RewriteSpin(material, reamer, rewritingParameter.TargetToolDiameter, ncWord),
+                                'S' => RewriteSpin(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
                                 'Z' => RewriteReamingDepth(thickness, ncWord),
-                                'F' => RewriteFeed(material, reamer, rewritingParameter.TargetToolDiameter, ncWord),
+                                'F' => RewriteFeed(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
                                 'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                 _ => y
                             };

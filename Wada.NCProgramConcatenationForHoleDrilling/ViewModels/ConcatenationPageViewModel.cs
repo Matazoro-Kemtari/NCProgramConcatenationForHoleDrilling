@@ -197,7 +197,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 new EditNCProgramPram(
                     _concatenation.FetchedOperationType.Value,
                     _concatenation.SubProgramNumber.Value,
-                    _concatenation.TargetToolDiameter.Value,
+                    _concatenation.DirectedOperationToolDiameter.Value,
                     _mainProgramCodes.Where(x => x.MachineToolClassification == (MachineToolTypeAttempt)MachineTool.Value)
                                      .Select(x => x.NCProgramCodeAttempts)
                                      .First(),
@@ -254,7 +254,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
             // 読み込んだサブプログラムの作業指示を取得する
             _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
-            _concatenation.TargetToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
+            _concatenation.DirectedOperationToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
             _concatenation.SubProgramNumber.Value = ncProcramCode.ProgramName;
         }
 

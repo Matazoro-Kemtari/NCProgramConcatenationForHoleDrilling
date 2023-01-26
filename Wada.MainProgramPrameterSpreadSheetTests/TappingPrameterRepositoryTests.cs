@@ -22,7 +22,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // then
             Assert.AreEqual(1, tappingProgramPrameters.Count());
-            Assert.AreEqual(10, tappingProgramPrameters.Select(x => x.TargetToolDiameter).First());
+            Assert.AreEqual(10, tappingProgramPrameters.Select(x => x.DirectedOperationToolDiameter).First());
         }
 
         [DataTestMethod()]

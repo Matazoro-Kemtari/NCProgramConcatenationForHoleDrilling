@@ -32,6 +32,6 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 
         public ReactivePropertySlim<string> SubProgramNumber { get; } = new(string.Empty);
         
-        public ReactivePropertySlim<decimal> TargetToolDiameter { get; } = new();
+        public ReactivePropertySlim<decimal> DirectedOperationToolDiameter { get; } = new();
     }
 }

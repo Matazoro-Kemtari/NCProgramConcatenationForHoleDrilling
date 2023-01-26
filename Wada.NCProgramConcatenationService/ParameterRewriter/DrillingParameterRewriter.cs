@@ -25,12 +25,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 try
                 {
                     drillingParameter = drillingParameters
-                        .First(x => x.TargetToolDiameter == rewriteByToolRecord.TargetToolDiameter);
+                        .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
                 }
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"ドリル径 {rewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
+                        $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
                 }
 
                 switch (rewritableCode.MainProgramClassification)

@@ -33,8 +33,8 @@ namespace Wada.UseCase.DataClass
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
             ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
-            (DirectedOperationTypeAttempt)ncProgramCode.FetchOperationType(),
-            ncProgramCode.FetchTargetToolDiameter());
+            (DirectedOperationTypeAttempt)ncProgramCode.FetchDirectedOperationType(),
+            ncProgramCode.FetchDirectedOperationToolDiameter());
 
         public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }

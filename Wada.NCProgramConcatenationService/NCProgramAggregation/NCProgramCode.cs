@@ -50,7 +50,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         [Logging]
-        public DirectedOperationType FetchOperationType()
+        public DirectedOperationType FetchDirectedOperationType()
         {
             // 作業指示を探す
             IEnumerable<DirectedOperationType> hasOperationType = NCBlocks
@@ -94,7 +94,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         [Logging]
-        public decimal FetchTargetToolDiameter()
+        public decimal FetchDirectedOperationToolDiameter()
         {
             // 作業指示を探す
             IEnumerable<decimal> hasOperationType = NCBlocks

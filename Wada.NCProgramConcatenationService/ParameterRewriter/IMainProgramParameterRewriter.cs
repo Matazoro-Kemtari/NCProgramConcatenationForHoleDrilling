@@ -21,7 +21,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     /// <param name="Material">素材</param>
     /// <param name="Thickness">板厚</param>
     /// <param name="SubProgramNumber">サブプログラム番号</param>
-    /// <param name="TargetToolDiameter">目標工具径 :サブプログラムで指定した工具径</param>
+    /// <param name="DirectedOperationToolDiameter">目標工具径 :サブプログラムで指定した工具径</param>
     /// <param name="CrystalReamerParameters">クリスタルリーマパラメータ</param>
     /// <param name="SkillReamerParameters">スキルリーマパラメータ</param>
     /// <param name="TapParameters">タップパラメータ</param>
@@ -31,7 +31,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         MaterialType Material,
         decimal Thickness,
         string SubProgramNumber,
-        decimal TargetToolDiameter,
+        decimal DirectedOperationToolDiameter,
         IEnumerable<ReamingProgramPrameter> CrystalReamerParameters,
         IEnumerable<ReamingProgramPrameter> SkillReamerParameters,
         IEnumerable<TappingProgramPrameter> TapParameters,
@@ -43,8 +43,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             IEnumerable<NCProgramCode>? rewritableCodes = default,
             MaterialType material = MaterialType.Aluminum,
             decimal thickness = 12.3m,
-            string subProgramNumber = "O1000",
-            decimal targetToolDiameter = 13.3m,
+            string subProgramNumber = "1000",
+            decimal directedOperationToolDiameter = 13.3m,
             IEnumerable<ReamingProgramPrameter>? crystalReamerParameters = default,
             IEnumerable<ReamingProgramPrameter>? skillReamerParameters = default,
             IEnumerable<TappingProgramPrameter>? tapParameters = default,
@@ -99,7 +99,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     FeedForIron: 70m),
             };
 
-            return new(rewritableCodes, material, thickness, subProgramNumber, targetToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
+            return new(rewritableCodes, material, thickness, subProgramNumber, directedOperationToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
         }
     }
     public enum MaterialType

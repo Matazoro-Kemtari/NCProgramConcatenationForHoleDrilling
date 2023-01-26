@@ -46,8 +46,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             List<NCProgramCode> ncPrograms = new();
             // 下穴 1回目
             var fastDrillingParameter = drillingParameters
-                .Where(x => x.TargetToolDiameter <= reamingParameter.PreparedHoleDiameter)
-                .MaxBy(x => x.TargetToolDiameter);
+                .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
+                .MaxBy(x => x.DirectedOperationToolDiameter);
             if (fastDrillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
@@ -55,8 +55,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
 
             // 下穴 2回目
             var secondDrillingParameter = drillingParameters
-                .Where(x => x.TargetToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
-                .MaxBy(x => x.TargetToolDiameter);
+                .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
+                .MaxBy(x => x.DirectedOperationToolDiameter);
             if (secondDrillingParameter == null)
                 throw new NCProgramConcatenationServiceException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
@@ -88,12 +88,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 ReamingProgramPrameter reamingParameter;
                 try
                 {
-                    reamingParameter = reamingParameters.First(x => x.TargetToolDiameter == rewriteByToolRecord.TargetToolDiameter);
+                    reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
                 }
                 catch (InvalidOperationException ex)
                 {
                     throw new NCProgramConcatenationServiceException(
-                        $"リーマ径 {rewriteByToolRecord.TargetToolDiameter}のリストがありません", ex);
+                        $"リーマ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
                 }
 
                 switch (rewritableCode.MainProgramClassification)

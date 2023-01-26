@@ -74,7 +74,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
+            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
 
             void target()
             {
@@ -155,7 +155,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // when
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
+                directedOperationToolDiameter: reamerDiameter,
                 skillReamerParameters: new List<ReamingProgramPrameter>
                 {
                     TestReamingProgramPrameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
@@ -189,7 +189,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // when
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
+                directedOperationToolDiameter: reamerDiameter,
                 skillReamerParameters: new List<ReamingProgramPrameter>
                 {
                     TestReamingProgramPrameterFactory.Create(
@@ -273,7 +273,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness,
-                targetToolDiameter: (decimal)toolDiameter);
+                directedOperationToolDiameter: (decimal)toolDiameter);
             IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
