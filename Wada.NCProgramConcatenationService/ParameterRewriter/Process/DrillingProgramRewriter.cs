@@ -34,22 +34,39 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                         .Select(y =>
                             {
-                                if (y.GetType() != typeof(NCWord))
-                                    return y;
-
-                                NCWord ncWord = (NCWord)y;
-                                if (!ncWord.ValueData.Indefinite)
-                                    return y;
-
-                                return ncWord.Address.Value switch
+                                INCWord result;
+                                if (y.GetType() == typeof(NCComment))
                                 {
-                                    'S' => RewriteSpin(material, drillingParameter, ncWord),
-                                    'Z' => RewriteDrillingDepth(thickness, drillingParameter, ncWord),
-                                    'Q' => RewriteCutDepth(drillingParameter, ncWord),
-                                    'F' => RewriteFeed(material, drillingParameter, ncWord),
-                                    'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
-                                    _ => y
-                                };
+                                    NCComment nCComment = (NCComment)y;
+                                    if (nCComment.Comment == "DR")
+                                        result = new NCComment(
+                                            string.Concat(
+                                                nCComment.Comment,
+                                                ' ',
+                                                drillingParameter.DirectedOperationToolDiameter));
+                                    else
+                                        result = y;
+                                }
+                                else if (y.GetType() == typeof(NCWord))
+                                {
+                                    NCWord ncWord = (NCWord)y;
+                                    if (ncWord.ValueData.Indefinite)
+                                        result = ncWord.Address.Value switch
+                                        {
+                                            'S' => RewriteSpin(material, drillingParameter, ncWord),
+                                            'Z' => RewriteDrillingDepth(thickness, drillingParameter, ncWord),
+                                            'Q' => RewriteCutDepth(drillingParameter, ncWord),
+                                            'F' => RewriteFeed(material, drillingParameter, ncWord),
+                                            'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
+                                            _ => y
+                                        };
+                                    else
+                                        result = y;
+                                }
+                                else
+                                    result = y;
+
+                                return result;
                             });
 
                     return new NCBlock(rewritedNCWords, x.HasBlockSkip);
@@ -82,7 +99,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 MaterialType.Iron => drillingParameter.FeedForIron.ToString(),
                 _ => throw new AggregateException(nameof(material)),
             };
-            
+
             return ncWord with
             {
                 ValueData = new NumericalValue(feedValue)

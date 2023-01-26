@@ -36,21 +36,38 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                         .Select(y =>
                         {
-                            if (y.GetType() != typeof(NCWord))
-                                return y;
-
-                            NCWord ncWord = (NCWord)y;
-                            if (!ncWord.ValueData.Indefinite)
-                                return y;
-
-                            return ncWord.Address.Value switch
+                            INCWord result;
+                            if (y.GetType() == typeof(NCComment))
                             {
-                                'S' => RewriteSpin(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
-                                'Z' => RewriteReamingDepth(thickness, ncWord),
-                                'F' => RewriteFeed(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
-                                'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
-                                _ => y
-                            };
+                                NCComment nCComment = (NCComment)y;
+                                if (nCComment.Comment == "REAMER")
+                                    result = new NCComment(
+                                        string.Concat(
+                                            nCComment.Comment,
+                                            ' ',
+                                            rewritingParameter.DirectedOperationToolDiameter));
+                                else
+                                    result = y;
+                            }
+                            else if (y.GetType() == typeof(NCWord))
+                            {
+                                NCWord ncWord = (NCWord)y;
+                                if (ncWord.ValueData.Indefinite)
+                                    result = ncWord.Address.Value switch
+                                    {
+                                        'S' => RewriteSpin(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
+                                        'Z' => RewriteReamingDepth(thickness, ncWord),
+                                        'F' => RewriteFeed(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
+                                        'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
+                                        _ => y
+                                    };
+                                else
+                                    result = y;
+                            }
+                            else
+                                return y;
+
+                            return result;
                         });
 
                     return new NCBlock(rewritedNCWords, x.HasBlockSkip);

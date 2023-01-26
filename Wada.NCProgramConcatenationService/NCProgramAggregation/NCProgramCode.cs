@@ -76,7 +76,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             if (hasOperationType.All(x => x == DirectedOperationType.Undetected))
                 // 有効な指示が1件もない場合
                 return DirectedOperationType.Undetected;
-            
+
             if (hasOperationType.Count(x => x != DirectedOperationType.Undetected) > 1)
             {
                 // 有効な指示が複数ある場合
@@ -187,12 +187,21 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             string programName = "O0001",
             IEnumerable<NCBlock?>? ncBlocks = default)
         {
+            var typeComment = mainProgramType switch
+            {
+                NCProgramType.CenterDrilling => "C/D",
+                NCProgramType.Drilling => "DR",
+                NCProgramType.Chamfering => "MENTORI",
+                NCProgramType.Reaming => "REAMER",
+                NCProgramType.Tapping => "TAP",
+                _ => "COMMENT",
+            };
             ncBlocks ??= new List<NCBlock>
             {
                 TestNCBlockFactory.Create(
                     ncWords: new List<INCWord>
                     {
-                        TestNCCommentFactory.Create(),
+                        TestNCCommentFactory.Create(typeComment),
                     }),
                 TestNCBlockFactory.Create(
                     ncWords: new List<INCWord>
