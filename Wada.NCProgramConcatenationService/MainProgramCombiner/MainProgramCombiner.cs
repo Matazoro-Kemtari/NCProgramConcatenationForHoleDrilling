@@ -12,7 +12,14 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
     {
         public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode)
         {
-            var combinedBlocks = combinableCode.Select(x => x.NCBlocks)
+            var combinedBlocks = combinableCode.Select(
+                (x, i) =>
+                {
+                    var blocks = x.NCBlocks.ToList();
+                    if (i < combinableCode.Count() - 1)
+                        blocks.Add(null);
+                    return blocks;
+                })
                 .SelectMany(x => x);
             return new(
                 NCProgramType.CombinedProgram,
