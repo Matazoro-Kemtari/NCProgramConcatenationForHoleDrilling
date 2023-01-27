@@ -1,7 +1,8 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Wada.UseCase.DataClass;
 
-namespace Wada.UseCase.DataClass
+namespace Wada.EditNCProgramApplication
 {
     public interface IEditNCProgramUseCase
     {
@@ -49,7 +50,7 @@ namespace Wada.UseCase.DataClass
                 editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
                 editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
                 editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()));
-            
+
             return await Task.Run(
                 () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
                     .Select(x => NCProgramCodeAttempt.Parse(x))));
@@ -153,22 +154,4 @@ namespace Wada.UseCase.DataClass
     }
 
     public record class EditNCProgramDTO(IEnumerable<NCProgramCodeAttempt> NCProgramCodes);
-
-    // TODO: 列挙型を移動するかどうか
-
-
-
-    public enum MaterialTypeAttempt
-    {
-        Undefined,
-        Aluminum,
-        Iron,
-    }
-
-    public enum ReamerTypeAttempt
-    {
-        Undefined,
-        Crystal,
-        Skill
-    }
 }

@@ -14,4 +14,18 @@ namespace Wada.UseCase.DataClass
         [EnumDisplayName("不明")]
         Undetected = int.MaxValue,
     }
+
+    public enum MaterialTypeAttempt
+    {
+        Undefined,
+        Aluminum,
+        Iron,
+    }
+
+    public enum ReamerTypeAttempt
+    {
+        Undefined,
+        Crystal,
+        Skill
+    }
 }

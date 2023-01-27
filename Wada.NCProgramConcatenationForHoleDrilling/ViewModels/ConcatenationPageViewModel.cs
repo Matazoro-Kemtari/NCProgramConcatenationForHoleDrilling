@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
 using Wada.CombineMainNCProgramApplication;
+using Wada.EditNCProgramApplication;
 using Wada.Extension;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;
@@ -217,6 +218,10 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             _regionNavigationService.RequestNavigate(nameof(PreviewPage), navigationParams);
         }
 
+        /// <summary>
+        /// Drag＆Dropして ファイルパスが変わった処理
+        /// </summary>
+        /// <param name="path"></param>
         [Logging]
         private async void ChangeSubprogramPath(string path)
         {
@@ -239,6 +244,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 return;
             }
 
+            // 読み込んだサブプログラムの作業指示を取得する
+            _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
+            _concatenation.DirectedOperationToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
+            _concatenation.SubProgramNumber.Value = ncProcramCode.ProgramName;
+
             IDialogParameters parameters = new DialogParameters(
                 $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={ncProcramCode}");
             IDialogResult? dialogResult = default;
@@ -251,11 +261,6 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 _concatenation.Clear();
                 return;
             }
-
-            // 読み込んだサブプログラムの作業指示を取得する
-            _concatenation.FetchedOperationType.Value = ncProcramCode.DirectedOperationClassification;
-            _concatenation.DirectedOperationToolDiameter.Value = ncProcramCode.DirectedOperationToolDiameter;
-            _concatenation.SubProgramNumber.Value = ncProcramCode.ProgramName;
         }
 
         [Logging]
