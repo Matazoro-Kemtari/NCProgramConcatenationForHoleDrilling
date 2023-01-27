@@ -16,7 +16,11 @@ namespace Wada.ReadSubNCProgramApplication.Tests
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INCProgramRepository> mock_nc = new();
             mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NCProgramType>(), It.IsAny<string>()))
-                .ReturnsAsync(TestNCProgramCodeFactory.Create());
+                .ReturnsAsync(TestNCProgramCodeFactory.Create(
+                    ncBlocks: new List<NCBlock> 
+                    {
+                        TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") })
+                    }));
             
 
             // when

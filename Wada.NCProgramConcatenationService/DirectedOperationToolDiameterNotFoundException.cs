@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.UseCase.DataClass
+namespace Wada.NCProgramConcatenationService
 {
     [Serializable]
     public class DirectedOperationToolDiameterNotFoundException : Exception

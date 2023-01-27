@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.NCProgramAggregation
@@ -19,6 +18,14 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             NCBlocks = ncBlocks;
         }
 
+        protected NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
+        {
+            ID = id;
+            MainProgramClassification = mainProgramClassification;
+            ProgramName = programName;
+            NCBlocks = ncBlocks;
+        }
+
         private static string FetchProgramNumber(string programName)
         {
             Match programNumberMatcher = Regex.Match(programName, @"\d+");
@@ -28,14 +35,6 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                     $"ファイル名を確認してください ファイル名: {programName}");
 
             return programNumberMatcher.Value;
-        }
-
-        private NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
-        {
-            ID = id;
-            MainProgramClassification = mainProgramClassification;
-            ProgramName = programName;
-            NCBlocks = ncBlocks;
         }
 
         public override string ToString()

@@ -29,16 +29,16 @@ namespace Wada.ReadSubNCProgramApplication
             // サブプログラムを読み込む
             using StreamReader reader = _streamReaderOpener.Open(path);
 
-            NCProgramCode ncProgramCode;
             try
             {
-                ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
+                var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
+                return SubNCProgramCodeAttemp.Parse(
+                    SubNCProgramCode.Parse(ncProgramCode));
             }
-            catch (NCProgramConcatenationServiceException ex)
+            catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException )
             {
                 throw new ReadSubNCProgramApplicationException(ex.Message, ex);
             }
-            return SubNCProgramCodeAttemp.Parse(ncProgramCode);
         }
     }
 }
