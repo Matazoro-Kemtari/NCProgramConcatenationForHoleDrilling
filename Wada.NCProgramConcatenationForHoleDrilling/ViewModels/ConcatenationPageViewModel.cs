@@ -247,6 +247,15 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
                 return;
             }
+            catch (Exception ex) when (ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException)
+            {
+                var message = MessageNotificationViaLivet.MakeInformationMessage(
+                    $"サブプログラムの読み込みでエラーが発生しました\n{ex.Message}");
+                await Messenger.RaiseAsync(message);
+                _concatenation.Clear();
+
+                return;
+            }
 
             // 読み込んだサブプログラムの作業指示を取得する
             _concatenation.FetchedOperationType.Value = subNCProcramCode.DirectedOperationClassification;

@@ -102,6 +102,7 @@ namespace Wada.UseCase.DataClass
         /// 作業指示を取得する
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="DirectedOperationNotFoundException"></exception>
         /// <exception cref="UseCase_DataClassException"></exception>
         [Logging]
         private static DirectedOperationTypeAttempt FetchDirectedOperationType(IEnumerable<NCBlockAttempt?> ncBlocks)
@@ -129,7 +130,7 @@ namespace Wada.UseCase.DataClass
 
             if (hasOperationType.All(x => x == DirectedOperationTypeAttempt.Undetected))
                 // 有効な指示が1件もない場合
-                return DirectedOperationTypeAttempt.Undetected;
+                throw new DirectedOperationNotFoundException("作業指示が見つかりません");
 
             if (hasOperationType.Count(x => x != DirectedOperationTypeAttempt.Undetected) > 1)
             {
@@ -146,6 +147,7 @@ namespace Wada.UseCase.DataClass
         /// ツール径を取得する
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="DirectedOperationToolDiameterNotFoundException"></exception>
         /// <exception cref="UseCase_DataClassException"></exception>
         [Logging]
         public static decimal FetchDirectedOperationToolDiameter(IEnumerable<NCBlockAttempt?> ncBlocks)
@@ -177,7 +179,7 @@ namespace Wada.UseCase.DataClass
 
             if (hasOperationType.All(x => x == decimal.MinValue))
                 // 有効な指示が1件もない場合
-                return 0m;
+                throw new DirectedOperationToolDiameterNotFoundException("ツール径が見つかりません");
 
             if (hasOperationType.Count(x => x != decimal.MinValue) > 1)
             {
