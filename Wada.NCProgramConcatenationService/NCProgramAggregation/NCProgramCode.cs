@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.NCProgramConcatenationService.NCProgramAggregation
@@ -19,6 +18,14 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             NCBlocks = ncBlocks;
         }
 
+        protected NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
+        {
+            ID = id;
+            MainProgramClassification = mainProgramClassification;
+            ProgramName = programName;
+            NCBlocks = ncBlocks;
+        }
+
         private static string FetchProgramNumber(string programName)
         {
             Match programNumberMatcher = Regex.Match(programName, @"\d+");
@@ -30,110 +37,10 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             return programNumberMatcher.Value;
         }
 
-        private NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
-        {
-            ID = id;
-            MainProgramClassification = mainProgramClassification;
-            ProgramName = programName;
-            NCBlocks = ncBlocks;
-        }
-
         public override string ToString()
         {
             var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
             return $"%\n{ncBlocksString}\n%\n";
-        }
-
-        /// <summary>
-        /// 作業指示を取得する
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
-        [Logging]
-        public DirectedOperationType FetchDirectedOperationType()
-        {
-            // 作業指示を探す
-            IEnumerable<DirectedOperationType> hasOperationType = NCBlocks
-                .Where(x => x != null)
-                .Select(block => block!.NCWords
-                .Where(w => w.GetType() == typeof(NCComment))
-                .Select(w =>
-                {
-                    DirectedOperationType responce;
-                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
-                        responce = DirectedOperationType.Tapping;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?[HG]\d+"))
-                        responce = DirectedOperationType.Reaming;
-                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?DR"))
-                        responce = DirectedOperationType.Drilling;
-                    else
-                        responce = DirectedOperationType.Undetected;
-
-                    return responce;
-                }))
-                .SelectMany(x => x);
-
-            if (hasOperationType.All(x => x == DirectedOperationType.Undetected))
-                // 有効な指示が1件もない場合
-                return DirectedOperationType.Undetected;
-
-            if (hasOperationType.Count(x => x != DirectedOperationType.Undetected) > 1)
-            {
-                // 有効な指示が複数ある場合
-                string msg = $"作業指示が{hasOperationType.Count(x => x != DirectedOperationType.Undetected)}件あります\n" +
-                    $"サブプログラムを確認して、作業指示は1件にしてください";
-                throw new NCProgramConcatenationServiceException(msg);
-            }
-
-            return hasOperationType.First(x => x != DirectedOperationType.Undetected);
-        }
-
-        /// <summary>
-        /// ツール径を取得する
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
-        [Logging]
-        public decimal FetchDirectedOperationToolDiameter()
-        {
-            // 作業指示を探す
-            IEnumerable<decimal> hasOperationType = NCBlocks
-                .Where(x => x != null)
-                .Select(block => block!.NCWords
-                .Where(w => w.GetType() == typeof(NCComment))
-                .Select(w =>
-                {
-                    var tapMatch = Regex.Match(w.ToString()!, @"(?<=-M)\d+(\.\d+)?");
-                    var reamerMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=[HG]\d+)");
-                    var drillMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=DR)");
-
-                    decimal diameter;
-                    if (tapMatch.Success)
-                        diameter = decimal.Parse(tapMatch.Value);
-                    else if (reamerMatch.Success)
-                        diameter = decimal.Parse(reamerMatch.Value);
-                    else if (drillMatch.Success)
-                        diameter = decimal.Parse(drillMatch.Value);
-                    else
-                        diameter = decimal.MinValue;
-
-                    return diameter;
-                }))
-                .SelectMany(x => x);
-
-            if (hasOperationType.All(x => x == decimal.MinValue))
-                // 有効な指示が1件もない場合
-                return 0m;
-
-            if (hasOperationType.Count(x => x != decimal.MinValue) > 1)
-            {
-                // 有効な指示が複数ある場合
-                string msg = $"作業指示が{hasOperationType.Count(x => x != decimal.MinValue)}件あります\n" +
-                    $"サブプログラムを確認して、作業指示は1件にしてください";
-                throw new NCProgramConcatenationServiceException(msg);
-            }
-
-            return hasOperationType.First(x => x != decimal.MinValue);
         }
 
         public static NCProgramCode ReConstruct(

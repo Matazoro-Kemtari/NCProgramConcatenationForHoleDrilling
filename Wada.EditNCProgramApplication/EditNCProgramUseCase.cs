@@ -99,45 +99,35 @@ namespace Wada.EditNCProgramApplication
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    },
-                    DirectedOperationTypeAttempt.Undetected,
-                    0m),
+                    }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Drilling,
                     ProgramName: "O2000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    },
-                    DirectedOperationTypeAttempt.Undetected,
-                    0m),
+                    }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Chamfering,
                     ProgramName: "O3000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    },
-                    DirectedOperationTypeAttempt.Undetected,
-                    0m),
+                    }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Reaming,
                     ProgramName: "O4000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    },
-                    DirectedOperationTypeAttempt.Undetected,
-                    0m),
+                    }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Tapping,
                     ProgramName: "O5000",
                     new List<NCBlockAttempt>
                     {
                         TestNCBlockAttemptFactory.Create(),
-                    },
-                    DirectedOperationTypeAttempt.Undetected,
-                    0m),
+                    }),
             };
 
             mainNCProgramParameters ??= TestMainNCProgramParametersPramFactory.Create();

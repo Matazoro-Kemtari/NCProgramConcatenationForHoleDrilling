@@ -4,7 +4,7 @@ using Wada.NCProgramConcatenationService.ValueObjects;
 namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
 {
     [TestClass()]
-    public class NCProgramCodeTests
+    public class SubNCProgramCodeTests
     {
         [DataTestMethod()]
         [DynamicData(nameof(NCBlockOperations))]
@@ -23,7 +23,8 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 TestNCBlockFactory.Create(),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            DirectedOperationType actual = ncProgramCode.FetchDirectedOperationType();
+            SubNCProgramCode subNCProgram = SubNCProgramCode.Parse(ncProgramCode);
+            DirectedOperationType actual = subNCProgram.DirectedOperationClassification;
 
             // then
             Assert.AreEqual(expected, actual);
@@ -39,10 +40,14 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),
                 DirectedOperationType.Reaming,
             },
+            new object[] {
+                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("4-D10DR") }),
+                DirectedOperationType.Drilling,
+            },
         };
 
         [TestMethod]
-        public void 正常系_作業指示がすべて無いときUndetectedを返すこと()
+        public void 異常系_作業指示がすべて無いときUndetectedを返すこと()
         {
             // given
             // when
@@ -77,10 +82,15 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 }),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            DirectedOperationType actual = ncProgramCode.FetchDirectedOperationType();
+            void target()
+            {
+                _ = SubNCProgramCode.Parse(ncProgramCode);
+            }
 
             // then
-            Assert.AreEqual(DirectedOperationType.Undetected, actual);
+            var ex = Assert.ThrowsException<DirectedOperationNotFoundException>(target);
+            string msg = "作業指示が見つかりません";
+            Assert.AreEqual(msg, ex.Message);
         }
 
         [TestMethod]
@@ -96,14 +106,14 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 null,
                 TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),
                 null,
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") }),
+                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("4-D10DR") }),
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
-                _ = ncProgramCode.FetchDirectedOperationType();
+                _ = SubNCProgramCode.Parse(ncProgramCode);
             }
 
             // then

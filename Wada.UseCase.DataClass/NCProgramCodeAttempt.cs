@@ -1,19 +1,23 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.Extension;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
-    //　TODO: オブジェクトをメインプログラムとサブプログラムで分けるのもあり
+    /// <summary>
+    /// NCプログラム
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="MainProgramClassification"></param>
+    /// <param name="ProgramName"></param>
+    /// <param name="NCBlocks"></param>
     public record class NCProgramCodeAttempt(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
         string ProgramName,
-        IEnumerable<NCBlockAttempt?> NCBlocks,
-        DirectedOperationTypeAttempt DirectedOperationClassification,
-        decimal DirectedOperationToolDiameter)
+        IEnumerable<NCBlockAttempt?> NCBlocks)
     {
         public override string ToString()
         {
@@ -25,9 +29,7 @@ namespace Wada.UseCase.DataClass
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
-            (DirectedOperationTypeAttempt)ncProgramCode.FetchDirectedOperationType(),
-            ncProgramCode.FetchDirectedOperationToolDiameter());
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)));
 
         public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
@@ -35,12 +37,12 @@ namespace Wada.UseCase.DataClass
     public class TestNCProgramCodeAttemptFactory
     {
         public static NCProgramCodeAttempt Create(
-            string ID = "01GQK2ATZNJTVTGC6A0SD00JB6",
-            MainProgramTypeAttempt MainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
-            string ProgramName = "O1234",
-            IEnumerable<NCBlockAttempt?>? NCBlocks = null)
+            string id = "01GQK2ATZNJTVTGC6A0SD00JB6",
+            MainProgramTypeAttempt mainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
+            string orogramName = "O1234",
+            IEnumerable<NCBlockAttempt?>? ncBlocks = null)
         {
-            NCBlocks ??= new List<NCBlockAttempt?>
+            ncBlocks ??= new List<NCBlockAttempt?>
             {
                 TestNCBlockAttemptFactory.Create(
                     ncWords:new List<INCWordAttempt>
@@ -52,15 +54,72 @@ namespace Wada.UseCase.DataClass
             };
 
             return new NCProgramCodeAttempt(
-                ID,
-                MainProgramClassification,
-                ProgramName,
-                NCBlocks,
-                DirectedOperationTypeAttempt.Reaming,
-                13.3m);
+                id,
+                mainProgramClassification,
+                orogramName,
+                ncBlocks);
         }
     }
 
+    /// <summary>
+    /// サブプログラム用NCプログラム
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="MainProgramClassification"></param>
+    /// <param name="ProgramName"></param>
+    /// <param name="NCBlocks"></param>
+    /// <param name="DirectedOperationClassification"></param>
+    /// <param name="DirectedOperationToolDiameter"></param>
+    public record class SubNCProgramCodeAttemp(
+        string ID,
+        MainProgramTypeAttempt MainProgramClassification,
+        string ProgramName,
+        IEnumerable<NCBlockAttempt?> NCBlocks,
+        DirectedOperationTypeAttempt DirectedOperationClassification,
+        decimal DirectedOperationToolDiameter)
+        : NCProgramCodeAttempt(ID, MainProgramClassification, ProgramName, NCBlocks)
+    {
+        public override string ToString()
+        {
+            var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
+            return $"%\n{ncBlocksString}\n%\n";
+        }
+
+        public static SubNCProgramCodeAttemp Parse(SubNCProgramCode ncProgramCode) => new(
+            ncProgramCode.ID.ToString(),
+            (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
+            ncProgramCode.ProgramName,
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
+            (DirectedOperationTypeAttempt)ncProgramCode.DirectedOperationClassification,
+            ncProgramCode.DirectedOperationToolDiameter);
+    }
+
+    public class TestSubNCProgramCodeAttemptFactory
+    {
+        public static SubNCProgramCodeAttemp Create(
+            string id = "01GQK2ATZNJTVTGC6A0SD00JB6",
+            MainProgramTypeAttempt mainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
+            string programName = "O1234",
+            IEnumerable<NCBlockAttempt?>? ncBlocks = null,
+            DirectedOperationTypeAttempt directedOperationClassification = DirectedOperationTypeAttempt.Reaming,
+            decimal directedOperationToolDiameter = 13.3m)
+        {
+            var ncProgram = TestNCProgramCodeAttemptFactory.Create(
+                id, mainProgramClassification, programName, ncBlocks);
+
+            return new SubNCProgramCodeAttemp(
+                ncProgram.ID,
+                ncProgram.MainProgramClassification,
+                ncProgram.ProgramName,
+                ncProgram.NCBlocks,
+                directedOperationClassification,
+                directedOperationToolDiameter);
+        }
+    }
+
+    /// <summary>
+    /// メインプログラム種別
+    /// </summary>
     public enum MainProgramTypeAttempt
     {
         CenterDrilling,
