@@ -52,6 +52,40 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
+        public void 正常系_コメントにツール径が追記されること()
+        {
+            // given
+            // when
+            var param = TestRewriteByToolRecordFactory.Create();
+            IMainProgramParameterRewriter crystalReamingParameterRewriter = new TappingParameterRewriter();
+            var actual = crystalReamingParameterRewriter.RewriteByTool(param);
+
+            // then
+            var directedDiameter = param.DirectedOperationToolDiameter;
+            var drDiameter = param.TapParameters
+                .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
+                .Select(x => x.PreparedHoleDiameter)
+                .First();
+            Assert.AreEqual($"DR {drDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Drilling));
+            Assert.AreEqual($"TAP M{directedDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Tapping));
+        }
+
+        private static string NCWordから始めのコメントを取得する(IEnumerable<NCProgramCode> ncProgramCode, NCProgramType ncProgram)
+        {
+            return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
+                .Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Where(x => x != null)
+                .Select(x => x?.NCWords)
+                .Where(x => x != null)
+                .SelectMany(x => x!)
+                .Where(x => x!.GetType() == typeof(NCComment))
+                .Cast<NCComment>()
+                .First()
+                .Comment;
+        }
+
+        [TestMethod]
         public void 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
@@ -75,7 +109,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
+            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
 
             void target()
             {
@@ -127,12 +161,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select)
         {
             decimal drillDiameter = param.TapParameters
-                .Where(x => x.TargetToolDiameter == param.TargetToolDiameter)
+                .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
                 .Select(x => x.PreparedHoleDiameter)
                 .First();
 
             return param.DrillingPrameters
-                .Where(x => x.TargetToolDiameter == drillDiameter)
+                .Where(x => x.DirectedOperationToolDiameter == drillDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -144,7 +178,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // when
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
+                directedOperationToolDiameter: reamerDiameter,
                 tapParameters: new List<TappingProgramPrameter>
                 {
                     TestTappingProgramPrameterFactory.Create(DiameterKey: $"M{reamerDiameter}", PreparedHoleDiameter: 3),

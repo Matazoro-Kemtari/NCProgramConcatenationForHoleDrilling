@@ -50,7 +50,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         [Logging]
-        public DirectedOperationType FetchOperationType()
+        public DirectedOperationType FetchDirectedOperationType()
         {
             // 作業指示を探す
             IEnumerable<DirectedOperationType> hasOperationType = NCBlocks
@@ -76,7 +76,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             if (hasOperationType.All(x => x == DirectedOperationType.Undetected))
                 // 有効な指示が1件もない場合
                 return DirectedOperationType.Undetected;
-            
+
             if (hasOperationType.Count(x => x != DirectedOperationType.Undetected) > 1)
             {
                 // 有効な指示が複数ある場合
@@ -94,7 +94,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <returns></returns>
         /// <exception cref="NCProgramConcatenationServiceException"></exception>
         [Logging]
-        public decimal FetchTargetToolDiameter()
+        public decimal FetchDirectedOperationToolDiameter()
         {
             // 作業指示を探す
             IEnumerable<decimal> hasOperationType = NCBlocks
@@ -187,12 +187,27 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             string programName = "O0001",
             IEnumerable<NCBlock?>? ncBlocks = default)
         {
+            var typeComment = mainProgramType switch
+            {
+                NCProgramType.CenterDrilling => "C/D",
+                NCProgramType.Drilling => "DR",
+                NCProgramType.Chamfering => "MENTORI",
+                NCProgramType.Reaming => "REAMER",
+                NCProgramType.Tapping => "TAP",
+                _ => "COMMENT",
+            };
+            var lastMCode = mainProgramType switch
+            {
+                NCProgramType.Reaming => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                NCProgramType.Tapping => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                _ => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("1")),
+            };
             ncBlocks ??= new List<NCBlock>
             {
                 TestNCBlockFactory.Create(
                     ncWords: new List<INCWord>
                     {
-                        TestNCCommentFactory.Create(),
+                        TestNCCommentFactory.Create(typeComment),
                     }),
                 TestNCBlockFactory.Create(
                     ncWords: new List<INCWord>
@@ -205,6 +220,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                             valueData: TestNumericalValueFactory.Create("*")),
                     }),
                 TestNCBlockFactory.Create(),
+                TestNCBlockFactory.Create(ncWords: new List<INCWord> { lastMCode }),
             };
             return new(mainProgramType, programName, ncBlocks);
         }

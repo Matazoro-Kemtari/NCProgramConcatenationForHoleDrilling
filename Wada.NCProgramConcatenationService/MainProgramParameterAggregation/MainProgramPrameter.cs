@@ -14,7 +14,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         /// <summary>
         /// ツール径
         /// </summary>
-        decimal TargetToolDiameter { get; }
+        decimal DirectedOperationToolDiameter { get; }
 
         /// <summary>
         /// C/D深さ
@@ -51,7 +51,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         [Logging]
         private static decimal Validate(string value) => decimal.Parse(value);
 
-        public decimal TargetToolDiameter => Validate(DiameterKey);
+        public decimal DirectedOperationToolDiameter => Validate(DiameterKey);
 
         public decimal DrillTipLength => 5m;
 
@@ -109,7 +109,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
             return decimal.Parse(matchedDiameter.Value);
         }
 
-        public decimal TargetToolDiameter => Validate(DiameterKey);
+        public decimal DirectedOperationToolDiameter => Validate(DiameterKey);
 
         public decimal DrillTipLength => 5m;
 
@@ -156,11 +156,11 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         [Logging]
         private static decimal CalcChamferingDepth(decimal diameter) => -(diameter / 2m + 0.2m);
 
-        public decimal TargetToolDiameter => Validate(DiameterKey);
+        public decimal DirectedOperationToolDiameter => Validate(DiameterKey);
 
-        public decimal? ChamferingDepth => CalcChamferingDepth(TargetToolDiameter);
+        public decimal? ChamferingDepth => CalcChamferingDepth(DirectedOperationToolDiameter);
 
-        public decimal DrillTipLength => new DrillTipLength(TargetToolDiameter).Value;
+        public decimal DrillTipLength => new DrillTipLength(DirectedOperationToolDiameter).Value;
     }
 
     public class TestDrillingProgramPrameterFactory

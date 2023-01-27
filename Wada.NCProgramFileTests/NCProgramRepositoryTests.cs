@@ -4,6 +4,7 @@ using System.Text;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
+using System.Text.RegularExpressions;
 
 namespace Wada.NCProgramFile.Tests
 {
@@ -23,13 +24,14 @@ namespace Wada.NCProgramFile.Tests
 
             // when
             string pgName = "O0150";
+            Match pgNameMatcher = Regex.Match(pgName, @"\d+");
             NCProgramType ncProgram = NCProgramType.SubProgram;
             INCProgramRepository ncProgramRepository = new NCProgramRepository();
             NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, pgName);
 
             // then
             NCProgramCode expected = new(ncProgram, pgName, testNCBlocks);
-            Assert.AreEqual(pgName, actual.ProgramName);
+            Assert.AreEqual(pgNameMatcher.Value, actual.ProgramName);
 
             CollectionAssert.AreEqual(
                 expected.NCBlocks.Select(x => x?.ToString()).ToList(),

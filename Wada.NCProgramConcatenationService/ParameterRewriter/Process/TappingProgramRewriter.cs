@@ -33,22 +33,39 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                         .Select(y =>
                         {
-                            if (y.GetType() != typeof(NCWord))
-                                return y;
-
-                            TappingProgramPrameter tappingProgramPrameter = (TappingProgramPrameter)rewritingParameter;
-                            NCWord ncWord = (NCWord)y;
-                            if (!ncWord.ValueData.Indefinite)
-                                return y;
-
-                            return ncWord.Address.Value switch
+                            INCWord result;
+                            if (y.GetType() == typeof(NCComment))
                             {
-                                'S' => RewriteSpin(material, tappingProgramPrameter, ncWord),
-                                'Z' => RewriteTappingDepth(thickness, ncWord),
-                                'F' => RewriteFeed(material, tappingProgramPrameter, ncWord),
-                                'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
-                                _ => y
-                            };
+                                NCComment nCComment = (NCComment)y;
+                                if (nCComment.Comment == "TAP")
+                                    result = new NCComment(
+                                        string.Concat(
+                                            nCComment.Comment,
+                                            " M",
+                                            rewritingParameter.DirectedOperationToolDiameter));
+                                else
+                                    result = y;
+                            }
+                            else if (y.GetType() == typeof(NCWord))
+                            {
+                                TappingProgramPrameter tappingProgramPrameter = (TappingProgramPrameter)rewritingParameter;
+                                NCWord ncWord = (NCWord)y;
+                                if (ncWord.ValueData.Indefinite)
+                                    result = ncWord.Address.Value switch
+                                    {
+                                        'S' => RewriteSpin(material, tappingProgramPrameter, ncWord),
+                                        'Z' => RewriteTappingDepth(thickness, ncWord),
+                                        'F' => RewriteFeed(material, tappingProgramPrameter, ncWord),
+                                        'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
+                                        _ => y
+                                    };
+                                else
+                                    result = y;
+                            }
+                            else
+                                result = y;
+
+                            return result;
                         });
 
                     return new NCBlock(rewritedNCWords, x.HasBlockSkip);
@@ -75,10 +92,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with
+            var feedValue = material switch
             {
-                ValueData = RewriteFeedValueData(material, tappingProgramPrameter)
+                MaterialType.Aluminum => tappingProgramPrameter.FeedForAluminum.ToString(),
+                MaterialType.Iron => tappingProgramPrameter.FeedForIron.ToString(),
+                _ => throw new AggregateException(nameof(material)),
             };
+
+            return ncWord with { ValueData = new NumericalValue(feedValue) };
         }
 
         [Logging]
@@ -87,46 +108,42 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = RewriteTappingDepthValueData(thickness) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(Convert.ToString(-(thickness + 5m))))
+            };
         }
 
         [Logging]
-        private static INCWord RewriteSpin(MaterialType material, TappingProgramPrameter TappingParameter, NCWord ncWord)
+        private static INCWord RewriteSpin(MaterialType material, TappingProgramPrameter tappingParameter, NCWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = RewriteSpinValueData(material, TappingParameter) };
-        }
-
-        [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter)
-        {
-            var feedValue = material switch
-            {
-                MaterialType.Aluminum => tappingProgramPrameter.FeedForAluminum.ToString(),
-                MaterialType.Iron => tappingProgramPrameter.FeedForIron.ToString(),
-                _ => throw new AggregateException(nameof(material)),
-            };
-            return new NumericalValue(feedValue);
-        }
-
-        [Logging]
-        private static IValueData RewriteTappingDepthValueData(decimal thickness)
-        {
-            return new CoordinateValue(Convert.ToString(-(thickness + 5m)));
-        }
-
-        [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material, TappingProgramPrameter tappingProgramPrameter)
-        {
             var spinValue = material switch
             {
-                MaterialType.Aluminum => tappingProgramPrameter.SpinForAluminum.ToString(),
-                MaterialType.Iron => tappingProgramPrameter.SpinForIron.ToString(),
+                MaterialType.Aluminum => tappingParameter.SpinForAluminum.ToString(),
+                MaterialType.Iron => tappingParameter.SpinForIron.ToString(),
                 _ => throw new AggregateException(nameof(material)),
             };
-            return new NumericalValue(spinValue);
+
+            return ncWord with { ValueData = new NumericalValue(spinValue) };
+        }
+
+        /// <summary>
+        /// 座標数値はドットがないと1/1000されるためドットを付加
+        /// パラメータリストはドットが省略されている
+        /// </summary>
+        /// <param name="value">座標値</param>
+        /// <returns></returns>
+        [Logging]
+
+        static string AddDecimalPoint(string value)
+        {
+            if (!value.Contains('.'))
+                value += ".";
+            return value;
         }
     }
 }

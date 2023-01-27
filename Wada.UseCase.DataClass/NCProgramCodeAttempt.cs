@@ -1,18 +1,11 @@
 ﻿using System.Text;
 using Wada.AOP.Logging;
+using Wada.Extension;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
-    public enum MachineToolTypeAttempt
-    {
-        //Undefined, 使わない
-        RB250F = 1,
-        RB260,
-        Triaxial,
-    }
-
     //　TODO: オブジェクトをメインプログラムとサブプログラムで分けるのもあり
     public record class NCProgramCodeAttempt(
         string ID,
@@ -33,8 +26,8 @@ namespace Wada.UseCase.DataClass
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
             ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
-            (DirectedOperationTypeAttempt)ncProgramCode.FetchOperationType(),
-            ncProgramCode.FetchTargetToolDiameter());
+            (DirectedOperationTypeAttempt)ncProgramCode.FetchDirectedOperationType(),
+            ncProgramCode.FetchDirectedOperationToolDiameter());
 
         public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }

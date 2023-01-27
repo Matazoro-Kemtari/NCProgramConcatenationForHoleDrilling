@@ -23,7 +23,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 TestNCBlockFactory.Create(),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            DirectedOperationType actual = ncProgramCode.FetchOperationType();
+            DirectedOperationType actual = ncProgramCode.FetchDirectedOperationType();
 
             // then
             Assert.AreEqual(expected, actual);
@@ -77,7 +77,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 }),
             };
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            DirectedOperationType actual = ncProgramCode.FetchOperationType();
+            DirectedOperationType actual = ncProgramCode.FetchDirectedOperationType();
 
             // then
             Assert.AreEqual(DirectedOperationType.Undetected, actual);
@@ -103,7 +103,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
             NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
-                _ = ncProgramCode.FetchOperationType();
+                _ = ncProgramCode.FetchDirectedOperationType();
             }
 
             // then

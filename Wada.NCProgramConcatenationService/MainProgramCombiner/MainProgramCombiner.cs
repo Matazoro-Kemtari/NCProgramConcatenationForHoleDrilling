@@ -5,15 +5,29 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
 {
     public interface IMainProgramCombiner
     {
-        NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode);
+        NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName);
     }
 
     public class MainProgramCombiner : IMainProgramCombiner
     {
-        public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode)
+        public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName)
         {
-            var combinedBlocks = combinableCode.Select(x => x.NCBlocks)
-                .SelectMany(x => x);
+            var combinedBlocks = combinableCode.Select(
+                (x, i) =>
+                {
+                    var blocks = x.NCBlocks.ToList();
+                    if (i < combinableCode.Count() - 1)
+                        blocks.Add(null);
+                    return blocks;
+                })
+                .SelectMany(x => x)
+                .Prepend(new NCBlock(
+                    new List<INCWord>
+                    {
+                        new NCComment($"{machineToolName}-{materialName}")
+                    },
+                    OptionalBlockSkip.None));
+
             return new(
                 NCProgramType.CombinedProgram,
                 string.Join('>', combinableCode.Select(x => x.ProgramName)),

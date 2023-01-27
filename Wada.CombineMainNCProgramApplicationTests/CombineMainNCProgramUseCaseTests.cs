@@ -15,7 +15,7 @@ namespace Wada.CombineMainNCProgramApplication.Tests
             // given
             // when
             Mock<IMainProgramCombiner> mock_comviner = new();
-            mock_comviner.Setup(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>()))
+            mock_comviner.Setup(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(TestNCProgramCodeFactory.Create());
             ICombineMainNCProgramUseCase useCase = new CombineMainNCProgramUseCase(mock_comviner.Object);
 
@@ -23,10 +23,11 @@ namespace Wada.CombineMainNCProgramApplication.Tests
             {
                 TestNCProgramCodeAttemptFactory.Create(),
             };
-            _ = await useCase.ExecuteAsync(combinableCodesInUseCase);
+            CombineMainNCProgramParam param = new(combinableCodesInUseCase, MachineToolTypeAttempt.RB250F, MaterialTypeAttempt.Aluminum);
+            _ = await useCase.ExecuteAsync(param);
 
             // then
-            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>()), Times.Once());
+            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
     }
 }

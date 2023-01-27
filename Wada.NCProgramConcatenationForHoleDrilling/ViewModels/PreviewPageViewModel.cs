@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
+using Wada.NCProgramConcatenationForHoleDrilling.Views;
 using Wada.NCProgramConcatenationService;
 
 namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
@@ -46,8 +47,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             var message = MessageNotificationViaLivet.MakeSaveFileDialog();
             await Messenger.RaiseAsync(message);
 
-            // アプリケーション終了
-            Application.Current.Shutdown();
+            // 画面遷移
+            _regionNavigationService.RequestNavigate(nameof(ConcatenationPage));
         }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
+
             return ncWord with { ValueData = new NumericalValue(subProgramNumber) };
         }
 
@@ -71,8 +71,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
-            return ncWord with { ValueData = RewriteFeedValueData(material) };
+
+            string feedValue = material switch
+            {
+                MaterialType.Aluminum => "150",
+                MaterialType.Iron => "100",
+                _ => throw new AggregateException(nameof(material)),
+            };
+
+            return ncWord with { ValueData = new NumericalValue(feedValue) };
         }
 
         [Logging]
@@ -81,7 +88,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = RewriteCenterDrillDepthValueData(centerDrillDepth) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(centerDrillDepth.ToString()))
+            };
         }
 
         [Logging]
@@ -89,38 +100,30 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
-            
-            return ncWord with { ValueData = RewriteSpinValueData(material) };
-        }
 
-        [Logging]
-        private static IValueData RewriteFeedValueData(MaterialType material)
-        {
-            string feedValue = material switch
-            {
-                MaterialType.Aluminum => "150",
-                MaterialType.Iron => "100",
-                _ => throw new AggregateException(nameof(material)),
-            };
-            return new NumericalValue(feedValue);
-        }
-
-        [Logging]
-        private static IValueData RewriteCenterDrillDepthValueData(decimal centerDrillDepth)
-        {
-            return new CoordinateValue(Convert.ToString(centerDrillDepth));
-        }
-
-        [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material)
-        {
             string spinValue = material switch
             {
                 MaterialType.Aluminum => "2000",
                 MaterialType.Iron => "1500",
                 _ => throw new AggregateException(nameof(material)),
             };
-            return new NumericalValue(spinValue);
+
+            return ncWord with { ValueData = new NumericalValue(spinValue) };
+        }
+
+        /// <summary>
+        /// 座標数値はドットがないと1/1000されるためドットを付加
+        /// パラメータリストはドットが省略されている
+        /// </summary>
+        /// <param name="value">座標値</param>
+        /// <returns></returns>
+        [Logging]
+
+        static string AddDecimalPoint(string value)
+        {
+            if (!value.Contains('.'))
+                value += ".";
+            return value;
         }
     }
 }

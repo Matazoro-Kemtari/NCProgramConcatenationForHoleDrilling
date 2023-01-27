@@ -74,7 +74,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            return ncWord with { ValueData = RewriteChamferingDepthValueData(chamferDepth) };
+            return ncWord with
+            {
+                ValueData = new CoordinateValue(
+                    AddDecimalPoint(chamferDepth.ToString()))
+            };
         }
 
         [Logging]
@@ -83,25 +87,29 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
             
-            return ncWord with { ValueData = RewriteSpinValueData(material) };
-        }
-
-        [Logging]
-        private static IValueData RewriteChamferingDepthValueData(decimal chamferDepth)
-        {
-            return new CoordinateValue(Convert.ToString(chamferDepth));
-        }
-
-        [Logging]
-        private static IValueData RewriteSpinValueData(MaterialType material)
-        {
             string spinValue = material switch
             {
                 MaterialType.Aluminum => "1400",
                 MaterialType.Iron => "1100",
                 _ => throw new AggregateException(nameof(material)),
             };
-            return new NumericalValue(spinValue);
+
+            return ncWord with { ValueData = new NumericalValue(spinValue) };
+        }
+
+        /// <summary>
+        /// 座標数値はドットがないと1/1000されるためドットを付加
+        /// パラメータリストはドットが省略されている
+        /// </summary>
+        /// <param name="value">座標値</param>
+        /// <returns></returns>
+        [Logging]
+
+        static string AddDecimalPoint(string value)
+        {
+            if (!value.Contains('.'))
+                value += ".";
+            return value;
         }
     }
 }

@@ -52,6 +52,45 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
+        public void 正常系_コメントにツール径が追記されること()
+        {
+            // given
+            // when
+            var param = TestRewriteByToolRecordFactory.Create();
+            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var actual = crystalReamingParameterRewriter.RewriteByTool(param);
+
+            // then
+            var directedDiameter = param.DirectedOperationToolDiameter;
+            var drDiameter = param.CrystalReamerParameters
+                .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
+                .Select(x => x.PreparedHoleDiameter)
+                .First();
+            Assert.AreEqual($"DR {drDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Drilling));
+            var dr2ndDiameter = param.CrystalReamerParameters
+                .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
+                .Select(x => x.SecondPreparedHoleDiameter)
+                .First(); Assert.AreEqual($"DR {dr2ndDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Drilling, 1));
+            Assert.AreEqual($"REAMER {directedDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Reaming));
+        }
+
+        private static string NCWordから始めのコメントを取得する(IEnumerable<NCProgramCode> ncProgramCode, NCProgramType ncProgram, int skip = 0)
+        {
+            return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
+                .Skip(skip)
+                .Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Where(x => x != null)
+                .Select(x => x?.NCWords)
+                .Where(x => x != null)
+                .SelectMany(x => x!)
+                .Where(x => x!.GetType() == typeof(NCComment))
+                .Cast<NCComment>()
+                .First()
+                .Comment;
+        }
+
+        [TestMethod]
         public void 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
@@ -74,7 +113,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
+            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
 
             void target()
             {
@@ -148,16 +187,16 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             decimal drillDiameter = skip switch
             {
                 1 => param.CrystalReamerParameters
-                        .Where(x => x.TargetToolDiameter <= param.TargetToolDiameter)
+                        .Where(x => x.DirectedOperationToolDiameter <= param.DirectedOperationToolDiameter)
                         .Select(x => x.SecondPreparedHoleDiameter)
                         .Max(),
                 _ => param.CrystalReamerParameters
-                        .Where(x => x.TargetToolDiameter <= param.TargetToolDiameter)
+                        .Where(x => x.DirectedOperationToolDiameter <= param.DirectedOperationToolDiameter)
                         .Select(x => x.PreparedHoleDiameter)
                         .Max(),
             };
             return param.DrillingPrameters
-                .Where(x => x.TargetToolDiameter == drillDiameter)
+                .Where(x => x.DirectedOperationToolDiameter == drillDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -169,7 +208,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // when
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
+                directedOperationToolDiameter: reamerDiameter,
                 crystalReamerParameters: new List<ReamingProgramPrameter>
                 {
                     TestReamingProgramPrameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
@@ -202,7 +241,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // when
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
-                targetToolDiameter: reamerDiameter,
+                directedOperationToolDiameter: reamerDiameter,
                 crystalReamerParameters: new List<ReamingProgramPrameter>
                 {
                     TestReamingProgramPrameterFactory.Create(
@@ -285,7 +324,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness,
-                targetToolDiameter: (decimal)toolDiameter);
+                directedOperationToolDiameter: (decimal)toolDiameter);
             IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 

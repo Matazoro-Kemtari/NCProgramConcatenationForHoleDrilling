@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
@@ -52,6 +53,35 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
+        public void 正常系_コメントにツール径が追記されること()
+        {
+            // given
+            // when
+            var param = TestRewriteByToolRecordFactory.Create();
+            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
+
+            // then
+            var directedDiameter = param.DirectedOperationToolDiameter;
+            Assert.AreEqual($"DR {directedDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Drilling));
+        }
+
+        private static string NCWordから始めのコメントを取得する(IEnumerable<NCProgramCode> ncProgramCode, NCProgramType ncProgram)
+        {
+            return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
+                .Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Where(x => x != null)
+                .Select(x => x?.NCWords)
+                .Where(x => x != null)
+                .SelectMany(x => x!)
+                .Where(x => x!.GetType() == typeof(NCComment))
+                .Cast<NCComment>()
+                .First()
+                .Comment;
+        }
+
+        [TestMethod]
         public void 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
@@ -74,7 +104,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(targetToolDiameter: diameter);
+            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
             void target()
             {
                 IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
@@ -125,7 +155,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
         private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select)
         {
             return param.DrillingPrameters
-                .Where(x => x.TargetToolDiameter == param.TargetToolDiameter)
+                .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -147,10 +177,36 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
 
             var rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.Chamfering);
             decimal? expectedChamferingDepth = param.DrillingPrameters
-                .Where(x => x.DiameterKey == param.TargetToolDiameter.ToString())
+                .Where(x => x.DiameterKey == param.DirectedOperationToolDiameter.ToString())
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "面取り深さ");
+        }
+
+        [TestMethod()]
+        public void 面取りの最後Mコードが30になっていること()
+        {
+            // given
+            // when
+            var param = TestRewriteByToolRecordFactory.Create();
+            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
+
+            // then
+            var lastM30 = actual.Where(x => x.MainProgramClassification == NCProgramType.Chamfering)
+                .Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Where(x => x != null)
+                .Select(x => x?.NCWords)
+                .Where(x => x != null)
+                .SelectMany(x => x!)
+                .Where(x => x.GetType() == typeof(NCWord))
+                .Cast<NCWord>()
+                .Where(x => x.Address.Value == 'M')
+                .Select(x => x.ValueData.Number)
+                .Last();
+
+            Assert.AreEqual(30, lastM30);
         }
     }
 }

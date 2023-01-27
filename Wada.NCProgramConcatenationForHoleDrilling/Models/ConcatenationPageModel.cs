@@ -12,9 +12,9 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
         {
             NCProgramFile.Value = string.Empty;
             FetchedOperationType.Value = DirectedOperationTypeAttempt.Undetected;
-            MachineTool.Value = MachineToolType.Undefined;
-            Material.Value = MaterialType.Undefined;
-            Reamer.Value = ReamerType.Undefined;
+            MachineTool.Value = MachineToolTypeAttempt.Undefined;
+            Material.Value = MaterialTypeAttempt.Undefined;
+            Reamer.Value = ReamerTypeAttempt.Undefined;
             Thickness.Value = string.Empty;
         }
 
@@ -22,16 +22,16 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.Models
 
         public ReactivePropertySlim<DirectedOperationTypeAttempt> FetchedOperationType { get; } = new(DirectedOperationTypeAttempt.Undetected);
 
-        public ReactivePropertySlim<MachineToolType> MachineTool { get; } = new();
+        public ReactivePropertySlim<MachineToolTypeAttempt> MachineTool { get; } = new();
 
-        public ReactivePropertySlim<MaterialType> Material { get; } = new();
+        public ReactivePropertySlim<MaterialTypeAttempt> Material { get; } = new();
 
-        public ReactivePropertySlim<ReamerType> Reamer { get; } = new();
+        public ReactivePropertySlim<ReamerTypeAttempt> Reamer { get; } = new();
 
         public ReactivePropertySlim<string> Thickness { get; } = new(string.Empty);
 
         public ReactivePropertySlim<string> SubProgramNumber { get; } = new(string.Empty);
         
-        public ReactivePropertySlim<decimal> TargetToolDiameter { get; } = new();
+        public ReactivePropertySlim<decimal> DirectedOperationToolDiameter { get; } = new();
     }
 }
