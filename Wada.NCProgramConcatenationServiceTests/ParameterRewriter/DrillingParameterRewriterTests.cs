@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
@@ -180,6 +181,32 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedChamferingDepth, rewritedDepth, "面取り深さ");
+        }
+
+        [TestMethod()]
+        public void 面取りの最後Mコードが30になっていること()
+        {
+            // given
+            // when
+            var param = TestRewriteByToolRecordFactory.Create();
+            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            var actual = drillingParameterRewriter.RewriteByTool(param);
+
+            // then
+            var lastM30 = actual.Where(x => x.MainProgramClassification == NCProgramType.Chamfering)
+                .Select(x => x.NCBlocks)
+                .SelectMany(x => x)
+                .Where(x => x != null)
+                .Select(x => x.NCWords)
+                .Where(x => x != null)
+                .SelectMany(x => x)
+                .Where(x => x.GetType() == typeof(NCWord))
+                .Cast<NCWord>()
+                .Where(x => x.Address.Value == 'M')
+                .Select(x => x.ValueData.Number)
+                .Last();
+
+            Assert.AreEqual(30, lastM30);
         }
     }
 }

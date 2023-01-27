@@ -196,6 +196,12 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 NCProgramType.Tapping => "TAP",
                 _ => "COMMENT",
             };
+            var lastMCode = mainProgramType switch
+            {
+                NCProgramType.Reaming => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                NCProgramType.Tapping => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                _ => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("1")),
+            };
             ncBlocks ??= new List<NCBlock>
             {
                 TestNCBlockFactory.Create(
@@ -214,6 +220,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                             valueData: TestNumericalValueFactory.Create("*")),
                     }),
                 TestNCBlockFactory.Create(),
+                TestNCBlockFactory.Create(ncWords: new List<INCWord> { lastMCode }),
             };
             return new(mainProgramType, programName, ncBlocks);
         }
