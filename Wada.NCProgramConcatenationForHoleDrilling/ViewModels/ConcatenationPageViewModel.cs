@@ -131,7 +131,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 Material.ObserveHasErrors,
                 FetchedOperationType.CombineLatest(
                     Reamer,
-                    (x, y) => x == DirectedOperationTypeAttempt.Reaming && y == ReamerType.Undefined),
+                    (x, y) => x == DirectedOperationTypeAttempt.Reaming && y == ReamerTypeAttempt.Undefined),
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
@@ -199,16 +199,20 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     _concatenation.FetchedOperationType.Value,
                     _concatenation.SubProgramNumber.Value,
                     _concatenation.DirectedOperationToolDiameter.Value,
-                    _mainProgramCodes.Where(x => x.MachineToolClassification == (MachineToolTypeAttempt)MachineTool.Value)
+                    _mainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value)
                                      .Select(x => x.NCProgramCodeAttempts)
                                      .First(),
-                    (MaterialTypeAttempt)Material.Value,
-                    (ReamerTypeAttempt)Reamer.Value,
+                    Material.Value,
+                    Reamer.Value,
                     decimal.Parse(Thickness.Value),
                     _mainNCProgramParameters));
 
             // 結合する
-            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(editedCodes.NCProgramCodes);
+            CombineMainNCProgramParam combineParam = new(
+                editedCodes.NCProgramCodes,
+                _concatenation.MachineTool.Value,
+                _concatenation.Material.Value);
+            var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(combineParam);
 
             // 画面遷移
             var navigationParams = new NavigationParameters
@@ -319,15 +323,15 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
         [Display(Name = "加工機")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<MachineToolType> MachineTool { get; }
+        public ReactiveProperty<MachineToolTypeAttempt> MachineTool { get; }
 
         [Display(Name = "材質")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<MaterialType> Material { get; }
+        public ReactiveProperty<MaterialTypeAttempt> Material { get; }
 
         [Display(Name = "リーマ")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<ReamerType> Reamer { get; }
+        public ReactiveProperty<ReamerTypeAttempt> Reamer { get; }
 
         [Display(Name = "板厚")]
         [Required(ErrorMessage = "{0}を入力してください")]
@@ -344,25 +348,5 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgMaterial { get; }
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgThickness { get; }
         public ReadOnlyReactivePropertySlim<string?> ErrorMsgReamer { get; }
-    }
-
-    public enum MachineToolType
-    {
-        Undefined,
-        RB250F,
-        RB260,
-        Triaxial,
-    }
-    public enum MaterialType
-    {
-        Undefined,
-        Aluminum,
-        Iron,
-    }
-    public enum ReamerType
-    {
-        Undefined,
-        Crystal,
-        Skill
     }
 }

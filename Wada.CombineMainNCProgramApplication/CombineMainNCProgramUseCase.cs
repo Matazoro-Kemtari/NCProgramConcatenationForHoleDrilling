@@ -1,11 +1,12 @@
-﻿using Wada.NCProgramConcatenationService.MainProgramCombiner;
+﻿using Wada.Extension;
+using Wada.NCProgramConcatenationService.MainProgramCombiner;
 using Wada.UseCase.DataClass;
 
 namespace Wada.CombineMainNCProgramApplication
 {
     public interface ICombineMainNCProgramUseCase
     {
-        Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCodeAttempt> combinableCodes);
+        Task<CombineMainNCProgramDTO> ExecuteAsync(CombineMainNCProgramParam combineMainNCProgramParam);
     }
 
     public class CombineMainNCProgramUseCase : ICombineMainNCProgramUseCase
@@ -17,13 +18,17 @@ namespace Wada.CombineMainNCProgramApplication
             _mainProgramCombiner = mainProgramCombiner;
         }
 
-        public async Task<CombineMainNCProgramDTO> ExecuteAsync(IEnumerable<NCProgramCodeAttempt> combinableCodes)
+        public async Task<CombineMainNCProgramDTO> ExecuteAsync(CombineMainNCProgramParam combineMainNCProgramParam)
             => await Task.Run(
                 () => new CombineMainNCProgramDTO(
                     NCProgramCodeAttempt.Parse(
                         _mainProgramCombiner.Combine(
-                            combinableCodes.Select(x => x.Convert())))));
+                            combineMainNCProgramParam.CombinableCodes.Select(x => x.Convert()),
+                            combineMainNCProgramParam.MachineTool.GetEnumDisplayName() ?? string.Empty,
+                            combineMainNCProgramParam.Material.GetEnumDisplayName() ?? string.Empty))));
     }
+
+    public record class CombineMainNCProgramParam(IEnumerable<NCProgramCodeAttempt> CombinableCodes, MachineToolTypeAttempt MachineTool, MaterialTypeAttempt Material);
 
     public record class CombineMainNCProgramDTO(NCProgramCodeAttempt NCProgramCode);
 }

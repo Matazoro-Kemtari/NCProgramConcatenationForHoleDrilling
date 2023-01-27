@@ -1,18 +1,11 @@
 ﻿using System.Text;
 using Wada.AOP.Logging;
+using Wada.Extension;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
-    public enum MachineToolTypeAttempt
-    {
-        //Undefined, 使わない
-        RB250F = 1,
-        RB260,
-        Triaxial,
-    }
-
     //　TODO: オブジェクトをメインプログラムとサブプログラムで分けるのもあり
     public record class NCProgramCodeAttempt(
         string ID,

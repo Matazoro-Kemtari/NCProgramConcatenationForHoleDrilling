@@ -5,12 +5,12 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
 {
     public interface IMainProgramCombiner
     {
-        NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode);
+        NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName);
     }
 
     public class MainProgramCombiner : IMainProgramCombiner
     {
-        public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode)
+        public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName)
         {
             var combinedBlocks = combinableCode.Select(
                 (x, i) =>
@@ -20,7 +20,14 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
                         blocks.Add(null);
                     return blocks;
                 })
-                .SelectMany(x => x);
+                .SelectMany(x => x)
+                .Prepend(new NCBlock(
+                    new List<INCWord>
+                    {
+                        new NCComment($"{machineToolName}-{materialName}")
+                    },
+                    OptionalBlockSkip.None));
+
             return new(
                 NCProgramType.CombinedProgram,
                 string.Join('>', combinableCode.Select(x => x.ProgramName)),
