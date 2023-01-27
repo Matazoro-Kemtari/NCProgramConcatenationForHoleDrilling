@@ -1,10 +1,19 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
+using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.NCProgramAggregation;
 using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
+    /// <summary>
+    /// NCプログラム
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="MainProgramClassification"></param>
+    /// <param name="ProgramName"></param>
+    /// <param name="NCBlocks"></param>
     public record class NCProgramCodeAttempt(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
@@ -53,6 +62,15 @@ namespace Wada.UseCase.DataClass
         }
     }
 
+    /// <summary>
+    /// サブプログラム用NCプログラム
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="MainProgramClassification"></param>
+    /// <param name="ProgramName"></param>
+    /// <param name="NCBlocks"></param>
+    /// <param name="DirectedOperationClassification"></param>
+    /// <param name="DirectedOperationToolDiameter"></param>
     public record class SubNCProgramCodeAttemp(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
@@ -62,13 +80,115 @@ namespace Wada.UseCase.DataClass
         decimal DirectedOperationToolDiameter)
         : NCProgramCodeAttempt(ID, MainProgramClassification, ProgramName, NCBlocks)
     {
-        public static new SubNCProgramCodeAttemp Parse(NCProgramCode ncProgramCode) => new(
+        public override string ToString()
+        {
+            var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
+            return $"%\n{ncBlocksString}\n%\n";
+        }
+
+        public static new SubNCProgramCodeAttemp Parse(NCProgramCode ncProgramCode)
+        {
+            var ncBlocks = ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x));
+            return new(
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
-            (DirectedOperationTypeAttempt)ncProgramCode.FetchDirectedOperationType(),
-            ncProgramCode.FetchDirectedOperationToolDiameter());
+            ncBlocks,
+            FetchDirectedOperationType(ncBlocks),
+            FetchDirectedOperationToolDiameter(ncBlocks));
+        }
+
+        /// <summary>
+        /// 作業指示を取得する
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="UseCase_DataClassException"></exception>
+        [Logging]
+        private static DirectedOperationTypeAttempt FetchDirectedOperationType(IEnumerable<NCBlockAttempt?> ncBlocks)
+        {
+            // 作業指示を探す
+            IEnumerable<DirectedOperationTypeAttempt> hasOperationType = ncBlocks
+                .Where(x => x != null)
+                .Select(block => block!.NCWords
+                .Where(w => w.GetType() == typeof(NCCommentAttempt))
+                .Select(w =>
+                {
+                    DirectedOperationTypeAttempt responce;
+                    if (Regex.IsMatch(w.ToString()!, @"(?<=-)M\d+"))
+                        responce = DirectedOperationTypeAttempt.Tapping;
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?[HG]\d+"))
+                        responce = DirectedOperationTypeAttempt.Reaming;
+                    else if (Regex.IsMatch(w.ToString()!, @"(?<=-)D\d+(\.?\d+)?DR"))
+                        responce = DirectedOperationTypeAttempt.Drilling;
+                    else
+                        responce = DirectedOperationTypeAttempt.Undetected;
+
+                    return responce;
+                }))
+                .SelectMany(x => x);
+
+            if (hasOperationType.All(x => x == DirectedOperationTypeAttempt.Undetected))
+                // 有効な指示が1件もない場合
+                return DirectedOperationTypeAttempt.Undetected;
+
+            if (hasOperationType.Count(x => x != DirectedOperationTypeAttempt.Undetected) > 1)
+            {
+                // 有効な指示が複数ある場合
+                string msg = $"作業指示が{hasOperationType.Count(x => x != DirectedOperationTypeAttempt.Undetected)}件あります\n" +
+                    $"サブプログラムを確認して、作業指示は1件にしてください";
+                throw new UseCase_DataClassException(msg);
+            }
+
+            return hasOperationType.First(x => x != DirectedOperationTypeAttempt.Undetected);
+        }
+
+        /// <summary>
+        /// ツール径を取得する
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="UseCase_DataClassException"></exception>
+        [Logging]
+        public static decimal FetchDirectedOperationToolDiameter(IEnumerable<NCBlockAttempt?> ncBlocks)
+        {
+            // 作業指示を探す
+            IEnumerable<decimal> hasOperationType = ncBlocks
+                .Where(x => x != null)
+                .Select(block => block!.NCWords
+                .Where(w => w.GetType() == typeof(NCCommentAttempt))
+                .Select(w =>
+                {
+                    var tapMatch = Regex.Match(w.ToString()!, @"(?<=-M)\d+(\.\d+)?");
+                    var reamerMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=[HG]\d+)");
+                    var drillMatch = Regex.Match(w.ToString()!, @"(?<=-D)\d+(\.\d+)?(?=DR)");
+
+                    decimal diameter;
+                    if (tapMatch.Success)
+                        diameter = decimal.Parse(tapMatch.Value);
+                    else if (reamerMatch.Success)
+                        diameter = decimal.Parse(reamerMatch.Value);
+                    else if (drillMatch.Success)
+                        diameter = decimal.Parse(drillMatch.Value);
+                    else
+                        diameter = decimal.MinValue;
+
+                    return diameter;
+                }))
+                .SelectMany(x => x);
+
+            if (hasOperationType.All(x => x == decimal.MinValue))
+                // 有効な指示が1件もない場合
+                return 0m;
+
+            if (hasOperationType.Count(x => x != decimal.MinValue) > 1)
+            {
+                // 有効な指示が複数ある場合
+                string msg = $"作業指示が{hasOperationType.Count(x => x != decimal.MinValue)}件あります\n" +
+                    $"サブプログラムを確認して、作業指示は1件にしてください";
+                throw new UseCase_DataClassException(msg);
+            }
+
+            return hasOperationType.First(x => x != decimal.MinValue);
+        }
     }
 
     public class TestSubNCProgramCodeAttemptFactory
@@ -94,6 +214,9 @@ namespace Wada.UseCase.DataClass
         }
     }
 
+    /// <summary>
+    /// メインプログラム種別
+    /// </summary>
     public enum MainProgramTypeAttempt
     {
         CenterDrilling,

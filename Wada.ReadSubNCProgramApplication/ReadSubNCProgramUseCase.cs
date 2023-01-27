@@ -8,7 +8,7 @@ namespace Wada.ReadSubNCProgramApplication
 {
     public interface IReadSubNCProgramUseCase
     {
-        Task<NCProgramCodeAttempt> ExecuteAsync(string path);
+        Task<SubNCProgramCodeAttemp> ExecuteAsync(string path);
     }
 
     public class ReadSubNCProgramUseCase : IReadSubNCProgramUseCase
@@ -23,7 +23,7 @@ namespace Wada.ReadSubNCProgramApplication
         }
 
         [Logging]
-        public async Task<NCProgramCodeAttempt> ExecuteAsync(string path)
+        public async Task<SubNCProgramCodeAttemp> ExecuteAsync(string path)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             // サブプログラムを読み込む
@@ -38,7 +38,7 @@ namespace Wada.ReadSubNCProgramApplication
             {
                 throw new ReadSubNCProgramApplicationException(ex.Message, ex);
             }
-            return NCProgramCodeAttempt.Parse(ncProgramCode);
+            return SubNCProgramCodeAttemp.Parse(ncProgramCode);
         }
     }
 }
