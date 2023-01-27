@@ -20,10 +20,13 @@ namespace Wada.CombineMainNCProgramApplication
 
         public async Task<CombineMainNCProgramDTO> ExecuteAsync(CombineMainNCProgramParam combineMainNCProgramParam)
             => await Task.Run(
-                () => new CombineMainNCProgramDTO(
+                async () => new CombineMainNCProgramDTO(
                     NCProgramCodeAttempt.Parse(
                         _mainProgramCombiner.Combine(
-                            combineMainNCProgramParam.CombinableCodes.Select(x => x.Convert()),
+                            await Task.WhenAll(
+                                combineMainNCProgramParam.CombinableCodes
+                                .Select(
+                                    async x => await Task.Run(() => x.Convert()))),
                             combineMainNCProgramParam.MachineTool.GetEnumDisplayName() ?? string.Empty,
                             combineMainNCProgramParam.Material.GetEnumDisplayName() ?? string.Empty))));
     }
