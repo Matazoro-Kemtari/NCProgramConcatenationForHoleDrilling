@@ -194,18 +194,30 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }
 
             // メインプログラムを編集する
-            var editedCodes = await _editNCProgramUseCase.ExecuteAsync(
-                new EditNCProgramPram(
-                    _concatenation.FetchedOperationType.Value,
-                    _concatenation.SubProgramNumber.Value,
-                    _concatenation.DirectedOperationToolDiameter.Value,
-                    _mainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value)
-                                     .Select(x => x.NCProgramCodeAttempts)
-                                     .First(),
-                    Material.Value,
-                    Reamer.Value,
-                    decimal.Parse(Thickness.Value),
-                    _mainNCProgramParameters));
+            EditNCProgramDTO editedCodes;
+            try
+            {
+                editedCodes = await _editNCProgramUseCase.ExecuteAsync(
+                    new EditNCProgramPram(
+                        _concatenation.FetchedOperationType.Value,
+                        _concatenation.SubProgramNumber.Value,
+                        _concatenation.DirectedOperationToolDiameter.Value,
+                        _mainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value)
+                                         .Select(x => x.NCProgramCodeAttempts)
+                                         .First(),
+                        Material.Value,
+                        Reamer.Value,
+                        decimal.Parse(Thickness.Value),
+                        _mainNCProgramParameters));
+            }
+            catch (EditNCProgramApplicationException ex)
+            {
+                var message = MessageNotificationViaLivet.MakeErrorMessage(
+                    "メインプログラム編集中にエラーが発生しました\n" +
+                    $"{ex.Message}");
+                await Messenger.RaiseAsync(message);
+                return;
+            }
 
             // 結合する
             CombineMainNCProgramParam combineParam = new(
