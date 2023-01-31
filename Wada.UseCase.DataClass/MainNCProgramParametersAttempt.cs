@@ -36,27 +36,27 @@ namespace Wada.UseCase.DataClass
                     PreparedHoleDiameter: fastDrill,
                     CenterDrillDepth: centerDrillDepth,
                     ChamferingDepth: -6.3m,
-                    SpinForAluminum: 160m,
-                    FeedForAluminum: 280m,
-                    SpinForIron: 120m,
-                    FeedForIron: 210m),
+                    SpinForAluminum: 160,
+                    FeedForAluminum: 280,
+                    SpinForIron: 120,
+                    FeedForIron: 210),
             };
             drillingPrameters ??= new List<DrillingProgramPrameterAttempt>
             {
                 new(DiameterKey: fastDrill.ToString(),
                     CenterDrillDepth: -1.5m,
                     CutDepth: 3m,
-                    SpinForAluminum: 960m,
-                    FeedForAluminum: 130m,
-                    SpinForIron: 640m,
-                    FeedForIron: 90m),
+                    SpinForAluminum: 960,
+                    FeedForAluminum: 130,
+                    SpinForIron: 640,
+                    FeedForIron: 90),
                 new(DiameterKey: secondDrill.ToString(),
                     CenterDrillDepth: -1.5m,
                     CutDepth: 3.5m,
-                    SpinForAluminum: 84m,
-                    FeedForAluminum: 110m,
-                    SpinForIron: 560m,
-                    FeedForIron: 80m),
+                    SpinForAluminum: 84,
+                    FeedForAluminum: 110,
+                    SpinForIron: 560,
+                    FeedForIron: 80),
             };
 
             return new(crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
@@ -85,10 +85,10 @@ namespace Wada.UseCase.DataClass
         decimal PreparedHoleDiameter,
         decimal CenterDrillDepth,
         decimal? ChamferingDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron)
+        int SpinForAluminum,
+        int FeedForAluminum,
+        int SpinForIron,
+        int FeedForIron)
     {
         public TappingProgramPrameter Convert() => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
 
@@ -107,12 +107,12 @@ namespace Wada.UseCase.DataClass
         string DiameterKey,
         decimal CenterDrillDepth,
         decimal CutDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron)
+        int SpinForAluminum,
+        int FeedForAluminum,
+        int SpinForIron,
+        int FeedForIron)
     {
-        public DrillingProgramPrameter Convert() => new DrillingProgramPrameter(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+        public DrillingProgramPrameter Convert() => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
 
         public static DrillingProgramPrameterAttempt Parse(DrillingProgramPrameter mainProgramPrameter)
         => new(mainProgramPrameter.DiameterKey,
