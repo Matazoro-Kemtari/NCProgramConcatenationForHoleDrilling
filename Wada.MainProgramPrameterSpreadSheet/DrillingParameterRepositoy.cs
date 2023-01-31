@@ -40,10 +40,10 @@ namespace Wada.MainProgramPrameterSpreadSheet
             var drillDiameter = GetValueWithVaridate<string>("A", "DR(φ)");
             var centerDrillDepth = GetValueWithVaridate<decimal>("B", "C/D深さ");
             var cutDepth = GetValueWithVaridate<decimal>("E", "切込(Q)");
-            var spinForAluminum = GetValueWithVaridate<decimal>("F", "回転(AL)");
-            var feedForAluminum = GetValueWithVaridate<decimal>("G", "送り(AL)");
-            var spinForIron = GetValueWithVaridate<decimal>("H", "回転(SS400)");
-            var feedForIron = GetValueWithVaridate<decimal>("I", "送り(SS400)");
+            var spinForAluminum = GetValueWithVaridate<int>("F", "回転(AL)");
+            var feedForAluminum = GetValueWithVaridate<int>("G", "送り(AL)");
+            var spinForIron = GetValueWithVaridate<int>("H", "回転(SS400)");
+            var feedForIron = GetValueWithVaridate<int>("I", "送り(SS400)");
 
             return new DrillingProgramPrameter(
                 drillDiameter,

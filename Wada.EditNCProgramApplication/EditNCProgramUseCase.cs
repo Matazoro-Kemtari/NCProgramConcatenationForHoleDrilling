@@ -1,4 +1,5 @@
 ﻿using Wada.AOP.Logging;
+using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.ParameterRewriter;
 using Wada.UseCase.DataClass;
 
@@ -51,9 +52,16 @@ namespace Wada.EditNCProgramApplication
                 editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
                 editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()));
 
-            return await Task.Run(
-                () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
-                    .Select(x => NCProgramCodeAttempt.Parse(x))));
+            try
+            {
+                return await Task.Run(
+                    () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
+                        .Select(x => NCProgramCodeAttempt.Parse(x))));
+            }
+            catch (NCProgramConcatenationServiceException ex)
+            {
+                throw new EditNCProgramApplicationException(ex.Message, ex);
+            }
         }
     }
 

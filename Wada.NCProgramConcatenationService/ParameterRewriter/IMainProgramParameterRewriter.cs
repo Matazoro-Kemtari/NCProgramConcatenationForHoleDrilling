@@ -76,10 +76,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     DiameterKey: "9.1",
                     CenterDrillDepth: -1.5m,
                     CutDepth: 2.5m,
-                    SpinForAluminum: 1100m,
-                    FeedForAluminum: 130m,
-                    SpinForIron: 710m,
-                    FeedForIron: 100m),
+                    SpinForAluminum: 1100,
+                    FeedForAluminum: 130,
+                    SpinForIron: 710,
+                    FeedForIron: 100),
                 TestDrillingProgramPrameterFactory.Create(
                     DiameterKey: "11.1",
                     CenterDrillDepth: -1.5m,
@@ -93,10 +93,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     DiameterKey: "15.3",
                     CenterDrillDepth: -1.5m,
                     CutDepth: 3.5m,
-                    SpinForAluminum: 740m,
-                    FeedForAluminum: 100m,
-                    SpinForIron: 490m,
-                    FeedForIron: 70m),
+                    SpinForAluminum: 740,
+                    FeedForAluminum: 100,
+                    SpinForIron: 490,
+                    FeedForIron: 70),
             };
 
             return new(rewritableCodes, material, thickness, subProgramNumber, directedOperationToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
