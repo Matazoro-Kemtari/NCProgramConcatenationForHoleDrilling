@@ -21,30 +21,45 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             List<NCProgramCode> rewritedNCPrograms = new();
             foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
-                DrillingProgramPrameter drillingParameter;
-                try
-                {
-                    drillingParameter = drillingParameters
-                        .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
-                }
-                catch (InvalidOperationException ex)
-                {
+                var maxDiameter = drillingParameters.MaxBy(x => x.DirectedOperationToolDiameter)
+                    ?.DirectedOperationToolDiameter;
+                if (maxDiameter == null
+                    || maxDiameter + 0.5m < rewriteByToolRecord.DirectedOperationToolDiameter)
                     throw new NCProgramConcatenationServiceException(
-                        $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
-                }
+                        $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません\n" +
+                        $"リストの最大ドリル径({maxDiameter})を超えています");
+
+                DrillingProgramPrameter drillingParameter = drillingParameters
+                    .Where(x => x.DirectedOperationToolDiameter <= rewriteByToolRecord.DirectedOperationToolDiameter)
+                    .MaxBy(x => x.DirectedOperationToolDiameter)
+                    ?? throw new NCProgramConcatenationServiceException(
+                        $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
 
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber));
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(
+                            rewritableCode,
+                            rewriteByToolRecord.Material,
+                            drillingParameter,
+                            rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Drilling:
-                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameter, rewriteByToolRecord.SubProgramNumber));
+                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(
+                                rewritableCode,
+                                rewriteByToolRecord.Material,
+                                rewriteByToolRecord.Thickness,
+                                drillingParameter,
+                                rewriteByToolRecord.SubProgramNumber,
+                                rewriteByToolRecord.DirectedOperationToolDiameter));
                         break;
                     case NCProgramType.Chamfering:
-                        rewritedNCPrograms.Add(
-                            ReplaceLastM1ToM30(
-                                ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber)));
+                        rewritedNCPrograms.Add(ReplaceLastM1ToM30(
+                                ChamferingProgramRewriter.Rewrite(
+                                    rewritableCode,
+                                    rewriteByToolRecord.Material,
+                                    drillingParameter,
+                                    rewriteByToolRecord.SubProgramNumber)));
                         break;
                     default:
                         // 何もしない

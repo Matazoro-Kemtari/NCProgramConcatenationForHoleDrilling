@@ -96,7 +96,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
 
             var spinValue = CalculateReamerSpin(material, reamer, diameter);
 
-            decimal feedValue = CalculateReamerSpinFeed(material, reamer, spinValue);
+            int feedValue = CalculateReamerSpinFeed(material, reamer, spinValue);
 
             return ncWord with { ValueData = new NumericalValue(feedValue.ToString()) };
         }
@@ -120,13 +120,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
-            decimal spinValue = CalculateReamerSpin(material, reamer, diameter);
+            var spinValue = CalculateReamerSpin(material, reamer, diameter);
 
             return ncWord with { ValueData = new NumericalValue(spinValue.ToString()) };
         }
 
         [Logging]
-        private static decimal CalculateReamerSpinFeed(MaterialType material, ReamerType reamer, decimal spin)
+        private static int CalculateReamerSpinFeed(MaterialType material, ReamerType reamer, decimal spin)
         {
             decimal figures = material switch
             {
@@ -144,12 +144,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var feedValue = Round(figures, -1, MidpointRounding.AwayFromZero);
+
+            // 整数10の位(decimals: -1)で丸め
+            var feedValue = (int)Round(figures, -1, MidpointRounding.AwayFromZero);
             return feedValue;
         }
 
         [Logging]
-        private static decimal CalculateReamerSpin(MaterialType material, ReamerType reamer, decimal diameter)
+        private static int CalculateReamerSpin(MaterialType material, ReamerType reamer, decimal diameter)
         {
             decimal figures = material switch
             {
@@ -167,7 +169,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                 },
                 _ => throw new AggregateException(nameof(material)),
             };
-            var spinValue = Round(figures, -1, MidpointRounding.AwayFromZero);
+
+            // 整数10の位(decimals: -1)で丸め
+            var spinValue = (int)Round(figures, -1, MidpointRounding.AwayFromZero);
             return spinValue;
         }
 

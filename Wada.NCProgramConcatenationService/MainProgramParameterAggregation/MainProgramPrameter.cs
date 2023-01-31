@@ -92,10 +92,10 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         decimal PreparedHoleDiameter,
         decimal CenterDrillDepth,
         decimal? ChamferingDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron) : IMainProgramPrameter
+        int SpinForAluminum,
+        int FeedForAluminum,
+        int SpinForIron,
+        int FeedForIron) : IMainProgramPrameter
     {
         [Logging]
         private static decimal Validate(string value)
@@ -126,10 +126,10 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
             decimal PreparedHoleDiameter = 11.1m,
             decimal CenterDrillDepth = -3.1m,
             decimal? ChamferingDepth = -1.7m,
-            decimal SpinForAluminum = 700m,
-            decimal FeedForAluminum = 300m,
-            decimal SpinForIron = 700m,
-            decimal FeedForIron = 300m) => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+            int SpinForAluminum = 700,
+            int FeedForAluminum = 300,
+            int SpinForIron = 700,
+            int FeedForIron = 300) => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
     }
     /// <summary>
     /// ドリルパラメータ
@@ -145,10 +145,10 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         string DiameterKey,
         decimal CenterDrillDepth,
         decimal CutDepth,
-        decimal SpinForAluminum,
-        decimal FeedForAluminum,
-        decimal SpinForIron,
-        decimal FeedForIron) : IMainProgramPrameter
+        int SpinForAluminum,
+        int FeedForAluminum,
+        int SpinForIron,
+        int FeedForIron) : IMainProgramPrameter
     {
         [Logging]
         private static decimal Validate(string value) => decimal.Parse(value);
@@ -169,9 +169,9 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         string DiameterKey="13.3",
         decimal CenterDrillDepth = -1.5m,
         decimal CutDepth = 3.5m,
-        decimal SpinForAluminum = 740m,
-        decimal FeedForAluminum = 100m,
-        decimal SpinForIron = 490m,
-        decimal FeedForIron = 70m) => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+        int SpinForAluminum = 740,
+        int FeedForAluminum = 100,
+        int SpinForIron = 490,
+        int FeedForIron = 70) => new(DiameterKey, CenterDrillDepth, CutDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
     }
 }

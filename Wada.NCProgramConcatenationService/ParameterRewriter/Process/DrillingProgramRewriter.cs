@@ -15,6 +15,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         /// <param name="diameter"></param>
         /// <param name="thickness"></param>
         /// <param name="drillingParameter"></param>
+        /// <param name="subProgramNumber"></param>
+        /// <param name="drillDiameter">実際に使用するドリル径</param>
         /// <returns></returns>
         [Logging]
         internal static NCProgramCode Rewrite(
@@ -22,7 +24,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             MaterialType material,
             decimal thickness,
             DrillingProgramPrameter drillingParameter,
-            string subProgramNumber)
+            string subProgramNumber,
+            decimal drillDiameter)
         {
             // NCプログラムを走査して書き換え対象を探す
             var rewritedNCBlocks = rewritableCode.NCBlocks
@@ -43,7 +46,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                             string.Concat(
                                                 nCComment.Comment,
                                                 ' ',
-                                                drillingParameter.DirectedOperationToolDiameter));
+                                                drillDiameter));
                                     else
                                         result = y;
                                 }

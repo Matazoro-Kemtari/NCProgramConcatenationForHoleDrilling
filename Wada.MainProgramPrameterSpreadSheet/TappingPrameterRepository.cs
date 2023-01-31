@@ -41,10 +41,10 @@ namespace Wada.MainProgramPrameterSpreadSheet
             var preparedHoleDiameter = GetValueWithVaridate<decimal>("B", "DR1(φ)");
             var centerDrillDepth = GetValueWithVaridate<decimal>("C", "C/D深さ");
             var chamferingDepth = GetValueWithVaridate<decimal>("D", "面取深さ");
-            var spinForAluminum = GetValueWithVaridate<decimal>("E", "回転(AL)");
-            var feedForAluminum = GetValueWithVaridate<decimal>("F", "送り(AL)");
-            var spinForIron = GetValueWithVaridate<decimal>("G", "回転(SS400)");
-            var feedForIron = GetValueWithVaridate<decimal>("H", "送り(SS400)");
+            var spinForAluminum = GetValueWithVaridate<int>("E", "回転(AL)");
+            var feedForAluminum = GetValueWithVaridate<int>("F", "送り(AL)");
+            var spinForIron = GetValueWithVaridate<int>("G", "回転(SS400)");
+            var feedForIron = GetValueWithVaridate<int>("H", "送り(SS400)");
 
             return new TappingProgramPrameter(
                 reamerDiameter,
