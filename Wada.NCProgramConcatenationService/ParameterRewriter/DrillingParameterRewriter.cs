@@ -38,15 +38,28 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 switch (rewritableCode.MainProgramClassification)
                 {
                     case NCProgramType.CenterDrilling:
-                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber));
+                        rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(
+                            rewritableCode,
+                            rewriteByToolRecord.Material,
+                            drillingParameter,
+                            rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NCProgramType.Drilling:
-                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, rewriteByToolRecord.Thickness, drillingParameter, rewriteByToolRecord.SubProgramNumber));
+                        rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(
+                                rewritableCode,
+                                rewriteByToolRecord.Material,
+                                rewriteByToolRecord.Thickness,
+                                drillingParameter,
+                                rewriteByToolRecord.SubProgramNumber,
+                                rewriteByToolRecord.DirectedOperationToolDiameter));
                         break;
                     case NCProgramType.Chamfering:
-                        rewritedNCPrograms.Add(
-                            ReplaceLastM1ToM30(
-                                ChamferingProgramRewriter.Rewrite(rewritableCode, rewriteByToolRecord.Material, drillingParameter, rewriteByToolRecord.SubProgramNumber)));
+                        rewritedNCPrograms.Add(ReplaceLastM1ToM30(
+                                ChamferingProgramRewriter.Rewrite(
+                                    rewritableCode,
+                                    rewriteByToolRecord.Material,
+                                    drillingParameter,
+                                    rewriteByToolRecord.SubProgramNumber)));
                         break;
                     default:
                         // 何もしない

@@ -10,6 +10,13 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
 
     public class MainProgramCombiner : IMainProgramCombiner
     {
+        /// <summary>
+        /// メインプログラムを結合する
+        /// </summary>
+        /// <param name="combinableCode"></param>
+        /// <param name="machineToolName"></param>
+        /// <param name="materialName"></param>
+        /// <returns></returns>
         public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName)
         {
             var combinedBlocks = combinableCode.Select(
