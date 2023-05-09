@@ -5,7 +5,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class DrillingParameterRepositoy : IMainProgramPrameterRepository
+    public class DrillingParameterReader : IMainProgramPrameterReader
     {
         [Logging]
         public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)

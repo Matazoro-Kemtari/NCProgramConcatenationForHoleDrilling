@@ -15,13 +15,13 @@ namespace Wada.ReadMainNCProgramParametersApplication.Tests
         {
             // given
             Mock<IStreamOpener> mock_stream = new();
-            Mock<ReamingPrameterRepository> mock_reamer = new();
+            Mock<ReamingPrameterReader> mock_reamer = new();
             mock_reamer.Setup(x => x.ReadAll(It.IsAny<Stream>()))
                 .Returns(new List<ReamingProgramPrameter>());
-            Mock<TappingPrameterRepository> mock_tap = new();
+            Mock<TappingPrameterReader> mock_tap = new();
             mock_tap.Setup(x => x.ReadAll(It.IsAny<Stream>()))
                 .Returns(new List<TappingProgramPrameter>());
-            Mock<DrillingParameterRepositoy> mock_drill=new();
+            Mock<DrillingParameterReader> mock_drill=new();
             mock_drill.Setup(x => x.ReadAll(It.IsAny<Stream>()))
                 .Returns(new List<DrillingProgramPrameter>());
 

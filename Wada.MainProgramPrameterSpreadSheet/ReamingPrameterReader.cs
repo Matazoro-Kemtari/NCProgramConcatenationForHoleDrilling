@@ -5,7 +5,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
-    public class TappingPrameterRepository : IMainProgramPrameterRepository
+    public class ReamingPrameterReader : IMainProgramPrameterReader
     {
         [Logging]
         public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
@@ -22,14 +22,14 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 .ToList();
         }
 
-
         [Logging]
-        private static TappingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static ReamingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
             {
-                if (!row.Cell(columnLetter).TryGetValue(out T cellValue))
+                if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
+                    || !decimal.TryParse(cellValue?.ToString(), out _))
                     throw new NCProgramConcatenationServiceException(
                         $"{columnHedder}が取得できません" +
                         $" シート: {paramSheet.Name}," +
@@ -37,24 +37,27 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 return cellValue;
             }
 
-            var reamerDiameter = GetValueWithVaridate<string>("A", "タップ径");
-            var preparedHoleDiameter = GetValueWithVaridate<decimal>("B", "DR1(φ)");
-            var centerDrillDepth = GetValueWithVaridate<decimal>("C", "C/D深さ");
-            var chamferingDepth = GetValueWithVaridate<decimal>("D", "面取深さ");
-            var spinForAluminum = GetValueWithVaridate<int>("E", "回転(AL)");
-            var feedForAluminum = GetValueWithVaridate<int>("F", "送り(AL)");
-            var spinForIron = GetValueWithVaridate<int>("G", "回転(SS400)");
-            var feedForIron = GetValueWithVaridate<int>("H", "送り(SS400)");
+            [Logging]
+            T? GetValueWithOutVaridate<T>(string columnLetter, string columnHedder)
+            {
+                if (!row.Cell(columnLetter).TryGetValue(out T cellValue)
+                    || !decimal.TryParse(cellValue?.ToString(), out _))
+                    return default(T);
+                return cellValue;
+            }
 
-            return new TappingProgramPrameter(
+            var reamerDiameter = GetValueWithVaridate<string>("A", "リーマ径");
+            var preparedHoleDiameter = GetValueWithVaridate<decimal>("B", "DR1(φ)");
+            var secondPreparedHoleDiameter = GetValueWithVaridate<decimal>("C", "DR2(φ)");
+            var centerDrillDepth = GetValueWithVaridate<decimal>("D", "C/D深さ");
+            var chamferingDepth = GetValueWithOutVaridate<decimal?>("E", "面取深さ");
+
+            return new ReamingProgramPrameter(
                 reamerDiameter,
                 preparedHoleDiameter,
+                secondPreparedHoleDiameter,
                 centerDrillDepth,
-                chamferingDepth,
-                spinForAluminum,
-                feedForAluminum,
-                spinForIron,
-                feedForIron);
+                chamferingDepth);
         }
     }
 }

@@ -6,7 +6,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class DrillingParameterRepositoyTests
+    public class DrillingParameterReaderTests
     {
         [TestMethod()]
         public void 正常系_ドリルパラメータエクセルが読み込めること()
@@ -17,8 +17,8 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
-            IEnumerable<IMainProgramPrameter> drillingProgramPrameters = drillingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IEnumerable<IMainProgramPrameter> drillingProgramPrameters = drillingPrameterReader.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, drillingProgramPrameters.Count());
@@ -44,9 +44,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -72,9 +72,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -100,9 +100,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -128,9 +128,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -156,9 +156,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -184,9 +184,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -212,9 +212,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository drillingPrameterRepository = new DrillingParameterRepositoy();
+            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
             void target() =>
-                 drillingPrameterRepository.ReadAll(stream);
+                 drillingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);

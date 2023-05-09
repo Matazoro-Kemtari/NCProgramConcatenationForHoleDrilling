@@ -8,7 +8,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
-using System.Windows;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationForHoleDrilling.Models;
 using Wada.NCProgramConcatenationForHoleDrilling.Views;

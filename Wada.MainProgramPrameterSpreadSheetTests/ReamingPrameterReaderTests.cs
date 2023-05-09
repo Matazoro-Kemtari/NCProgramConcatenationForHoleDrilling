@@ -6,7 +6,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class ReamingPrameterRepositoryTests
+    public class ReamingPrameterReaderTests
     {
         [TestMethod()]
         public void 正常系_リーマパラメータエクセルが読み込めること()
@@ -17,8 +17,8 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterReader.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
@@ -34,8 +34,8 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterReader.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
@@ -58,9 +58,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
             void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+                 reamingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -86,9 +86,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
             void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+                 reamingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -114,9 +114,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
             void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+                 reamingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -142,9 +142,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
             void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+                 reamingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);

@@ -37,9 +37,9 @@ namespace NCProgramConcatenationForHoleDrilling
 
             // パラメーターリスト読み込み
             _ = containerRegistry.Register<IStreamOpener, StreamOpener>();
-            _ = containerRegistry.Register<ReamingPrameterRepository>();
-            _ = containerRegistry.Register<TappingPrameterRepository>();
-            _ = containerRegistry.Register<DrillingParameterRepositoy>();
+            _ = containerRegistry.Register<ReamingPrameterReader>();
+            _ = containerRegistry.Register<TappingPrameterReader>();
+            _ = containerRegistry.Register<DrillingParameterReader>();
             _ = containerRegistry.Register<IReadMainNCProgramParametersUseCase, ReadMainNCProgramParametersUseCase>();
 
             // メインプログラムの編集

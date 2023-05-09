@@ -6,7 +6,7 @@ using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class TappingPrameterRepositoryTests
+    public class TappingPrameterReaderTests
     {
         [TestMethod()]
         public void 正常系_タップパラメータエクセルが読み込めること()
@@ -17,8 +17,8 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
-            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = tappingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = tappingPrameterReader.ReadAll(xlsStream);
 
             // then
             Assert.AreEqual(1, tappingProgramPrameters.Count());
@@ -41,9 +41,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -69,9 +69,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -97,9 +97,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -125,9 +125,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -153,9 +153,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -181,9 +181,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
@@ -209,9 +209,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository tappingPrameterRepository = new TappingPrameterRepository();
+            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
             void target() =>
-                 tappingPrameterRepository.ReadAll(stream);
+                 tappingPrameterReader.ReadAll(stream);
 
             // then
             var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);

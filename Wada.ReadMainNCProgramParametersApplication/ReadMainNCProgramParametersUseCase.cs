@@ -8,6 +8,10 @@ namespace Wada.ReadMainNCProgramParametersApplication
 {
     public interface IReadMainNCProgramParametersUseCase
     {
+        /// <summary>
+        /// リストフォルダのエクセルを読み込む
+        /// </summary>
+        /// <returns></returns>
         Task<MainNCProgramParametersDTO> ExecuteAsync();
     }
 
@@ -27,16 +31,16 @@ namespace Wada.ReadMainNCProgramParametersApplication
     public class ReadMainNCProgramParametersUseCase : IReadMainNCProgramParametersUseCase
     {
         private readonly IStreamOpener _streamOpener;
-        private readonly IMainProgramPrameterRepository _reamingPrameterRepository;
-        private readonly IMainProgramPrameterRepository _tappingPrameterRepository;
-        private readonly IMainProgramPrameterRepository _drillingPrameterRepository;
+        private readonly IMainProgramPrameterReader _reamingPrameterReader;
+        private readonly IMainProgramPrameterReader _tappingPrameterReader;
+        private readonly IMainProgramPrameterReader _drillingPrameterReader;
 
-        public ReadMainNCProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterRepository reamingPrameterRepository, TappingPrameterRepository tappingPrameterRepository, DrillingParameterRepositoy drillingPrameterRepository)
+        public ReadMainNCProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterReader reamingPrameterReader, TappingPrameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader)
         {
             _streamOpener = streamOpener;
-            _reamingPrameterRepository = reamingPrameterRepository;
-            _tappingPrameterRepository = tappingPrameterRepository;
-            _drillingPrameterRepository = drillingPrameterRepository;
+            _reamingPrameterReader = reamingPrameterReader;
+            _tappingPrameterReader = tappingPrameterReader;
+            _drillingPrameterReader = drillingPrameterReader;
         }
 
         [Logging]
@@ -59,7 +63,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
                         directory,
                         "クリスタルリーマー.xlsx");
                     using Stream stream = _streamOpener.Open(path);
-                    return _reamingPrameterRepository.ReadAll(stream);
+                    return _reamingPrameterReader.ReadAll(stream);
                 });
 
                 skillReamerTask = Task.Run(() =>
@@ -68,7 +72,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
                         directory,
                         "スキルリーマー.xlsx");
                     using Stream stream = _streamOpener.Open(path);
-                    return _reamingPrameterRepository.ReadAll(stream);
+                    return _reamingPrameterReader.ReadAll(stream);
                 });
 
                 tapTask = Task.Run(() =>
@@ -77,7 +81,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
                         directory,
                         "タップ.xlsx");
                     using Stream stream = _streamOpener.Open(path);
-                    return _tappingPrameterRepository.ReadAll(stream);
+                    return _tappingPrameterReader.ReadAll(stream);
                 });
 
                 drillTask = Task.Run(() =>
@@ -86,7 +90,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
                         directory,
                         "ドリル.xlsx");
                     using Stream stream = _streamOpener.Open(path);
-                    return _drillingPrameterRepository.ReadAll(stream);
+                    return _drillingPrameterReader.ReadAll(stream);
                 });
             }
             catch (OpenFileStreamException ex)
