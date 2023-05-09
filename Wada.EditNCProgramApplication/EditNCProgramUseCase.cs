@@ -58,7 +58,7 @@ namespace Wada.EditNCProgramApplication
                     () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
                         .Select(x => NCProgramCodeAttempt.Parse(x))));
             }
-            catch (NCProgramConcatenationServiceException ex)
+            catch (DomainException ex)
             {
                 throw new EditNCProgramApplicationException(ex.Message, ex);
             }

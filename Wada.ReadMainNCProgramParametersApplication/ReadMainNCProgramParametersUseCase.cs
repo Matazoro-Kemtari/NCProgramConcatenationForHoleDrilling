@@ -97,7 +97,7 @@ namespace Wada.ReadMainNCProgramParametersApplication
             {
                 throw new ReadMainNCProgramParametersApplicationException(ex.Message);
             }
-            catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+            catch (Exception ex) when (ex is DomainException || ex is InvalidOperationException)
             {
                 throw new ReadMainNCProgramParametersApplicationException(
                     $"リストの読み込みでエラーが発生しました\n{ex.Message}", ex);

@@ -63,7 +63,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  reamingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"リーマ径が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: A2";
@@ -91,7 +91,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  reamingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"DR1(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: B2";
@@ -119,7 +119,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  reamingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"DR2(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: C2";
@@ -147,7 +147,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  reamingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"C/D深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: D2";

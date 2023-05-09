@@ -33,7 +33,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <param name="drillingParameters"></param>
         /// <param name="reamingParameter"></param>
         /// <returns></returns>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
+        /// <exception cref="DomainException"></exception>
         [Logging]
         private static List<NCProgramCode> RewriteCNCProgramForDrilling(
             NCProgramCode rewritableCode,
@@ -49,7 +49,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
                 .MaxBy(x => x.DirectedOperationToolDiameter);
             if (fastDrillingParameter == null)
-                throw new NCProgramConcatenationServiceException(
+                throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,
@@ -64,7 +64,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
                 .MaxBy(x => x.DirectedOperationToolDiameter);
             if (secondDrillingParameter == null)
-                throw new NCProgramConcatenationServiceException(
+                throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,
@@ -104,7 +104,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 }
                 catch (InvalidOperationException ex)
                 {
-                    throw new NCProgramConcatenationServiceException(
+                    throw new DomainException(
                         $"リーマ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
                 }
 

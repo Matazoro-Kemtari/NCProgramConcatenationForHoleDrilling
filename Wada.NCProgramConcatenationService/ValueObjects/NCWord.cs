@@ -64,7 +64,7 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public Address(char value)
         {
             if (!Regex.IsMatch(value.ToString(), @"^[a-zA-Z]$"))
-                throw new NCProgramConcatenationServiceException(nameof(value));
+                throw new DomainException(nameof(value));
 
             Value = value;
         }

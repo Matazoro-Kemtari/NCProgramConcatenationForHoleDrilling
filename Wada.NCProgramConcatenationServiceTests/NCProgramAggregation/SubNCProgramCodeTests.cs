@@ -117,7 +117,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
             }
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string msg = $"作業指示が3件あります\n" +
                     $"サブプログラムを確認して、作業指示は1件にしてください";
             Assert.AreEqual(msg, ex.Message);

@@ -3,7 +3,7 @@
 namespace Wada.NCProgramConcatenationService
 {
     [Serializable]
-    public class DirectedOperationNotFoundException : Exception
+    public class DirectedOperationNotFoundException : DomainException
     {
         public DirectedOperationNotFoundException()
         {

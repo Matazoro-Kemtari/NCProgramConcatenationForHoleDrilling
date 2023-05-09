@@ -25,14 +25,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     ?.DirectedOperationToolDiameter;
                 if (maxDiameter == null
                     || maxDiameter + 0.5m < rewriteByToolRecord.DirectedOperationToolDiameter)
-                    throw new NCProgramConcatenationServiceException(
+                    throw new DomainException(
                         $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません\n" +
                         $"リストの最大ドリル径({maxDiameter})を超えています");
 
                 DrillingProgramPrameter drillingParameter = drillingParameters
                     .Where(x => x.DirectedOperationToolDiameter <= rewriteByToolRecord.DirectedOperationToolDiameter)
                     .MaxBy(x => x.DirectedOperationToolDiameter)
-                    ?? throw new NCProgramConcatenationServiceException(
+                    ?? throw new DomainException(
                         $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
 
                 switch (rewritableCode.MainProgramClassification)

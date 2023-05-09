@@ -54,7 +54,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DirectedOperationNotFoundException"></exception>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
+        /// <exception cref="DomainException"></exception>
         [Logging]
         private static DirectedOperationType FetchDirectedOperationType(IEnumerable<NCBlock?> ncBlocks)
         {
@@ -88,7 +88,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 // 有効な指示が複数ある場合
                 string msg = $"作業指示が{hasOperationType.Count(x => x != DirectedOperationType.Undetected)}件あります\n" +
                     $"サブプログラムを確認して、作業指示は1件にしてください";
-                throw new NCProgramConcatenationServiceException(msg);
+                throw new DomainException(msg);
             }
 
             return hasOperationType.First(x => x != DirectedOperationType.Undetected);
@@ -99,7 +99,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// </summary>
         /// <returns></returns>
         /// <exception cref="DirectedOperationToolDiameterNotFoundException"></exception>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
+        /// <exception cref="DomainException"></exception>
         [Logging]
         public static decimal FetchDirectedOperationToolDiameter(IEnumerable<NCBlock?> ncBlocks)
         {
@@ -137,7 +137,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
                 // 有効な指示が複数ある場合
                 string msg = $"作業指示が{hasOperationType.Count(x => x != decimal.MinValue)}件あります\n" +
                     $"サブプログラムを確認して、作業指示は1件にしてください";
-                throw new NCProgramConcatenationServiceException(msg);
+                throw new DomainException(msg);
             }
 
             return hasOperationType.First(x => x != decimal.MinValue);

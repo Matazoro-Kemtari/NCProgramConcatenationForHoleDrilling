@@ -35,7 +35,7 @@ namespace Wada.ReadSubNCProgramApplication
                 return SubNCProgramCodeAttemp.Parse(
                     SubNCProgramCode.Parse(ncProgramCode));
             }
-            catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException )
+            catch (Exception ex) when (ex is DomainException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException )
             {
                 throw new ReadSubNCProgramApplicationException(ex.Message, ex);
             }

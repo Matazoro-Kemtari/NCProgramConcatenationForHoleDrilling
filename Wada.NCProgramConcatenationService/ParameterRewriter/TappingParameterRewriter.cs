@@ -32,7 +32,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                 }
                 catch (InvalidOperationException ex)
                 {
-                    throw new NCProgramConcatenationServiceException(
+                    throw new DomainException(
                         $"タップ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
                 }
 
@@ -86,14 +86,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <param name="drillingParameters"></param>
         /// <param name="tappingParameter"></param>
         /// <returns></returns>
-        /// <exception cref="NCProgramConcatenationServiceException"></exception>
+        /// <exception cref="DomainException"></exception>
         private static NCProgramCode RewriteCNCProgramForDrilling(NCProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramPrameter> drillingParameters, TappingProgramPrameter tappingParameter, string subProgramNumber)
         {
             var drillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
                 .MaxBy(x => x.DirectedOperationToolDiameter);
             if (drillingParameter == null)
-                throw new NCProgramConcatenationServiceException(
+                throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
 
             return DrillingProgramRewriter.Rewrite(

@@ -30,7 +30,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         {
             Match programNumberMatcher = Regex.Match(programName, @"\d+");
             if (!programNumberMatcher.Success)
-                throw new NCProgramConcatenationServiceException(
+                throw new DomainException(
                     "プログラム番号が取得できません" +
                     $"ファイル名を確認してください ファイル名: {programName}");
 

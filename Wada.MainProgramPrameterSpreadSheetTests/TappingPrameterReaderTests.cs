@@ -46,7 +46,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"DR1(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: B2";
@@ -74,7 +74,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"C/D深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: C2";
@@ -102,7 +102,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"面取深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: D2";
@@ -130,7 +130,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"回転(AL)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: E2";
@@ -158,7 +158,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"送り(AL)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: F2";
@@ -186,7 +186,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"回転(SS400)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: G2";
@@ -214,7 +214,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
                  tappingPrameterReader.ReadAll(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             string expected = $"送り(SS400)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: H2";

@@ -112,7 +112,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             }
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"ドリル径 {diameter}のリストがありません",
                 ex.Message);
         }

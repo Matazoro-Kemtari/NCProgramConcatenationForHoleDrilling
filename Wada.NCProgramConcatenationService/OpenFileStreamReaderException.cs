@@ -3,7 +3,7 @@
 namespace Wada.NCProgramConcatenationService
 {
     [Serializable]
-    public class OpenFileStreamReaderException : Exception
+    public class OpenFileStreamReaderException : DomainException
     {
         public OpenFileStreamReaderException()
         {

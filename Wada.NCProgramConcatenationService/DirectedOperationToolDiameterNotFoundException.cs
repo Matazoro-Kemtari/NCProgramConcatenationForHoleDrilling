@@ -3,7 +3,7 @@
 namespace Wada.NCProgramConcatenationService
 {
     [Serializable]
-    public class DirectedOperationToolDiameterNotFoundException : Exception
+    public class DirectedOperationToolDiameterNotFoundException : DomainException
     {
         public DirectedOperationToolDiameterNotFoundException()
         {

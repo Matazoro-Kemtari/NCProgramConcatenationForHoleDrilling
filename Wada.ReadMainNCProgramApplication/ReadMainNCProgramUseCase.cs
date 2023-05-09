@@ -69,7 +69,7 @@ namespace Wada.ReadMainNCProgramApplication
                 {
                     throw new ReadMainNCProgramApplicationException(ex.Message);
                 }
-                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                catch (Exception ex) when (ex is DomainException || ex is InvalidOperationException)
                 {
                     throw new ReadMainNCProgramApplicationException(
                         $"メインプログラムの読み込みでエラーが発生しました\n{ex.Message}", ex);

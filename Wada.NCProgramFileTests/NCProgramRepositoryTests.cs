@@ -19,7 +19,7 @@ namespace Wada.NCProgramFile.Tests
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(ncProgramSource)))
-                ?? throw new NCProgramConcatenationServiceException(
+                ?? throw new DomainException(
                     "StreamReader作るときに失敗した");
 
             // when
@@ -126,7 +126,7 @@ M02
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(mainSource)))
-                ?? throw new NCProgramConcatenationServiceException(
+                ?? throw new DomainException(
                     "StreamReader作るときに失敗した");
 
             // when

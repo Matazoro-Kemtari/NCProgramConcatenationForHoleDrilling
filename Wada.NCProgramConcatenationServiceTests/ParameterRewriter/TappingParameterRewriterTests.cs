@@ -118,7 +118,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             }
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"タップ径 {diameter}のリストがありません",
                 ex.Message);
         }
@@ -199,7 +199,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var fastDrill = param.TapParameters
                 .Select(x => x.PreparedHoleDiameter)
                 .FirstOrDefault();
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
                 ex.Message);
         }

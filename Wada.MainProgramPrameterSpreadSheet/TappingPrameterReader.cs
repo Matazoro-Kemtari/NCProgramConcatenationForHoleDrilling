@@ -30,7 +30,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
             T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
             {
                 if (!row.Cell(columnLetter).TryGetValue(out T cellValue))
-                    throw new NCProgramConcatenationServiceException(
+                    throw new DomainException(
                         $"{columnHedder}が取得できません" +
                         $" シート: {paramSheet.Name}," +
                         $" セル: {row.Cell(columnLetter).Address}");
