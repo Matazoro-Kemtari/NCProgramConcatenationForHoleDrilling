@@ -8,7 +8,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
     public class TappingPrameterReader : IMainProgramPrameterReader
     {
         [Logging]
-        public virtual IEnumerable<IMainProgramPrameter> ReadAll(Stream stream)
+        public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -17,34 +17,38 @@ namespace Wada.MainProgramPrameterSpreadSheet
             // テーブル形式で一括読み込み
             var paramTbl = paramSheet.RangeUsed().AsTable();
 
-            return paramTbl.Rows().Skip(1)
-                .Select(row => FetchParameter(row, paramSheet))
-                .ToList();
+            var parameters = await Task.WhenAll(
+                paramTbl.Rows()
+                        .Skip(1)
+                        .Select(row => FetchParameterAsync(row, paramSheet)));
+
+            return parameters.ToList();
         }
 
 
         [Logging]
-        private static TappingProgramPrameter FetchParameter(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static async Task<TappingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
-            T GetValueWithVaridate<T>(string columnLetter, string columnHedder)
-            {
-                if (!row.Cell(columnLetter).TryGetValue(out T cellValue))
-                    throw new DomainException(
-                        $"{columnHedder}が取得できません" +
-                        $" シート: {paramSheet.Name}," +
-                        $" セル: {row.Cell(columnLetter).Address}");
-                return cellValue;
-            }
+            Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
+                () =>
+                {
+                    if (!row.Cell(columnLetter).TryGetValue(out T cellValue))
+                        throw new MainProgramParameterException(
+                            $"{columnHedder}が取得できません" +
+                            $" シート: {paramSheet.Name}," +
+                            $" セル: {row.Cell(columnLetter).Address}");
+                    return cellValue;
+                });
 
-            var reamerDiameter = GetValueWithVaridate<string>("A", "タップ径");
-            var preparedHoleDiameter = GetValueWithVaridate<decimal>("B", "DR1(φ)");
-            var centerDrillDepth = GetValueWithVaridate<decimal>("C", "C/D深さ");
-            var chamferingDepth = GetValueWithVaridate<decimal>("D", "面取深さ");
-            var spinForAluminum = GetValueWithVaridate<int>("E", "回転(AL)");
-            var feedForAluminum = GetValueWithVaridate<int>("F", "送り(AL)");
-            var spinForIron = GetValueWithVaridate<int>("G", "回転(SS400)");
-            var feedForIron = GetValueWithVaridate<int>("H", "送り(SS400)");
+            var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "タップ径");
+            var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
+            var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("C", "C/D深さ");
+            var chamferingDepth = await GetValueWithVaridateAsync<decimal>("D", "面取深さ");
+            var spinForAluminum = await GetValueWithVaridateAsync<int>("E", "回転(AL)");
+            var feedForAluminum = await GetValueWithVaridateAsync<int>("F", "送り(AL)");
+            var spinForIron = await GetValueWithVaridateAsync<int>("G", "回転(SS400)");
+            var feedForIron = await GetValueWithVaridateAsync<int>("H", "送り(SS400)");
 
             return new TappingProgramPrameter(
                 reamerDiameter,

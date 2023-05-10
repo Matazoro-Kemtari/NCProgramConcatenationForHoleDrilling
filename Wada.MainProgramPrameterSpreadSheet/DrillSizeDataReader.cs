@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
 using Wada.NCProgramConcatenationService;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
@@ -17,45 +16,49 @@ public class DrillSizeDataReader : IDrillSizeDataReader
         // テーブル形式で一括読み込み
         var sizeTbl = sheet.RangeUsed().AsTable();
 
-        // 段組み：左・中・右と順番に処理する
+        // 左・中・右の各列からドリルサイズオブジェクトを作成する
         var drillSizes = await Task.WhenAll(
-            Enumerable.Range(0, 3).Select(async x =>
-            {
-                return await Task.WhenAll(
-                    sizeTbl.Rows().Skip(1)
-                           // 値がある行だけ選択する
-                           .Where(y => !y.Cell(1 + (3 * x)).IsEmpty())
-                           .Select(async y => await Task.Run(() =>
-                           {
-                               // 列から値を取得し、ドリルサイズオブジェクトを作成する
-                               string sizeIdentifier = y.Cell(1 + (3 * x)).GetString();
+            ReadDrillSizesByColumn(0, sizeTbl),
+            ReadDrillSizesByColumn(1, sizeTbl),
+            ReadDrillSizesByColumn(2, sizeTbl));
 
-                               // 識別子の書式が合っているか確認する
-                               if (!Regex.IsMatch(sizeIdentifier, @"(#(\d{1,2}|[A-Z])|\d{1,2}/\d{1,2})"))
-                                   throw new DrillSizeDataException(
-                                       $"識別子の値が不正です 値: {sizeIdentifier}, アドレス: {y.Cell(1 + (3 * x)).Address}");
-
-                               if (!y.Cell(2 + (3 * x)).TryGetValue(out double inch))
-                                   throw new DrillSizeDataException(
-                                       $"Inchesが取得できませんでした 行: {y.RowNumber()}, 列: {2 + (3 * x)}");
-
-                               if (inch <= 0)
-                                   throw new DrillSizeDataException(
-                                       $"Inchesの値が不正です 値: {inch}, アドレス: {y.Cell(2 + (3 * x)).Address}");
-
-                               if (!y.Cell(3 + (3 * x)).TryGetValue(out double millimeter))
-                                   throw new DrillSizeDataException(
-                                       $"ISO Metric drill size(㎜)が取得できませんでした 行: {y.RowNumber()}, 列: {2 + (3 * x)}");
-
-                               if (millimeter <= 0)
-                                   throw new DrillSizeDataException(
-                                       $"ISO Metric drill size(㎜)の値が不正です 値: {millimeter}, アドレス: {y.Cell(3 + (3 * x)).Address}");
-
-                               return DrillSizeData.Create(sizeIdentifier, inch, millimeter);
-                           })));
-
-            }));
-        // 一次元のコレクションに変換して返す
+        // 各リストを結合して一つのリストにする
         return drillSizes.SelectMany(x => x);
+    }
+
+    [Logging]
+    private static async Task<IEnumerable<DrillSizeData>> ReadDrillSizesByColumn(int columnIndex, IXLTable sizeTbl)
+    {
+        var idIndex = 1 + (3 * columnIndex);
+        var inchIndex = idIndex + 1;
+        var millIndex = inchIndex + 1;
+        return await Task.WhenAll(
+            sizeTbl.Rows()
+                // ヘッダ行を飛ばす
+                .Skip(1)
+                // 値がある行だけ選択する
+                .Where(y => !y.Cell(idIndex).IsEmpty())
+                .Select(async y => await Task.Run(() =>
+                {
+                    // 列から値を取得し、ドリルサイズオブジェクトを作成する
+                    string sizeIdentifier = y.Cell(idIndex).GetString();
+
+                    if (!y.Cell(inchIndex).TryGetValue(out double inch))
+                        throw new DrillSizeDataException(
+                            $"Inchesが取得できませんでした 行: {y.RowNumber()}, 列: {inchIndex}");
+
+                    if (!y.Cell(millIndex).TryGetValue(out double millimeter))
+                        throw new DrillSizeDataException(
+                            $"ISO Metric drill size(㎜)が取得できませんでした 行: {y.RowNumber()}, 列: {inchIndex}");
+
+                    try
+                    {
+                        return DrillSizeData.Create(sizeIdentifier, inch, millimeter);
+                    }
+                    catch(DrillSizeDataException ex)
+                    {
+                        throw new DrillSizeDataException($"{ex.Message}, 行: {y.RowNumber()}", ex);
+                    }
+                })));
     }
 }

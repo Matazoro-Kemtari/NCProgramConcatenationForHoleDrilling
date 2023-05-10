@@ -9,7 +9,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
     public class TappingPrameterReaderTests
     {
         [TestMethod()]
-        public void 正常系_タップパラメータエクセルが読み込めること()
+        public async Task 正常系_タップパラメータエクセルが読み込めること()
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -18,7 +18,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = tappingPrameterReader.ReadAll(xlsStream);
+            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = await tappingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
             Assert.AreEqual(1, tappingProgramPrameters.Count());
@@ -32,7 +32,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_DR1に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_DR1に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -42,11 +42,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"DR1(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: B2";
@@ -60,7 +60,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_CDに数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_CDに数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -70,11 +70,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"C/D深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: C2";
@@ -88,7 +88,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_面取りに数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_面取りに数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -98,11 +98,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"面取深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: D2";
@@ -116,7 +116,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_回転ALに数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_回転ALに数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -126,11 +126,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"回転(AL)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: E2";
@@ -144,7 +144,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_送りALに数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_送りALに数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -154,11 +154,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"送り(AL)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: F2";
@@ -172,7 +172,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_回転SS400に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_回転SS400に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -182,11 +182,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"回転(SS400)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: G2";
@@ -200,7 +200,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_送りSS400に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_送りSS400に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -210,11 +210,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
-            void target() =>
-                 tappingPrameterReader.ReadAll(stream);
+            Task target() =>
+                 tappingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"送り(SS400)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: H2";

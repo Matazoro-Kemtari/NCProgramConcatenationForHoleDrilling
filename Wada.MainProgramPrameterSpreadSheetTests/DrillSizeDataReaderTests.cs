@@ -36,7 +36,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // when
             var reader = new DrillSizeDataReader();
-            Task target() => reader.ReadAllAsync(xlsStream);
+            Task target() => reader.ReadAllAsync(xlsStream!);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(target);
@@ -65,7 +65,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             // given
             using var workbook = MakeTestBook();
             var sheet = workbook.Worksheets.First();
-            sheet.Range(address).SetValue(value);
+            var range = sheet.Range(address);
+            range.SetValue(value);
+            var rowNumber = range.RowCount() + 1;
             using Stream xlsStream = new MemoryStream();
             workbook.SaveAs(xlsStream);
 
@@ -75,7 +77,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<DrillSizeDataException>(target);
-            var message = $"{item}の値が不正です 値: {value}, アドレス: {address}";
+            var message = $"{item}の値が不正です 値: {value}, 行: {rowNumber}";
             Assert.AreEqual(message, ex.Message);
         }
 

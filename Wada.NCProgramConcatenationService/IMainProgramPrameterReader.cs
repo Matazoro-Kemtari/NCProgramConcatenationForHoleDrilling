@@ -9,6 +9,6 @@ namespace Wada.NCProgramConcatenationService
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        IEnumerable<IMainProgramPrameter> ReadAll(Stream stream);
+        Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream);
     }
 }
