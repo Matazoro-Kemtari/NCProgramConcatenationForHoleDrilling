@@ -1,6 +1,9 @@
-﻿using ClosedXML.Excel;
+﻿using Wada.MainProgramPrameterSpreadSheet;
+using ClosedXML.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text.RegularExpressions;
 using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NCProgramConcatenationService.ValueObjects;
 
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {
@@ -26,15 +29,54 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         }
 
         [TestMethod()]
-        public void 異常系_無効なストリームが与えられた場合ArgumentNullExceptionがスローされること()
+        public async Task 異常系_無効なストリームが与えられた場合ArgumentNullExceptionがスローされること()
         {
-            Assert.Fail();
+            // given
+            using Stream? xlsStream = null;
+
+            // when
+            var reader = new DrillSizeDataReader();
+            Task target() => reader.ReadAllAsync(xlsStream);
+
+            // then
+            var ex = await Assert.ThrowsExceptionAsync<ArgumentNullException>(target);
         }
 
         [TestMethod()]
-        public void 異常系_不正なドリルサイズデータが含まれるストリームが与えられた場合FormatExceptionがスローされること()
+        public async Task 異常系_空のストリームが与えられた場合FormatExceptionがスローされること()
         {
-            Assert.Fail();
+            // given
+            using Stream xlsStream = new MemoryStream();
+
+            // when
+            var reader = new DrillSizeDataReader();
+            Task target() => reader.ReadAllAsync(xlsStream);
+
+            // then
+            var ex = await Assert.ThrowsExceptionAsync<FileFormatException>(target);
+        }
+
+        [DataTestMethod()]
+        [DataRow("A2", "@1", "識別子")]
+        [DataRow("B2", "-1", "Inches")]
+        [DataRow("C2", "0", "ISO Metric drill size(㎜)")]
+        public async Task 異常系_不正なドリルサイズデータが含まれるストリームが与えられた場合DrillSizeDataExceptionがスローされること(string address, string value, string item)
+        {
+            // given
+            using var workbook = MakeTestBook();
+            var sheet = workbook.Worksheets.First();
+            sheet.Range(address).SetValue(value);
+            using Stream xlsStream = new MemoryStream();
+            workbook.SaveAs(xlsStream);
+
+            // when
+            var reader = new DrillSizeDataReader();
+            Task target() => reader.ReadAllAsync(xlsStream);
+
+            // then
+            var ex = await Assert.ThrowsExceptionAsync<DrillSizeDataException>(target);
+            var message = $"{item}の値が不正です 値: {value}, アドレス: {address}";
+            Assert.AreEqual(message, ex.Message);
         }
 
         private static IEnumerable<DrillSizeData> TestDrillSizeDatas() => new List<DrillSizeData>
@@ -44,11 +86,14 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             TestDrillSizeDataFactory.Create("#58", 0.0461d, 1.17d),
             TestDrillSizeDataFactory.Create("#57", 0.0491d, 1.25d),
             TestDrillSizeDataFactory.Create("#56", 0.0522d, 1.33d),
+            TestDrillSizeDataFactory.Create("#55", 0.0553d, 1.4d),
+            TestDrillSizeDataFactory.Create("#54", 0.0584d, 1.48d),
             TestDrillSizeDataFactory.Create("1/16", 0.0625d, 1.59d),
             TestDrillSizeDataFactory.Create("5/64", 0.0781d, 1.98d),
             TestDrillSizeDataFactory.Create("3/32", 0.0938d, 2.38d),
             TestDrillSizeDataFactory.Create("7/64", 0.1094d, 2.78d),
             TestDrillSizeDataFactory.Create("1/8", 0.1250d, 3.18d),
+            TestDrillSizeDataFactory.Create("9/64", 0.1406d, 3.57d),
             TestDrillSizeDataFactory.Create("#A", 0.234d, 5.94d),
             TestDrillSizeDataFactory.Create("#B", 0.238d, 6.05d),
             TestDrillSizeDataFactory.Create("#C", 0.242d, 6.15d),
@@ -70,16 +115,28 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             sht.Cell(1, 8).SetValue("Inches");
             sht.Cell(1, 9).SetValue("ISO Metric drill size(㎜)");
 
-            var testDatas = TestDrillSizeDatas();
-            Enumerable.Range(0, 3).ToList().ForEach(coefficient =>
+            Dictionary<int, int> counts = new()
             {
-                var offset = 3 * coefficient;
-                testDatas.Skip(5 * coefficient).Take(5).Select((v, i) => (v, i)).ToList().ForEach(x =>
-                {
-                    sht.Cell(x.i + 2, 1 + offset).SetValue(x.v.SizeIdentifier);
-                    sht.Cell(x.i + 2, 2 + offset).SetValue(x.v.Inch);
-                    sht.Cell(x.i + 2, 3 + offset).SetValue(x.v.Millimeter);
-                });
+                {0, 0 },
+                {3, 0 },
+                {6, 0 },
+            };
+            var testDatas = TestDrillSizeDatas();
+            testDatas.ToList().ForEach(x =>
+            {
+                int offset;
+                if (Regex.IsMatch(x.SizeIdentifier, @"#\d+"))
+                    offset = 0;
+                else if (Regex.IsMatch(x.SizeIdentifier, @"\d{1,2}/\d{1,2}"))
+                    offset = 3;
+                else
+                    offset = 6;
+
+                counts[offset]++;
+
+                sht.Cell(counts[offset] + 1, 1 + offset).SetValue(x.SizeIdentifier);
+                sht.Cell(counts[offset] + 1, 2 + offset).SetValue(x.Inch);
+                sht.Cell(counts[offset] + 1, 3 + offset).SetValue(x.Millimeter);
             });
             return workbook;
         }
