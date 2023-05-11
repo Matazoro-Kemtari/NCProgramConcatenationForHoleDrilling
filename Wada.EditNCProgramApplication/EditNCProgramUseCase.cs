@@ -1,4 +1,5 @@
-﻿using Wada.AOP.Logging;
+﻿using System.Diagnostics;
+using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.ParameterRewriter;
 using Wada.UseCase.DataClass;
@@ -16,6 +17,7 @@ namespace Wada.EditNcProgramApplication
         private readonly IMainProgramParameterRewriter _skillReamingParameterRewriter;
         private readonly IMainProgramParameterRewriter _tappingParameterRewriter;
         private readonly IMainProgramParameterRewriter _drillingParameterRewriter;
+        private readonly Dictionary<RewriterSelectorAttempt, IMainProgramParameterRewriter> _rewriter;
 
         public EditNcProgramUseCase(
             CrystalReamingParameterRewriter crystalReamingParameterRewriter,
@@ -27,20 +29,19 @@ namespace Wada.EditNcProgramApplication
             _skillReamingParameterRewriter = skillReamingParameterRewriter;
             _tappingParameterRewriter = tappingParameterRewriter;
             _drillingParameterRewriter = drillingParameterRewriter;
+
+            _rewriter = new()
+            {
+                { RewriterSelectorAttempt.Tapping, _tappingParameterRewriter },
+                { RewriterSelectorAttempt.CrystalReaming, _crystalReamingParameterRewriter },
+                { RewriterSelectorAttempt.SkillReaming, _skillReamingParameterRewriter },
+                { RewriterSelectorAttempt.Drilling , _drillingParameterRewriter },
+            };
         }
 
         [Logging]
         public async Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram editNCProgramPram)
         {
-            // EditNCProgramPramのValidateで不整合状態は確認済み
-            IMainProgramParameterRewriter rewriter = editNCProgramPram.DirectedOperation switch
-            {
-                DirectedOperationTypeAttempt.Tapping => _tappingParameterRewriter,
-                DirectedOperationTypeAttempt.Reaming => editNCProgramPram.Reamer == ReamerTypeAttempt.Crystal ? _crystalReamingParameterRewriter : _skillReamingParameterRewriter,
-                DirectedOperationTypeAttempt.Drilling => _drillingParameterRewriter,
-                _ => throw new NotImplementedException(),
-            };
-
             RewriteByToolRecord param = new(
                 editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
                 (MaterialType)editNCProgramPram.Material,
@@ -55,7 +56,8 @@ namespace Wada.EditNcProgramApplication
             try
             {
                 return await Task.Run(
-                    () => new EditNcProgramDto(rewriter.RewriteByTool(param)
+                    () => new EditNcProgramDto(
+                        _rewriter[editNCProgramPram.RewriterSelector].RewriteByTool(param)
                         .Select(x => NcProgramCodeAttempt.Parse(x))));
             }
             catch (DomainException ex)
@@ -75,16 +77,29 @@ namespace Wada.EditNcProgramApplication
         decimal Thickness,
         MainNcProgramParametersAttempt MainNcProgramParameters)
     {
-        private static ReamerTypeAttempt Validate(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
+        private RewriterSelectorAttempt GetRewriterSelection() => DirectedOperation switch
+        {
+            DirectedOperationTypeAttempt.Tapping => RewriterSelectorAttempt.Tapping,
+            DirectedOperationTypeAttempt.Reaming => GetReamerRewriterSelection(DirectedOperation, Reamer),
+            DirectedOperationTypeAttempt.Drilling => RewriterSelectorAttempt.Drilling,
+            _ => throw new NotImplementedException(),
+        };
+
+        private static RewriterSelectorAttempt GetReamerRewriterSelection(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
             if (directedOperation == DirectedOperationTypeAttempt.Reaming
                 && reamer == ReamerTypeAttempt.Undefined)
                 throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
 
-            return reamer;
+            return reamer switch
+            {
+                ReamerTypeAttempt.Crystal => RewriterSelectorAttempt.CrystalReaming,
+                ReamerTypeAttempt.Skill => RewriterSelectorAttempt.SkillReaming,
+                _ => throw new NotImplementedException(),
+            };
         }
 
-        public ReamerTypeAttempt Reamer { get; init; } = Validate(DirectedOperation, Reamer);
+        public RewriterSelectorAttempt RewriterSelector => GetRewriterSelection();
     }
 
     public class TestEditNcProgramPramFactory
@@ -149,6 +164,14 @@ namespace Wada.EditNcProgramApplication
                        thickness,
                        mainNcProgramParameters);
         }
+    }
+
+    public enum RewriterSelectorAttempt
+    {
+        Tapping,
+        CrystalReaming,
+        SkillReaming,
+        Drilling,
     }
 
     public record class EditNcProgramDto(IEnumerable<NcProgramCodeAttempt> NcProgramCodes);
