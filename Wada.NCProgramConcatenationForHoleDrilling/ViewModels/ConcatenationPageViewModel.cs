@@ -39,10 +39,6 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
         private readonly IEditNcProgramUseCase _editNCProgramUseCase;
         private readonly ICombineMainNcProgramUseCase _combineMainNCProgramUseCase;
 
-        private IEnumerable<MainNcProgramCodeDto>? _mainProgramCodes = null;
-
-        private MainNcProgramParametersAttempt? _mainNCProgramParameters = null;
-
         public ConcatenationPageViewModel(IDialogService dialogService, IReadMainNcProgramUseCase readMainNCProgramUseCase, IReadSubNcProgramUseCase readSubNCProgramUseCase, IReadMainNcProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNcProgramUseCase editNCProgramUseCase, ICombineMainNcProgramUseCase combineMainNCProgramUseCase)
         {
             _dialogService = dialogService;
@@ -131,7 +127,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                 Material.ObserveHasErrors,
                 FetchedOperationType.CombineLatest(
                     Reamer,
-                    (x, y) => x == DirectedOperationTypeAttempt.Reaming && y == ReamerTypeAttempt.Undefined),
+                    (x, y) => x == DirectedOperation.Reaming && y == ReamerType.Undefined),
                 Thickness.ObserveHasErrors,
             }
             .CombineLatestValuesAreAllFalse()
@@ -143,12 +139,15 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                 .WithSubscribe(() => _concatenation.Clear())
                 .AddTo(Disposables);
 
+
             // メインプログラム読込
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    _mainProgramCodes = await _readMainNCProgramUseCase.ExecuteAsync();
+                    var mainPrograms = await _readMainNCProgramUseCase.ExecuteAsync();
+                    mainPrograms.ToList().ForEach(
+                        x => _concatenation.MainProgramCodes.Add(MainNcProgramCodeRequest.Parse(x)));
                 }
                 catch (ReadMainNcProgramUseCaseException ex)
                 {
@@ -165,11 +164,11 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                 try
                 {
                     var _dto = await _readMainNCProgramParametersUseCase.ExecuteAsync();
-                    _mainNCProgramParameters = _dto != null
+                    _concatenation.SetMainNCProgramParameters(_dto != null
                     ? _dto.Convert()
                     : throw new NcProgramConcatenationForHoleDrillingException(
                         "リストを読み込もうとしましたが、失敗しました\n" +
-                        "リストの内容を確認してください");
+                        "リストの内容を確認してください"));
                 }
                 catch (ReadMainNcProgramParametersUseCaseException ex)
                 {
@@ -183,7 +182,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
         [Logging]
         private async Task MoveNextViewAsync()
         {
-            if (_mainProgramCodes == null || _mainNCProgramParameters == null)
+            if (!_concatenation.MainProgramCodes.Any() || _concatenation.MainNcProgramParameters == null)
             {
                 var message = MessageNotificationViaLivet.MakeInformationMessage(
                     "設定ファイルの準備ができていません\n" +
@@ -197,18 +196,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
             EditNcProgramDto editedCodes;
             try
             {
-                editedCodes = await _editNCProgramUseCase.ExecuteAsync(
-                    new EditNcProgramPram(
-                        _concatenation.FetchedOperationType.Value,
-                        _concatenation.SubProgramNumber.Value,
-                        _concatenation.DirectedOperationToolDiameter.Value,
-                        _mainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value)
-                                         .Select(x => x.NcProgramCodeAttempts)
-                                         .First(),
-                        Material.Value,
-                        Reamer.Value,
-                        decimal.Parse(Thickness.Value),
-                        _mainNCProgramParameters));
+                editedCodes = await _editNCProgramUseCase.ExecuteAsync(_concatenation.ToEditNcProgramPram());
             }
             catch (EditNcProgramUseCaseException ex)
             {
@@ -222,8 +210,8 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
             // 結合する
             CombineMainNcProgramParam combineParam = new(
                 editedCodes.NcProgramCodes,
-                _concatenation.MachineTool.Value,
-                _concatenation.Material.Value);
+                (MachineToolTypeAttempt)_concatenation.MachineTool.Value,
+                (MaterialTypeAttempt)_concatenation.Material.Value);
             var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(combineParam);
 
             // 画面遷移
@@ -261,7 +249,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
             }
 
             // 読み込んだサブプログラムの作業指示を取得する
-            _concatenation.FetchedOperationType.Value = subNCProcramCode.DirectedOperationClassification;
+            _concatenation.FetchedOperationType.Value = (DirectedOperation)subNCProcramCode.DirectedOperationClassification;
             _concatenation.DirectedOperationToolDiameter.Value = subNCProcramCode.DirectedOperationToolDiameter;
             _concatenation.SubProgramNumber.Value = subNCProcramCode.ProgramName;
 
@@ -331,19 +319,19 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
         [Required(ErrorMessage = "{0}をドラッグアンドドロップしてください")]
         public ReactiveProperty<string> NCProgramFileName { get; }
 
-        public ReactiveProperty<DirectedOperationTypeAttempt> FetchedOperationType { get; }
+        public ReactiveProperty<DirectedOperation> FetchedOperationType { get; }
 
         [Display(Name = "加工機")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<MachineToolTypeAttempt> MachineTool { get; }
+        public ReactiveProperty<MachineTool> MachineTool { get; }
 
         [Display(Name = "材質")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<MaterialTypeAttempt> Material { get; }
+        public ReactiveProperty<Material> Material { get; }
 
         [Display(Name = "リーマ")]
         [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
-        public ReactiveProperty<ReamerTypeAttempt> Reamer { get; }
+        public ReactiveProperty<ReamerType> Reamer { get; }
 
         [Display(Name = "板厚")]
         [Required(ErrorMessage = "{0}を入力してください")]
