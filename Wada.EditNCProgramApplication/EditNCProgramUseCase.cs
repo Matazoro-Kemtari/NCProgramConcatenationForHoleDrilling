@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Wada.AOP.Logging;
+﻿using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.ParameterRewriter;
 using Wada.UseCase.DataClass;
@@ -67,6 +66,17 @@ namespace Wada.EditNcProgramApplication
         }
     }
 
+    /// <summary>
+    /// 引数用データクラス
+    /// </summary>
+    /// <param name="DirectedOperation">サブプログラム中の作業指示</param>
+    /// <param name="SubProgramNumger">サブプログラム名</param>
+    /// <param name="DirectedOperationToolDiameter">ツール径</param>
+    /// <param name="RewritableCodeds">NCプログラム</param>
+    /// <param name="Material">素材</param>
+    /// <param name="Reamer">RewriterSelectorAttemptの判断用</param>
+    /// <param name="Thickness">板厚</param>
+    /// <param name="MainNcProgramParameters">パラメータ</param>
     public record class EditNcProgramPram(
         DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
@@ -164,6 +174,13 @@ namespace Wada.EditNcProgramApplication
                        thickness,
                        mainNcProgramParameters);
         }
+    }
+
+    public enum ReamerTypeAttempt
+    {
+        Undefined,
+        Crystal,
+        Skill
     }
 
     public enum RewriterSelectorAttempt

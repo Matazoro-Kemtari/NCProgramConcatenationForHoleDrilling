@@ -182,7 +182,8 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
         [Logging]
         private async Task MoveNextViewAsync()
         {
-            if (!_concatenation.MainProgramCodes.Any() || _concatenation.MainNcProgramParameters == null)
+            if (!_concatenation.MainProgramCodes.Any()
+                || _concatenation.MainNcProgramParameters == null)
             {
                 var message = MessageNotificationViaLivet.MakeInformationMessage(
                     "設定ファイルの準備ができていません\n" +

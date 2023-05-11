@@ -41,11 +41,4 @@ namespace Wada.UseCase.DataClass
         [EnumDisplayName("SS400")]
         Iron,
     }
-
-    public enum ReamerTypeAttempt
-    {
-        Undefined,
-        Crystal,
-        Skill
-    }
 }
