@@ -150,7 +150,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                 {
                     _mainProgramCodes = await _readMainNCProgramUseCase.ExecuteAsync();
                 }
-                catch (ReadMainNcProgramApplicationException ex)
+                catch (ReadMainNcProgramUseCaseException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);
@@ -210,7 +210,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                         decimal.Parse(Thickness.Value),
                         _mainNCProgramParameters));
             }
-            catch (EditNcProgramApplicationException ex)
+            catch (EditNcProgramUseCaseException ex)
             {
                 var message = MessageNotificationViaLivet.MakeErrorMessage(
                     "メインプログラム編集中にエラーが発生しました\n" +
@@ -250,7 +250,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
             {
                 subNCProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
             }
-            catch (ReadSubNcProgramApplicationException ex)
+            catch (ReadSubNcProgramUseCaseException ex)
             {
                 var message = MessageNotificationViaLivet.MakeInformationMessage(
                     $"サブプログラムの読み込みでエラーが発生しました\n{ex.Message}");

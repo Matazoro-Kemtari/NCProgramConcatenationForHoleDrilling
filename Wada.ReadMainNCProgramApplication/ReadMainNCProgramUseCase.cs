@@ -67,11 +67,11 @@ namespace Wada.ReadMainNcProgramApplication
                 }
                 catch (OpenFileStreamReaderException ex)
                 {
-                    throw new ReadMainNcProgramApplicationException(ex.Message);
+                    throw new ReadMainNcProgramUseCaseException(ex.Message);
                 }
                 catch (Exception ex) when (ex is DomainException || ex is InvalidOperationException)
                 {
-                    throw new ReadMainNcProgramApplicationException(
+                    throw new ReadMainNcProgramUseCaseException(
                         $"メインプログラムの読み込みでエラーが発生しました\n{ex.Message}", ex);
                 }
 

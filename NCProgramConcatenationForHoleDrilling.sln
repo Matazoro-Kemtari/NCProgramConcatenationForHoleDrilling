@@ -62,8 +62,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeAppl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeApplicationTests", "Wada.StoreNcProgramCodeApplicationTests\Wada.StoreNcProgramCodeApplicationTests.csproj", "{9D663703-E241-4158-865F-C584749A495D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.UseCase.DataClassTests", "Wada.UseCase.DataClassTests\Wada.UseCase.DataClassTests.csproj", "{5417865C-5AEB-4115-B7B2-88AAC939199F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,10 +164,6 @@ Global
 		{9D663703-E241-4158-865F-C584749A495D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5417865C-5AEB-4115-B7B2-88AAC939199F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5417865C-5AEB-4115-B7B2-88AAC939199F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5417865C-5AEB-4115-B7B2-88AAC939199F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5417865C-5AEB-4115-B7B2-88AAC939199F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -198,7 +192,6 @@ Global
 		{F9B98D5B-A185-4EF4-B55A-3A614DCA4686} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{74633620-388C-4573-B6D8-AE32D5AE957D} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{9D663703-E241-4158-865F-C584749A495D} = {D3D9615A-1602-44DB-883B-5D520011579A}
-		{5417865C-5AEB-4115-B7B2-88AAC939199F} = {D3D9615A-1602-44DB-883B-5D520011579A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}

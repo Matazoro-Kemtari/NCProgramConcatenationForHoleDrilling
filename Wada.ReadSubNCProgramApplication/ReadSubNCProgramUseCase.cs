@@ -37,7 +37,7 @@ namespace Wada.ReadSubNcProgramApplication
             }
             catch (Exception ex) when (ex is DomainException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException )
             {
-                throw new ReadSubNcProgramApplicationException(ex.Message, ex);
+                throw new ReadSubNcProgramUseCaseException(ex.Message, ex);
             }
         }
     }

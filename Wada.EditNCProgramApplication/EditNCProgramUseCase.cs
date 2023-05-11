@@ -60,7 +60,7 @@ namespace Wada.EditNcProgramApplication
             }
             catch (DomainException ex)
             {
-                throw new EditNcProgramApplicationException(ex.Message, ex);
+                throw new EditNcProgramUseCaseException(ex.Message, ex);
             }
         }
     }
