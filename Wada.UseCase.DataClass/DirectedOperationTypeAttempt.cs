@@ -1,4 +1,4 @@
-﻿using Wada.Extension;
+﻿using Wada.Extensions;
 
 namespace Wada.UseCase.DataClass
 {

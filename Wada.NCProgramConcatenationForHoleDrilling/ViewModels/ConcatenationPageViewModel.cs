@@ -18,7 +18,7 @@ using System.Windows;
 using Wada.AOP.Logging;
 using Wada.CombineMainNcProgramApplication;
 using Wada.EditNcProgramApplication;
-using Wada.Extension;
+using Wada.Extensions;
 using Wada.NcProgramConcatenationForHoleDrilling.Models;
 using Wada.NcProgramConcatenationForHoleDrilling.Views;
 using Wada.ReadMainNcProgramApplication;

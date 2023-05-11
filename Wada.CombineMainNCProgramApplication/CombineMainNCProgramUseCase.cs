@@ -1,4 +1,4 @@
-﻿using Wada.Extension;
+﻿using Wada.Extensions;
 using Wada.NcProgramConcatenationService.MainProgramCombiner;
 using Wada.UseCase.DataClass;
 

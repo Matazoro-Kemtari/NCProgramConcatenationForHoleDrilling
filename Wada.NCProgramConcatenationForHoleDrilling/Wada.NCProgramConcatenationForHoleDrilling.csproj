@@ -12,6 +12,7 @@
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="ReactiveProperty.WPF" Version="8.2.0" />
+    <PackageReference Include="Wada.Extensions" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />

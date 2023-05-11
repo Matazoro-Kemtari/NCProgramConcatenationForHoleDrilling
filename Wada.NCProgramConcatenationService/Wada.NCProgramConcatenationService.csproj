@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Wada.AOP.Logging\Wada.AOP.Logging.csproj" />
-    <ProjectReference Include="..\Wada.Extension\Wada.Extension.csproj" />
   </ItemGroup>
 
 </Project>
