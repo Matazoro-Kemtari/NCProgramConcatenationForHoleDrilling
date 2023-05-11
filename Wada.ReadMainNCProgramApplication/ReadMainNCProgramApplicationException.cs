@@ -1,24 +1,24 @@
 ﻿using System.Runtime.Serialization;
-using Wada.NCProgramConcatenationService;
+using Wada.NcProgramConcatenationService;
 
-namespace Wada.ReadMainNCProgramApplication
+namespace Wada.ReadMainNcProgramApplication
 {
     [Serializable]
-    public class ReadMainNCProgramApplicationException : Exception
+    public class ReadMainNcProgramApplicationException : Exception
     {
-        public ReadMainNCProgramApplicationException()
+        public ReadMainNcProgramApplicationException()
         {
         }
 
-        public ReadMainNCProgramApplicationException(string? message) : base(message)
+        public ReadMainNcProgramApplicationException(string? message) : base(message)
         {
         }
 
-        public ReadMainNCProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
+        public ReadMainNcProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 
-        protected ReadMainNCProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ReadMainNcProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

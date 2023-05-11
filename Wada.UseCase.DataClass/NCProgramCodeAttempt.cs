@@ -1,8 +1,7 @@
 ﻿using System.Text;
-using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.UseCase.DataClass
 {
@@ -13,11 +12,11 @@ namespace Wada.UseCase.DataClass
     /// <param name="MainProgramClassification"></param>
     /// <param name="ProgramName"></param>
     /// <param name="NCBlocks"></param>
-    public record class NCProgramCodeAttempt(
+    public record class NcProgramCodeAttempt(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
         string ProgramName,
-        IEnumerable<NCBlockAttempt?> NCBlocks)
+        IEnumerable<NcBlockAttempt?> NCBlocks)
     {
         public override string ToString()
         {
@@ -25,35 +24,35 @@ namespace Wada.UseCase.DataClass
             return $"%\n{ncBlocksString}\n%\n";
         }
 
-        public static NCProgramCodeAttempt Parse(NCProgramCode ncProgramCode) => new(
+        public static NcProgramCodeAttempt Parse(NcProgramCode ncProgramCode) => new(
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)));
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)));
 
-        public NCProgramCode Convert() => NCProgramCode.ReConstruct(ID, (NCProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
+        public NcProgramCode Convert() => NcProgramCode.ReConstruct(ID, (NcProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
 
-    public class TestNCProgramCodeAttemptFactory
+    public class TestNcProgramCodeAttemptFactory
     {
-        public static NCProgramCodeAttempt Create(
+        public static NcProgramCodeAttempt Create(
             string id = "01GQK2ATZNJTVTGC6A0SD00JB6",
             MainProgramTypeAttempt mainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
             string orogramName = "O1234",
-            IEnumerable<NCBlockAttempt?>? ncBlocks = null)
+            IEnumerable<NcBlockAttempt?>? ncBlocks = null)
         {
-            ncBlocks ??= new List<NCBlockAttempt?>
+            ncBlocks ??= new List<NcBlockAttempt?>
             {
-                TestNCBlockAttemptFactory.Create(
-                    ncWords:new List<INCWordAttempt>
+                TestNcBlockAttemptFactory.Create(
+                    ncWords:new List<INcWordAttempt>
                     {
-                        TestNCCommentAttemptFactory.Create(),
+                        TestNcCommentAttemptFactory.Create(),
                     }),
-                TestNCBlockAttemptFactory.Create(),
+                TestNcBlockAttemptFactory.Create(),
                 null,
             };
 
-            return new NCProgramCodeAttempt(
+            return new NcProgramCodeAttempt(
                 id,
                 mainProgramClassification,
                 orogramName,
@@ -70,14 +69,14 @@ namespace Wada.UseCase.DataClass
     /// <param name="NCBlocks"></param>
     /// <param name="DirectedOperationClassification"></param>
     /// <param name="DirectedOperationToolDiameter"></param>
-    public record class SubNCProgramCodeAttemp(
+    public record class SubNcProgramCodeAttemp(
         string ID,
         MainProgramTypeAttempt MainProgramClassification,
         string ProgramName,
-        IEnumerable<NCBlockAttempt?> NCBlocks,
+        IEnumerable<NcBlockAttempt?> NCBlocks,
         DirectedOperationTypeAttempt DirectedOperationClassification,
         decimal DirectedOperationToolDiameter)
-        : NCProgramCodeAttempt(ID, MainProgramClassification, ProgramName, NCBlocks)
+        : NcProgramCodeAttempt(ID, MainProgramClassification, ProgramName, NCBlocks)
     {
         public override string ToString()
         {
@@ -85,29 +84,29 @@ namespace Wada.UseCase.DataClass
             return $"%\n{ncBlocksString}\n%\n";
         }
 
-        public static SubNCProgramCodeAttemp Parse(SubNCProgramCode ncProgramCode) => new(
+        public static SubNcProgramCodeAttemp Parse(SubNcProgramCode ncProgramCode) => new(
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NCBlockAttempt.Parse(x)),
+            ncProgramCode.NCBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)),
             (DirectedOperationTypeAttempt)ncProgramCode.DirectedOperationClassification,
             ncProgramCode.DirectedOperationToolDiameter);
     }
 
-    public class TestSubNCProgramCodeAttemptFactory
+    public class TestSubNcProgramCodeAttemptFactory
     {
-        public static SubNCProgramCodeAttemp Create(
+        public static SubNcProgramCodeAttemp Create(
             string id = "01GQK2ATZNJTVTGC6A0SD00JB6",
             MainProgramTypeAttempt mainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
             string programName = "O1234",
-            IEnumerable<NCBlockAttempt?>? ncBlocks = null,
+            IEnumerable<NcBlockAttempt?>? ncBlocks = null,
             DirectedOperationTypeAttempt directedOperationClassification = DirectedOperationTypeAttempt.Reaming,
             decimal directedOperationToolDiameter = 13.3m)
         {
-            var ncProgram = TestNCProgramCodeAttemptFactory.Create(
+            var ncProgram = TestNcProgramCodeAttemptFactory.Create(
                 id, mainProgramClassification, programName, ncBlocks);
 
-            return new SubNCProgramCodeAttemp(
+            return new SubNcProgramCodeAttemp(
                 ncProgram.ID,
                 ncProgram.MainProgramClassification,
                 ncProgram.ProgramName,
@@ -146,7 +145,7 @@ namespace Wada.UseCase.DataClass
         BDT9,
     }
 
-    public record class NCBlockAttempt(IEnumerable<INCWordAttempt> NCWords, OptionalBlockSkipAttempt HasBlockSkip)
+    public record class NcBlockAttempt(IEnumerable<INcWordAttempt> NCWords, OptionalBlockSkipAttempt HasBlockSkip)
     {
         public override string ToString()
         {
@@ -163,20 +162,20 @@ namespace Wada.UseCase.DataClass
             return buf.ToString();
         }
 
-        public NCBlock? Convert() => new(NCWords.Select(x => x.Convert()), (OptionalBlockSkip)HasBlockSkip);
+        public NcBlock? Convert() => new(NCWords.Select(x => x.Convert()), (OptionalBlockSkip)HasBlockSkip);
 
-        public static NCBlockAttempt Parse(NCBlock ncBlock)
+        public static NcBlockAttempt Parse(NcBlock ncBlock)
         {
-            IEnumerable<INCWordAttempt> ncWords = ncBlock.NCWords
+            IEnumerable<INcWordAttempt> ncWords = ncBlock.NCWords
                 .Select(x =>
                 {
-                    INCWordAttempt ncWordAttempt;
-                    if (x.GetType() == typeof(NCComment))
-                        ncWordAttempt = NCCommentAttempt.Parse((NCComment)x);
-                    else if (x.GetType() == typeof(NCWord))
-                        ncWordAttempt = NCWordAttempt.Parse((NCWord)x);
-                    else if (x.GetType() == typeof(NCVariable))
-                        ncWordAttempt = NCVariableAttempt.Parse((NCVariable)x);
+                    INcWordAttempt ncWordAttempt;
+                    if (x.GetType() == typeof(NcComment))
+                        ncWordAttempt = NcCommentAttempt.Parse((NcComment)x);
+                    else if (x.GetType() == typeof(NcWord))
+                        ncWordAttempt = NcWordAttempt.Parse((NcWord)x);
+                    else if (x.GetType() == typeof(NcVariable))
+                        ncWordAttempt = NcVariableAttempt.Parse((NcVariable)x);
                     else
                         throw new NotImplementedException();
 
@@ -186,34 +185,34 @@ namespace Wada.UseCase.DataClass
         }
     }
 
-    public class TestNCBlockAttemptFactory
+    public class TestNcBlockAttemptFactory
     {
-        public static NCBlockAttempt Create(IEnumerable<INCWordAttempt>? ncWords = default)
+        public static NcBlockAttempt Create(IEnumerable<INcWordAttempt>? ncWords = default)
         {
-            ncWords ??= new List<INCWordAttempt>
+            ncWords ??= new List<INcWordAttempt>
             {
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('G'),
                     valueData: TestNumericalValueAttemptFactory.Create("98")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('G'),
                     valueData: TestNumericalValueAttemptFactory.Create("82")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('R'),
                     valueData: TestCoordinateValueAttemptFactory.Create("3")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('Z'),
                     valueData: TestCoordinateValueAttemptFactory.Create("*")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('P'),
                     valueData: TestCoordinateValueAttemptFactory.Create("*")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('Q'),
                     valueData: TestCoordinateValueAttemptFactory.Create("*")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('F'),
                     valueData: TestNumericalValueAttemptFactory.Create("*")),
-                TestNCWordAttemptFactory.Create(
+                TestNcWordAttemptFactory.Create(
                     address: TestAddressAttemptFactory.Create('L'),
                     valueData: TestNumericalValueAttemptFactory.Create("0")),
             };
@@ -221,27 +220,27 @@ namespace Wada.UseCase.DataClass
         }
     }
 
-    public interface INCWordAttempt
+    public interface INcWordAttempt
     {
-        INCWord Convert();
+        INcWord Convert();
     }
 
     /// <summary>
     /// コメント
     /// </summary>
     /// <param name="Comment"></param>
-    public record class NCCommentAttempt(string Comment) : INCWordAttempt
+    public record class NcCommentAttempt(string Comment) : INcWordAttempt
     {
         public override string ToString() => $"({Comment})";
 
-        public static NCCommentAttempt Parse(NCComment ncComment) => new(ncComment.Comment);
+        public static NcCommentAttempt Parse(NcComment ncComment) => new(ncComment.Comment);
 
-        public INCWord Convert() => new NCComment(Comment);
+        public INcWord Convert() => new NcComment(Comment);
     }
 
-    public class TestNCCommentAttemptFactory
+    public class TestNcCommentAttemptFactory
     {
-        public static NCCommentAttempt Create(string comment = "SAMPLE")
+        public static NcCommentAttempt Create(string comment = "SAMPLE")
             => new(comment);
     }
 
@@ -250,11 +249,11 @@ namespace Wada.UseCase.DataClass
     /// </summary>
     /// <param name="Address"></param>
     /// <param name="ValueData"></param>
-    public record class NCWordAttempt(AddressAttempt Address, IValueDataAttempt ValueData) : INCWordAttempt
+    public record class NcWordAttempt(AddressAttempt Address, IValueDataAttempt ValueData) : INcWordAttempt
     {
         public override string ToString() => Address.ToString() + ValueData.ToString();
 
-        public static NCWordAttempt Parse(NCWord ncWord)
+        public static NcWordAttempt Parse(NcWord ncWord)
         {
             IValueDataAttempt valueDataAttempt;
             if (ncWord.ValueData.GetType() == typeof(NumericalValue))
@@ -267,13 +266,13 @@ namespace Wada.UseCase.DataClass
             return new(AddressAttempt.Parse(ncWord.Address), valueDataAttempt);
         }
 
-        public INCWord Convert()
-        => new NCWord(Address.Convert(), ValueData.Convert());
+        public INcWord Convert()
+        => new NcWord(Address.Convert(), ValueData.Convert());
     }
 
-    public class TestNCWordAttemptFactory
+    public class TestNcWordAttemptFactory
     {
-        public static NCWordAttempt Create(AddressAttempt? address = default, IValueDataAttempt? valueData = default)
+        public static NcWordAttempt Create(AddressAttempt? address = default, IValueDataAttempt? valueData = default)
         {
             address ??= TestAddressAttemptFactory.Create();
             valueData ??= TestCoordinateValueAttemptFactory.Create();
@@ -385,11 +384,11 @@ namespace Wada.UseCase.DataClass
     /// </summary>
     /// <param name="VariableAddress"></param>
     /// <param name="ValueData"></param>
-    public record class NCVariableAttempt(VariableAddressAttempt VariableAddress, IValueDataAttempt ValueData) : INCWordAttempt
+    public record class NcVariableAttempt(VariableAddressAttempt VariableAddress, IValueDataAttempt ValueData) : INcWordAttempt
     {
         public override string ToString() => $"#{VariableAddress}={ValueData}";
 
-        public static NCVariableAttempt Parse(NCVariable ncVariable)
+        public static NcVariableAttempt Parse(NcVariable ncVariable)
         {
             IValueDataAttempt valueDataAttempt;
             if (ncVariable.ValueData.GetType() == typeof(NumericalValue))
@@ -402,12 +401,12 @@ namespace Wada.UseCase.DataClass
             return new(VariableAddressAttempt.Parse(ncVariable.VariableAddress), valueDataAttempt);
         }
 
-        public INCWord Convert() => new NCVariable(VariableAddress.Convert(), ValueData.Convert());
+        public INcWord Convert() => new NcVariable(VariableAddress.Convert(), ValueData.Convert());
     }
 
-    public class TestNCVariableAttemptFactory
+    public class TestNcVariableAttemptFactory
     {
-        public static NCVariableAttempt Create(
+        public static NcVariableAttempt Create(
             VariableAddressAttempt? variableAddress = default,
             IValueDataAttempt? valueData = default)
         {

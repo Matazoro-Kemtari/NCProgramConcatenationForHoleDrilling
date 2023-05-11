@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
 
-namespace Wada.NCProgramConcatenationService.ValueObjects
+namespace Wada.NcProgramConcatenationService.ValueObjects
 {
     /// <summary>
     /// オプショナルブロックスキップ
@@ -20,20 +20,20 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         BDT9,
     }
 
-    public interface INCWord { }
+    public interface INcWord { }
 
     /// <summary>
     /// コメント
     /// </summary>
     /// <param name="Comment"></param>
-    public record class NCComment(string Comment) : INCWord
+    public record class NcComment(string Comment) : INcWord
     {
         public override string ToString() => $"({Comment})";
     }
 
-    public class TestNCCommentFactory
+    public class TestNcCommentFactory
     {
-        public static NCComment Create(string comment = "COMMENT") => new(comment);
+        public static NcComment Create(string comment = "COMMENT") => new(comment);
     }
 
     /// <summary>
@@ -41,14 +41,14 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     /// </summary>
     /// <param name="Address"></param>
     /// <param name="ValueData"></param>
-    public record class NCWord(Address Address, IValueData ValueData) : INCWord
+    public record class NcWord(Address Address, IValueData ValueData) : INcWord
     {
         public override string ToString() => Address.ToString() + ValueData.ToString();
     }
 
-    public class TestNCWordFactory
+    public class TestNcWordFactory
     {
-        public static NCWord Create(Address? address = default, IValueData? valueData = default)
+        public static NcWord Create(Address? address = default, IValueData? valueData = default)
         {
             address ??= TestAddressFactory.Create();
             valueData ??= TestCoordinateValueFactory.Create();
@@ -209,14 +209,14 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
     /// </summary>
     /// <param name="VariableAddress"></param>
     /// <param name="ValueData"></param>
-    public record class NCVariable(VariableAddress VariableAddress, IValueData ValueData) : INCWord
+    public record class NcVariable(VariableAddress VariableAddress, IValueData ValueData) : INcWord
     {
         public override string ToString() => $"#{VariableAddress}={ValueData}";
     }
 
     public class TestNCVariableFactory
     {
-        public static NCVariable Create(
+        public static NcVariable Create(
             VariableAddress? variableAddress = default,
             IValueData? valueData = default)
         {
@@ -240,7 +240,7 @@ namespace Wada.NCProgramConcatenationService.ValueObjects
         public static VariableAddress Create(uint value = 1) => new(value);
     }
 
-    public enum NCProgramType
+    public enum NcProgramType
     {
         /// <summary>
         /// センタードリル

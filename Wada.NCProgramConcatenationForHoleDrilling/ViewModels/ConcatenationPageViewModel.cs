@@ -16,34 +16,34 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Wada.AOP.Logging;
-using Wada.CombineMainNCProgramApplication;
-using Wada.EditNCProgramApplication;
+using Wada.CombineMainNcProgramApplication;
+using Wada.EditNcProgramApplication;
 using Wada.Extension;
-using Wada.NCProgramConcatenationForHoleDrilling.Models;
-using Wada.NCProgramConcatenationForHoleDrilling.Views;
-using Wada.ReadMainNCProgramApplication;
-using Wada.ReadMainNCProgramParametersApplication;
-using Wada.ReadSubNCProgramApplication;
+using Wada.NcProgramConcatenationForHoleDrilling.Models;
+using Wada.NcProgramConcatenationForHoleDrilling.Views;
+using Wada.ReadMainNcProgramApplication;
+using Wada.ReadMainNcProgramParametersApplication;
+using Wada.ReadSubNcProgramApplication;
 using Wada.UseCase.DataClass;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestructible, IDropTarget
     {
         private readonly ConcatenationPageModel _concatenation = new();
         private IRegionNavigationService? _regionNavigationService;
         private readonly IDialogService _dialogService;
-        private readonly IReadMainNCProgramUseCase _readMainNCProgramUseCase;
-        private readonly IReadSubNCProgramUseCase _readSubNCProgramUseCase;
-        private readonly IReadMainNCProgramParametersUseCase _readMainNCProgramParametersUseCase;
-        private readonly IEditNCProgramUseCase _editNCProgramUseCase;
-        private readonly ICombineMainNCProgramUseCase _combineMainNCProgramUseCase;
+        private readonly IReadMainNcProgramUseCase _readMainNCProgramUseCase;
+        private readonly IReadSubNcProgramUseCase _readSubNCProgramUseCase;
+        private readonly IReadMainNcProgramParametersUseCase _readMainNCProgramParametersUseCase;
+        private readonly IEditNcProgramUseCase _editNCProgramUseCase;
+        private readonly ICombineMainNcProgramUseCase _combineMainNCProgramUseCase;
 
-        private IEnumerable<MainNCProgramCodeDTO>? _mainProgramCodes = null;
+        private IEnumerable<MainNcProgramCodeDto>? _mainProgramCodes = null;
 
-        private MainNCProgramParametersAttempt? _mainNCProgramParameters = null;
+        private MainNcProgramParametersAttempt? _mainNCProgramParameters = null;
 
-        public ConcatenationPageViewModel(IDialogService dialogService, IReadMainNCProgramUseCase readMainNCProgramUseCase, IReadSubNCProgramUseCase readSubNCProgramUseCase, IReadMainNCProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNCProgramUseCase editNCProgramUseCase, ICombineMainNCProgramUseCase combineMainNCProgramUseCase)
+        public ConcatenationPageViewModel(IDialogService dialogService, IReadMainNcProgramUseCase readMainNCProgramUseCase, IReadSubNcProgramUseCase readSubNCProgramUseCase, IReadMainNcProgramParametersUseCase readMainNCProgramParametersUseCase, IEditNcProgramUseCase editNCProgramUseCase, ICombineMainNcProgramUseCase combineMainNCProgramUseCase)
         {
             _dialogService = dialogService;
             _readMainNCProgramUseCase = readMainNCProgramUseCase;
@@ -150,7 +150,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 {
                     _mainProgramCodes = await _readMainNCProgramUseCase.ExecuteAsync();
                 }
-                catch (ReadMainNCProgramApplicationException ex)
+                catch (ReadMainNcProgramApplicationException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);
@@ -167,11 +167,11 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                     var _dto = await _readMainNCProgramParametersUseCase.ExecuteAsync();
                     _mainNCProgramParameters = _dto != null
                     ? _dto.Convert()
-                    : throw new NCProgramConcatenationForHoleDrillingException(
+                    : throw new NcProgramConcatenationForHoleDrillingException(
                         "リストを読み込もうとしましたが、失敗しました\n" +
                         "リストの内容を確認してください");
                 }
-                catch (ReadMainNCProgramParametersApplicationException ex)
+                catch (ReadMainNcProgramParametersUseCaseException ex)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);
@@ -194,23 +194,23 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }
 
             // メインプログラムを編集する
-            EditNCProgramDTO editedCodes;
+            EditNcProgramDto editedCodes;
             try
             {
                 editedCodes = await _editNCProgramUseCase.ExecuteAsync(
-                    new EditNCProgramPram(
+                    new EditNcProgramPram(
                         _concatenation.FetchedOperationType.Value,
                         _concatenation.SubProgramNumber.Value,
                         _concatenation.DirectedOperationToolDiameter.Value,
                         _mainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value)
-                                         .Select(x => x.NCProgramCodeAttempts)
+                                         .Select(x => x.NcProgramCodeAttempts)
                                          .First(),
                         Material.Value,
                         Reamer.Value,
                         decimal.Parse(Thickness.Value),
                         _mainNCProgramParameters));
             }
-            catch (EditNCProgramApplicationException ex)
+            catch (EditNcProgramApplicationException ex)
             {
                 var message = MessageNotificationViaLivet.MakeErrorMessage(
                     "メインプログラム編集中にエラーが発生しました\n" +
@@ -220,8 +220,8 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
             }
 
             // 結合する
-            CombineMainNCProgramParam combineParam = new(
-                editedCodes.NCProgramCodes,
+            CombineMainNcProgramParam combineParam = new(
+                editedCodes.NcProgramCodes,
                 _concatenation.MachineTool.Value,
                 _concatenation.Material.Value);
             var combinedCode = await _combineMainNCProgramUseCase.ExecuteAsync(combineParam);
@@ -245,12 +245,12 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
                 return;
 
             // サブプログラムを読み込む
-            SubNCProgramCodeAttemp subNCProcramCode;
+            SubNcProgramCodeAttemp subNCProcramCode;
             try
             {
                 subNCProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
             }
-            catch (ReadSubNCProgramApplicationException ex)
+            catch (ReadSubNcProgramApplicationException ex)
             {
                 var message = MessageNotificationViaLivet.MakeInformationMessage(
                     $"サブプログラムの読み込みでエラーが発生しました\n{ex.Message}");

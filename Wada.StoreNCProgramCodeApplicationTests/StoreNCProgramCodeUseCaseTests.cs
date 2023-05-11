@@ -1,13 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService;
 using Wada.UseCase.DataClass;
 
-namespace Wada.StoreNCProgramCodeApplication.Tests
+namespace Wada.StoreNcProgramCodeApplication.Tests
 {
     [TestClass()]
-    public class StoreNCProgramCodeUseCaseTests
+    public class StoreNcProgramCodeUseCaseTests
     {
         [TestMethod()]
         public async Task 正常系_ユースケースを実行するとリポジトリが実行されること()
@@ -15,12 +14,12 @@ namespace Wada.StoreNCProgramCodeApplication.Tests
             // given
             // when
             Mock<IStreamWriterOpener> mock_writer = new();
-            Mock<INCProgramRepository> mock_nc = new();
+            Mock<INcProgramRepository> mock_nc = new();
 
-            IStoreNCProgramCodeUseCase useCase =
-                new StoreNCProgramCodeUseCase(mock_writer.Object, mock_nc.Object);
+            IStoreNcProgramCodeUseCase useCase =
+                new StoreNcProgramCodeUseCase(mock_writer.Object, mock_nc.Object);
             var path = "testfile";
-            var ncProgram = TestNCProgramCodeAttemptFactory.Create();
+            var ncProgram = TestNcProgramCodeAttemptFactory.Create();
             await useCase.ExecuteAsync(path, ncProgram);
 
             // then

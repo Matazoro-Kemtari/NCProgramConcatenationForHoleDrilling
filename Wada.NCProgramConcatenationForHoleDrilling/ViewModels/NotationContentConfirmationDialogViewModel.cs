@@ -5,9 +5,9 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Reactive.Disposables;
-using Wada.NCProgramConcatenationForHoleDrilling.Models;
+using Wada.NcProgramConcatenationForHoleDrilling.Models;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogAware, IDestructible
     {

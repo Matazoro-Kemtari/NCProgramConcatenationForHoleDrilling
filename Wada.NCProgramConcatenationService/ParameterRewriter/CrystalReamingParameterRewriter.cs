@@ -1,4 +1,4 @@
-﻿namespace Wada.NCProgramConcatenationService.ParameterRewriter
+﻿namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
     /// <summary>
     /// クリスタルリーマのパラメータを書き換える

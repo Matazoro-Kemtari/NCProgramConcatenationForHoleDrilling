@@ -1,29 +1,29 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 
-namespace Wada.ReadSubNCProgramApplication
+namespace Wada.ReadSubNcProgramApplication
 {
-    public interface IReadSubNCProgramUseCase
+    public interface IReadSubNcProgramUseCase
     {
-        Task<SubNCProgramCodeAttemp> ExecuteAsync(string path);
+        Task<SubNcProgramCodeAttemp> ExecuteAsync(string path);
     }
 
-    public class ReadSubNCProgramUseCase : IReadSubNCProgramUseCase
+    public class ReadSubNcProgramUseCase : IReadSubNcProgramUseCase
     {
         private readonly IStreamReaderOpener _streamReaderOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramRepository _ncProgramRepository;
 
-        public ReadSubNCProgramUseCase(IStreamReaderOpener streamReaderOpener, INCProgramRepository ncProgramRepository)
+        public ReadSubNcProgramUseCase(IStreamReaderOpener streamReaderOpener, INcProgramRepository ncProgramRepository)
         {
             _streamReaderOpener = streamReaderOpener;
             _ncProgramRepository = ncProgramRepository;
         }
 
         [Logging]
-        public async Task<SubNCProgramCodeAttemp> ExecuteAsync(string path)
+        public async Task<SubNcProgramCodeAttemp> ExecuteAsync(string path)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             // サブプログラムを読み込む
@@ -31,13 +31,13 @@ namespace Wada.ReadSubNCProgramApplication
 
             try
             {
-                var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, NCProgramType.SubProgram, fileName);
-                return SubNCProgramCodeAttemp.Parse(
-                    SubNCProgramCode.Parse(ncProgramCode));
+                var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, NcProgramType.SubProgram, fileName);
+                return SubNcProgramCodeAttemp.Parse(
+                    SubNcProgramCode.Parse(ncProgramCode));
             }
             catch (Exception ex) when (ex is DomainException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException )
             {
-                throw new ReadSubNCProgramApplicationException(ex.Message, ex);
+                throw new ReadSubNcProgramApplicationException(ex.Message, ex);
             }
         }
     }

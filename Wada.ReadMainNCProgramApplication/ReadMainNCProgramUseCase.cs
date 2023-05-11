@@ -1,40 +1,40 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 
-namespace Wada.ReadMainNCProgramApplication
+namespace Wada.ReadMainNcProgramApplication
 {
-    public interface IReadMainNCProgramUseCase
+    public interface IReadMainNcProgramUseCase
     {
-        Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync();
+        Task<IEnumerable<MainNcProgramCodeDto>> ExecuteAsync();
     }
 
-    public record class MainNCProgramCodeDTO(
+    public record class MainNcProgramCodeDto(
         MachineToolTypeAttempt MachineToolClassification,
-        IEnumerable<NCProgramCodeAttempt> NCProgramCodeAttempts);
+        IEnumerable<NcProgramCodeAttempt> NcProgramCodeAttempts);
 
-    public class ReadMainNCProgramUseCase : IReadMainNCProgramUseCase
+    public class ReadMainNcProgramUseCase : IReadMainNcProgramUseCase
     {
         private readonly IStreamReaderOpener _streamReaderOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramRepository _ncProgramRepository;
 
-        public ReadMainNCProgramUseCase(IStreamReaderOpener streamReaderOpener, INCProgramRepository ncProgramRepository)
+        public ReadMainNcProgramUseCase(IStreamReaderOpener streamReaderOpener, INcProgramRepository ncProgramRepository)
         {
             _streamReaderOpener = streamReaderOpener;
             _ncProgramRepository = ncProgramRepository;
         }
 
         [Logging]
-        public async Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync()
+        public async Task<IEnumerable<MainNcProgramCodeDto>> ExecuteAsync()
         {
-            List<(string FileName, NCProgramType NCProgramType)> mainPrograms = new()
+            List<(string FileName, NcProgramType NCProgramType)> mainPrograms = new()
             {
-                ("CD.txt",NCProgramType.CenterDrilling),
-                ("DR.txt",NCProgramType.Drilling),
-                ("MENTORI.txt",NCProgramType.Chamfering),
-                ("REAMER.txt",NCProgramType.Reaming),
-                ("TAP.txt",NCProgramType.Tapping),
+                ("CD.txt",NcProgramType.CenterDrilling),
+                ("DR.txt",NcProgramType.Drilling),
+                ("MENTORI.txt",NcProgramType.Chamfering),
+                ("REAMER.txt",NcProgramType.Reaming),
+                ("TAP.txt",NcProgramType.Tapping),
             };
 
             List<string> machineName = new()
@@ -51,7 +51,7 @@ namespace Wada.ReadMainNCProgramApplication
 
             var task = machineName.Select(async machine =>
             {
-                NCProgramCodeAttempt[] ncProgramCodeAttempts;
+                NcProgramCodeAttempt[] ncProgramCodeAttempts;
                 try
                 {
                     ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
@@ -62,16 +62,16 @@ namespace Wada.ReadMainNCProgramApplication
                         // メインプログラムを読み込む
                         using StreamReader reader = _streamReaderOpener.Open(path);
                         var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
-                        return NCProgramCodeAttempt.Parse(ncProgramCode);
+                        return NcProgramCodeAttempt.Parse(ncProgramCode);
                     }));
                 }
                 catch (OpenFileStreamReaderException ex)
                 {
-                    throw new ReadMainNCProgramApplicationException(ex.Message);
+                    throw new ReadMainNcProgramApplicationException(ex.Message);
                 }
                 catch (Exception ex) when (ex is DomainException || ex is InvalidOperationException)
                 {
-                    throw new ReadMainNCProgramApplicationException(
+                    throw new ReadMainNcProgramApplicationException(
                         $"メインプログラムの読み込みでエラーが発生しました\n{ex.Message}", ex);
                 }
 
@@ -83,7 +83,7 @@ namespace Wada.ReadMainNCProgramApplication
                     _ => throw new NotImplementedException(),
                 };
 
-                return new MainNCProgramCodeDTO(
+                return new MainNcProgramCodeDto(
                     machineClassification,
                     ncProgramCodeAttempts);
             });

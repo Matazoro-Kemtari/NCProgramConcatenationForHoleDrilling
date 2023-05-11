@@ -1,9 +1,9 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
+namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
 {
     internal class CenterDrillingProgramRewriter
     {
@@ -15,8 +15,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         /// <param name="rewritingParameter">対象のパラメータ</param>
         /// <returns></returns>
         [Logging]
-        internal static NCProgramCode Rewrite(
-            NCProgramCode rewritableCode,
+        internal static NcProgramCode Rewrite(
+            NcProgramCode rewritableCode,
             MaterialType material,
             IMainProgramPrameter rewritingParameter,
             string subProgramNumber)
@@ -31,10 +31,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                             .Select(y =>
                             {
-                                if (y.GetType() != typeof(NCWord))
+                                if (y.GetType() != typeof(NcWord))
                                     return y;
 
-                                NCWord ncWord = (NCWord)y;
+                                NcWord ncWord = (NcWord)y;
                                 if (!ncWord.ValueData.Indefinite)
                                     return y;
 
@@ -48,7 +48,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 };
                             });
 
-                    return new NCBlock(rewritedNCWords, x.HasBlockSkip);
+                    return new NcBlock(rewritedNCWords, x.HasBlockSkip);
                 });
 
             return rewritableCode with
@@ -58,7 +58,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        private static INcWord RewriteSubProgramNumber(string subProgramNumber, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -67,7 +67,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteFeed(MaterialType material, NCWord ncWord)
+        private static INcWord RewriteFeed(MaterialType material, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -83,7 +83,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteCenterDrillDepth(decimal centerDrillDepth, NCWord ncWord)
+        private static INcWord RewriteCenterDrillDepth(decimal centerDrillDepth, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -96,7 +96,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteSpin(MaterialType material, NCWord ncWord)
+        private static INcWord RewriteSpin(MaterialType material, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;

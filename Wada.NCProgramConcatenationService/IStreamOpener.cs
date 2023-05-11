@@ -1,4 +1,4 @@
-﻿namespace Wada.NCProgramConcatenationService
+﻿namespace Wada.NcProgramConcatenationService
 {
     public interface IStreamOpener
     {

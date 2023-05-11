@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
   </ItemGroup>
 
 </Project>

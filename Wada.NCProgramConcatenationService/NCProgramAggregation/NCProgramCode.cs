@@ -1,24 +1,24 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.NCProgramAggregation
+namespace Wada.NcProgramConcatenationService.NCProgramAggregation
 {
-    public record class NCProgramCode
+    public record class NcProgramCode
     {
-        public NCProgramCode(NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
+        public NcProgramCode(NcProgramType mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
         {
             ID = Ulid.NewUlid();
             MainProgramClassification = mainProgramClassification;
             ProgramName = mainProgramClassification switch
             {
-                NCProgramType.SubProgram => FetchProgramNumber(programName),
+                NcProgramType.SubProgram => FetchProgramNumber(programName),
                 _ => programName,
             };
             NCBlocks = ncBlocks;
         }
 
-        protected NCProgramCode(Ulid id, NCProgramType mainProgramClassification, string programName, IEnumerable<NCBlock?> ncBlocks)
+        protected NcProgramCode(Ulid id, NcProgramType mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
         {
             ID = id;
             MainProgramClassification = mainProgramClassification;
@@ -43,25 +43,25 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             return $"%\n{ncBlocksString}\n%\n";
         }
 
-        public static NCProgramCode ReConstruct(
+        public static NcProgramCode ReConstruct(
             string id,
-            NCProgramType mainProgramClassification,
+            NcProgramType mainProgramClassification,
             string programName,
-            IEnumerable<NCBlock?> ncBlocks) => new(Ulid.Parse(id), mainProgramClassification, programName, ncBlocks);
+            IEnumerable<NcBlock?> ncBlocks) => new(Ulid.Parse(id), mainProgramClassification, programName, ncBlocks);
 
         public Ulid ID { get; }
 
         /// <summary>
         /// メインプログラム種別
         /// </summary>
-        public NCProgramType MainProgramClassification { get; init; }
+        public NcProgramType MainProgramClassification { get; init; }
 
         /// <summary>
         /// プログラム番号
         /// </summary>
         public string ProgramName { get; init; }
 
-        public IEnumerable<NCBlock?> NCBlocks { get; init; }
+        public IEnumerable<NcBlock?> NCBlocks { get; init; }
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
     /// </summary>
     /// <param name="NCWords">ワード</param>
     /// <param name="HasBlockSkip">オプショナルブロックスキップの有無</param>
-    public record class NCBlock(IEnumerable<INCWord> NCWords, OptionalBlockSkip HasBlockSkip)
+    public record class NcBlock(IEnumerable<INcWord> NCWords, OptionalBlockSkip HasBlockSkip)
     {
         public override string ToString()
         {
@@ -89,45 +89,45 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
 
     public class TestNCProgramCodeFactory
     {
-        public static NCProgramCode Create(
-            NCProgramType mainProgramType = NCProgramType.Reaming,
+        public static NcProgramCode Create(
+            NcProgramType mainProgramType = NcProgramType.Reaming,
             string programName = "O0001",
-            IEnumerable<NCBlock?>? ncBlocks = default)
+            IEnumerable<NcBlock?>? ncBlocks = default)
         {
             var typeComment = mainProgramType switch
             {
-                NCProgramType.CenterDrilling => "C/D",
-                NCProgramType.Drilling => "DR",
-                NCProgramType.Chamfering => "MENTORI",
-                NCProgramType.Reaming => "REAMER",
-                NCProgramType.Tapping => "TAP",
+                NcProgramType.CenterDrilling => "C/D",
+                NcProgramType.Drilling => "DR",
+                NcProgramType.Chamfering => "MENTORI",
+                NcProgramType.Reaming => "REAMER",
+                NcProgramType.Tapping => "TAP",
                 _ => "COMMENT",
             };
             var lastMCode = mainProgramType switch
             {
-                NCProgramType.Reaming => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
-                NCProgramType.Tapping => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
-                _ => TestNCWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("1")),
+                NcProgramType.Reaming => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                NcProgramType.Tapping => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                _ => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("1")),
             };
-            ncBlocks ??= new List<NCBlock>
+            ncBlocks ??= new List<NcBlock>
             {
                 TestNCBlockFactory.Create(
-                    ncWords: new List<INCWord>
+                    ncWords: new List<INcWord>
                     {
-                        TestNCCommentFactory.Create(typeComment),
+                        TestNcCommentFactory.Create(typeComment),
                     }),
                 TestNCBlockFactory.Create(
-                    ncWords: new List<INCWord>
+                    ncWords: new List<INcWord>
                     {
-                        TestNCWordFactory.Create(
+                        TestNcWordFactory.Create(
                             address: TestAddressFactory.Create('M'),
                             valueData: TestNumericalValueFactory.Create("3")),
-                        TestNCWordFactory.Create(
+                        TestNcWordFactory.Create(
                             address: TestAddressFactory.Create('S'),
                             valueData: TestNumericalValueFactory.Create("*")),
                     }),
                 TestNCBlockFactory.Create(),
-                TestNCBlockFactory.Create(ncWords: new List<INCWord> { lastMCode }),
+                TestNCBlockFactory.Create(ncWords: new List<INcWord> { lastMCode }),
             };
             return new(mainProgramType, programName, ncBlocks);
         }
@@ -135,32 +135,32 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
 
     public class TestNCBlockFactory
     {
-        public static NCBlock Create(IEnumerable<INCWord>? ncWords = default)
+        public static NcBlock Create(IEnumerable<INcWord>? ncWords = default)
         {
-            ncWords ??= new List<INCWord>
+            ncWords ??= new List<INcWord>
             {
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('G'),
                     valueData: TestNumericalValueFactory.Create("98")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('G'),
                     valueData: TestNumericalValueFactory.Create("82")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('R'),
                     valueData: TestCoordinateValueFactory.Create("3")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('Z'),
                     valueData: TestCoordinateValueFactory.Create("*")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('P'),
                     valueData: TestCoordinateValueFactory.Create("*")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('Q'),
                     valueData: TestCoordinateValueFactory.Create("*")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('F'),
                     valueData: TestNumericalValueFactory.Create("*")),
-                TestNCWordFactory.Create(
+                TestNcWordFactory.Create(
                     address: TestAddressFactory.Create('L'),
                     valueData: TestNumericalValueFactory.Create("0")),
             };

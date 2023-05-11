@@ -1,23 +1,23 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.EditNCProgramApplication
+namespace Wada.EditNcProgramApplication
 {
     [Serializable]
-    public class EditNCProgramApplicationException : Exception
+    public class EditNcProgramApplicationException : Exception
     {
-        public EditNCProgramApplicationException()
+        public EditNcProgramApplicationException()
         {
         }
 
-        public EditNCProgramApplicationException(string? message) : base(message)
+        public EditNcProgramApplicationException(string? message) : base(message)
         {
         }
 
-        public EditNCProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
+        public EditNcProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 
-        protected EditNCProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected EditNcProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

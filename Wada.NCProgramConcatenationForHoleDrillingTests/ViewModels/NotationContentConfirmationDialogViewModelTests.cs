@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Prism.Services.Dialogs;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels.Tests
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels.Tests
 {
     [TestClass()]
     public class NotationContentConfirmationDialogViewModelTests

@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {

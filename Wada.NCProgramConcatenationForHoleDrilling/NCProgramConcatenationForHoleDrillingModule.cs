@@ -1,11 +1,11 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
-using Wada.NCProgramConcatenationForHoleDrilling.Views;
+using Wada.NcProgramConcatenationForHoleDrilling.Views;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling
+namespace Wada.NcProgramConcatenationForHoleDrilling
 {
-    public class NCProgramConcatenationForHoleDrillingModule : IModule
+    public class NcProgramConcatenationForHoleDrillingModule : IModule
     {
         public void OnInitialized(IContainerProvider containerProvider)
         {

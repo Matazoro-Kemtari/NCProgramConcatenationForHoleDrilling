@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.NCProgramConcatenationForHoleDrilling\Wada.NCProgramConcatenationForHoleDrilling.csproj" />
+    <ProjectReference Include="..\Wada.NCProgramConcatenationForHoleDrilling\Wada.NcProgramConcatenationForHoleDrilling.csproj" />
   </ItemGroup>
 
 </Project>

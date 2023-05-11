@@ -9,20 +9,20 @@ using Reactive.Bindings.Extensions;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationForHoleDrilling.Models;
-using Wada.NCProgramConcatenationForHoleDrilling.Views;
-using Wada.NCProgramConcatenationService;
+using Wada.NcProgramConcatenationForHoleDrilling.Models;
+using Wada.NcProgramConcatenationForHoleDrilling.Views;
+using Wada.NcProgramConcatenationService;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructible
     {
         private readonly PreviewPageModel _previewPageModel = new();
         private IRegionNavigationService? _regionNavigationService;
         private readonly IStreamWriterOpener _streamWriterOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramRepository _ncProgramRepository;
 
-        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INCProgramRepository ncProgramRepository)
+        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INcProgramRepository ncProgramRepository)
         {
             _streamWriterOpener = streamWriterOpener;
             _ncProgramRepository = ncProgramRepository;

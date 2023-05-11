@@ -1,18 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
+namespace Wada.NcProgramConcatenationService.NCProgramAggregation.Tests
 {
     [TestClass()]
-    public class SubNCProgramCodeTests
+    public class SubNcProgramCodeTests
     {
         [DataTestMethod()]
         [DynamicData(nameof(NCBlockOperations))]
-        public void 正常系_作業指示が返ってくること(NCBlock ncBlock, DirectedOperationType expected)
+        public void 正常系_作業指示が返ってくること(NcBlock ncBlock, DirectedOperationType expected)
         {
             // given
             // when
-            List<NCBlock?> ncBlocks = new()
+            List<NcBlock?> ncBlocks = new()
             {
                 TestNCBlockFactory.Create(),
                 null,
@@ -22,8 +22,8 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
-            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
-            SubNCProgramCode subNCProgram = SubNCProgramCode.Parse(ncProgramCode);
+            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
+            SubNcProgramCode subNCProgram = SubNcProgramCode.Parse(ncProgramCode);
             DirectedOperationType actual = subNCProgram.DirectedOperationClassification;
 
             // then
@@ -33,15 +33,15 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         private static IEnumerable<object[]> NCBlockOperations => new List<object[]>
         {
             new object[] {
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("3-M10") }),
                 DirectedOperationType.Tapping,
             },
             new object[] {
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("3-D4.76H7") }),
                 DirectedOperationType.Reaming,
             },
             new object[] {
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("4-D10DR") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("4-D10DR") }),
                 DirectedOperationType.Drilling,
             },
         };
@@ -51,40 +51,40 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         {
             // given
             // when
-            List<NCBlock?> ncBlocks = new()
+            List<NcBlock?> ncBlocks = new()
             {
-                TestNCBlockFactory.Create(new List<INCWord>
+                TestNCBlockFactory.Create(new List<INcWord>
                 {
-                    TestNCCommentFactory.Create(),
-                    TestNCWordFactory.Create(),
+                    TestNcCommentFactory.Create(),
+                    TestNcWordFactory.Create(),
                 }),
                 null,
-                TestNCBlockFactory.Create(new List<INCWord>
+                TestNCBlockFactory.Create(new List<INcWord>
                 {
-                    TestNCCommentFactory.Create(),
-                    TestNCWordFactory.Create(),
+                    TestNcCommentFactory.Create(),
+                    TestNcWordFactory.Create(),
                 }),
-                TestNCBlockFactory.Create(new List<INCWord>
+                TestNCBlockFactory.Create(new List<INcWord>
                 {
-                    TestNCCommentFactory.Create(),
-                    TestNCWordFactory.Create(),
+                    TestNcCommentFactory.Create(),
+                    TestNcWordFactory.Create(),
                 }),
-                TestNCBlockFactory.Create(new List<INCWord>
+                TestNCBlockFactory.Create(new List<INcWord>
                 {
-                    TestNCCommentFactory.Create(),
-                    TestNCWordFactory.Create(),
+                    TestNcCommentFactory.Create(),
+                    TestNcWordFactory.Create(),
                 }),
                 null,null,null,
-                TestNCBlockFactory.Create(new List<INCWord>
+                TestNCBlockFactory.Create(new List<INcWord>
                 {
-                    TestNCCommentFactory.Create(),
-                    TestNCWordFactory.Create(),
+                    TestNcCommentFactory.Create(),
+                    TestNcWordFactory.Create(),
                 }),
             };
-            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
-                _ = SubNCProgramCode.Parse(ncProgramCode);
+                _ = SubNcProgramCode.Parse(ncProgramCode);
             }
 
             // then
@@ -98,22 +98,22 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation.Tests
         {
             // given
             // when
-            List<NCBlock?> ncBlocks = new()
+            List<NcBlock?> ncBlocks = new()
             {
                 TestNCBlockFactory.Create(),
                 null,
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-M10") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("3-M10") }),
                 null,
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("3-D4.76H7") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("3-D4.76H7") }),
                 null,
-                TestNCBlockFactory.Create(new List<INCWord> { new NCComment("4-D10DR") }),
+                TestNCBlockFactory.Create(new List<INcWord> { new NcComment("4-D10DR") }),
                 null,null,null,
                 TestNCBlockFactory.Create(),
             };
-            NCProgramCode ncProgramCode = new(NCProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
             void target()
             {
-                _ = SubNCProgramCode.Parse(ncProgramCode);
+                _ = SubNcProgramCode.Parse(ncProgramCode);
             }
 
             // then

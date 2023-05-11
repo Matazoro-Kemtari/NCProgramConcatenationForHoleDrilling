@@ -1,6 +1,6 @@
-﻿using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.NCProgramConcatenationService
+namespace Wada.NcProgramConcatenationService
 {
     public interface IMainProgramPrameterReader
     {

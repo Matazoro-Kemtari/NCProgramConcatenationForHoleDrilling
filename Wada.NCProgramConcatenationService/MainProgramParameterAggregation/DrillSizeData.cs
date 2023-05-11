@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System;
 
-namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
 public record class DrillSizeData
 {

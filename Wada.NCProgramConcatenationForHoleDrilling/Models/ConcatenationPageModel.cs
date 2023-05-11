@@ -1,9 +1,9 @@
 ﻿using Reactive.Bindings;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationForHoleDrilling.ViewModels;
+using Wada.NcProgramConcatenationForHoleDrilling.ViewModels;
 using Wada.UseCase.DataClass;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Models
+namespace Wada.NcProgramConcatenationForHoleDrilling.Models
 {
     internal record class ConcatenationPageModel
     {

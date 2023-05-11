@@ -1,9 +1,9 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
+namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
 {
     internal class TappingProgramRewriter
     {
@@ -16,8 +16,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         /// <param name="rewritingParameter">対象のパラメータ</param>
         /// <returns></returns>
         [Logging]
-        internal static NCProgramCode Rewrite(
-            NCProgramCode rewritableCode,
+        internal static NcProgramCode Rewrite(
+            NcProgramCode rewritableCode,
             MaterialType material,
             decimal thickness,
             IMainProgramPrameter rewritingParameter,
@@ -33,12 +33,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                         .Select(y =>
                         {
-                            INCWord result;
-                            if (y.GetType() == typeof(NCComment))
+                            INcWord result;
+                            if (y.GetType() == typeof(NcComment))
                             {
-                                NCComment nCComment = (NCComment)y;
+                                NcComment nCComment = (NcComment)y;
                                 if (nCComment.Comment == "TAP")
-                                    result = new NCComment(
+                                    result = new NcComment(
                                         string.Concat(
                                             nCComment.Comment,
                                             " M",
@@ -46,10 +46,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 else
                                     result = y;
                             }
-                            else if (y.GetType() == typeof(NCWord))
+                            else if (y.GetType() == typeof(NcWord))
                             {
                                 TappingProgramPrameter tappingProgramPrameter = (TappingProgramPrameter)rewritingParameter;
-                                NCWord ncWord = (NCWord)y;
+                                NcWord ncWord = (NcWord)y;
                                 if (ncWord.ValueData.Indefinite)
                                     result = ncWord.Address.Value switch
                                     {
@@ -68,7 +68,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                             return result;
                         });
 
-                    return new NCBlock(rewritedNCWords, x.HasBlockSkip);
+                    return new NcBlock(rewritedNCWords, x.HasBlockSkip);
                 });
 
             return rewritableCode with
@@ -78,7 +78,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        private static INcWord RewriteSubProgramNumber(string subProgramNumber, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -87,7 +87,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteFeed(MaterialType material, TappingProgramPrameter tappingProgramPrameter, NCWord ncWord)
+        private static INcWord RewriteFeed(MaterialType material, TappingProgramPrameter tappingProgramPrameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -103,7 +103,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteTappingDepth(decimal thickness, NCWord ncWord)
+        private static INcWord RewriteTappingDepth(decimal thickness, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -116,7 +116,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteSpin(MaterialType material, TappingProgramPrameter tappingParameter, NCWord ncWord)
+        private static INcWord RewriteSpin(MaterialType material, TappingProgramPrameter tappingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;

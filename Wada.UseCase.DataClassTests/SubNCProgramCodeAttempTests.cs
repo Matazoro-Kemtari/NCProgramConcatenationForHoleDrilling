@@ -3,7 +3,7 @@
 namespace Wada.UseCase.DataClass.Tests
 {
     [TestClass()]
-    public class SubNCProgramCodeAttempTests
+    public class SubNcProgramCodeAttempTests
     {
     }
 }

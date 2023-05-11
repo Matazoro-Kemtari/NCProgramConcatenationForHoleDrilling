@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {

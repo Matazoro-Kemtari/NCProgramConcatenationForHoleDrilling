@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Data;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Views
+namespace Wada.NcProgramConcatenationForHoleDrilling.Views
 {
     /// <summary>
     /// 複数のコンバーターをまとめるコンバーター

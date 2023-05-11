@@ -1,47 +1,53 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.MainProgramPrameterSpreadSheet;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.UseCase.DataClass;
 
-namespace Wada.ReadMainNCProgramParametersApplication.Tests
+namespace Wada.ReadMainNcProgramParametersApplication.Tests
 {
     [TestClass()]
-    public class ReadMainNCProgramParametersUseCaseTests
+    public class ReadMainNcProgramParametersUseCaseTests
     {
         [TestMethod()]
         public async Task 正常系_ユースケースを実行するとリポジトリが実行されること()
         {
             // given
             Mock<IStreamOpener> mock_stream = new();
+
             Mock<ReamingPrameterReader> mock_reamer = new();
-            mock_reamer.Setup(x => x.ReadAll(It.IsAny<Stream>()))
-                .Returns(new List<ReamingProgramPrameter>());
+            mock_reamer.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
+                .ReturnsAsync(new List<ReamingProgramPrameter>());
+
             Mock<TappingPrameterReader> mock_tap = new();
-            mock_tap.Setup(x => x.ReadAll(It.IsAny<Stream>()))
-                .Returns(new List<TappingProgramPrameter>());
-            Mock<DrillingParameterReader> mock_drill=new();
-            mock_drill.Setup(x => x.ReadAll(It.IsAny<Stream>()))
-                .Returns(new List<DrillingProgramPrameter>());
+            mock_tap.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
+                .ReturnsAsync(new List<TappingProgramPrameter>());
+
+            Mock<DrillingParameterReader> mock_drill = new();
+            mock_drill.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
+                .ReturnsAsync(new List<DrillingProgramPrameter>());
+
+            Mock<IDrillSizeDataReader> drillSizeReaderMock = new();
 
             // when
-            IReadMainNCProgramParametersUseCase useCase =
-                new ReadMainNCProgramParametersUseCase(
+            IReadMainNcProgramParametersUseCase useCase =
+                new ReadMainNcProgramParametersUseCase(
                     mock_stream.Object,
                     mock_reamer.Object,
                     mock_tap.Object,
-                    mock_drill.Object);
+                    mock_drill.Object,
+                    drillSizeReaderMock.Object);
             var actual = await useCase.ExecuteAsync();
 
             // then
             Assert.IsInstanceOfType(actual.CrystalReamerParameters, typeof(IEnumerable<ReamingProgramPrameterAttempt>));
-            Assert.IsInstanceOfType(actual.SkillReamerParameters,typeof(IEnumerable<ReamingProgramPrameterAttempt>));
+            Assert.IsInstanceOfType(actual.SkillReamerParameters, typeof(IEnumerable<ReamingProgramPrameterAttempt>));
             Assert.IsInstanceOfType(actual.TapParameters, typeof(IEnumerable<TappingProgramPrameterAttempt>));
-            mock_stream.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(4));
-            mock_reamer.Verify(x => x.ReadAll(It.IsAny<Stream>()), Times.Exactly(2));
-            mock_tap.Verify(x => x.ReadAll(It.IsAny<Stream>()), Times.Once());
-            mock_drill.Verify(x => x.ReadAll(It.IsAny<Stream>()), Times.Once());
+            mock_stream.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(5));
+            mock_reamer.Verify(x => x.ReadAllAsync(It.IsAny<Stream>()), Times.Exactly(2));
+            mock_tap.Verify(x => x.ReadAllAsync(It.IsAny<Stream>()), Times.Once());
+            mock_drill.Verify(x => x.ReadAllAsync(It.IsAny<Stream>()), Times.Once());
         }
     }
 }

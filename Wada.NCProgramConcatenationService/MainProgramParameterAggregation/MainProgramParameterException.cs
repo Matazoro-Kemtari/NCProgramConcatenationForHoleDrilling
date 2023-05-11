@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
+namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
 {
     public class MainProgramParameterException : DomainException
     {

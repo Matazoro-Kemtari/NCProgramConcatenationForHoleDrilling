@@ -1,11 +1,11 @@
-﻿using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+﻿using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.MainProgramCombiner
+namespace Wada.NcProgramConcatenationService.MainProgramCombiner
 {
     public interface IMainProgramCombiner
     {
-        NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName);
+        NcProgramCode Combine(IEnumerable<NcProgramCode> combinableCode, string machineToolName, string materialName);
     }
 
     public class MainProgramCombiner : IMainProgramCombiner
@@ -17,7 +17,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
         /// <param name="machineToolName"></param>
         /// <param name="materialName"></param>
         /// <returns></returns>
-        public NCProgramCode Combine(IEnumerable<NCProgramCode> combinableCode, string machineToolName, string materialName)
+        public NcProgramCode Combine(IEnumerable<NcProgramCode> combinableCode, string machineToolName, string materialName)
         {
             var combinedBlocks = combinableCode.Select(
                 (x, i) =>
@@ -28,15 +28,15 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner
                     return blocks;
                 })
                 .SelectMany(x => x)
-                .Prepend(new NCBlock(
-                    new List<INCWord>
+                .Prepend(new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCComment($"{machineToolName}-{materialName}")
+                        new NcComment($"{machineToolName}-{materialName}")
                     },
                     OptionalBlockSkip.None));
 
             return new(
-                NCProgramType.CombinedProgram,
+                NcProgramType.CombinedProgram,
                 string.Join('>', combinableCode.Select(x => x.ProgramName)),
                 combinedBlocks);
         }

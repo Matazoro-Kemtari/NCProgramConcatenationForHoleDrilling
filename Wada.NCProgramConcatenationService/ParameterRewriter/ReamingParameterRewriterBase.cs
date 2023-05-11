@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ParameterRewriter.Process;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter
+namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
     internal enum ReamerType
     {
@@ -35,15 +35,15 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <returns></returns>
         /// <exception cref="DomainException"></exception>
         [Logging]
-        private static List<NCProgramCode> RewriteCNCProgramForDrilling(
-            NCProgramCode rewritableCode,
+        private static List<NcProgramCode> RewriteCNCProgramForDrilling(
+            NcProgramCode rewritableCode,
             MaterialType material,
             decimal thickness,
             IEnumerable<DrillingProgramPrameter> drillingParameters,
             ReamingProgramPrameter reamingParameter,
             string subProgramNumber)
         {
-            List<NCProgramCode> ncPrograms = new();
+            List<NcProgramCode> ncPrograms = new();
             // 下穴 1回目
             var fastDrillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
@@ -78,7 +78,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         }
 
         [Logging]
-        public virtual IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
+        public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
             if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
@@ -94,7 +94,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             var drillingParameters = rewriteByToolRecord.DrillingPrameters;
 
             // メインプログラムを工程ごとに取り出す
-            List<NCProgramCode> rewritedNCPrograms = new();
+            List<NcProgramCode> rewritedNCPrograms = new();
             foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
                 ReamingProgramPrameter reamingParameter;
@@ -110,14 +110,14 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
 
                 switch (rewritableCode.MainProgramClassification)
                 {
-                    case NCProgramType.CenterDrilling:
+                    case NcProgramType.CenterDrilling:
                         rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,
                             reamingParameter,
                             rewriteByToolRecord.SubProgramNumber));
                         break;
-                    case NCProgramType.Drilling:
+                    case NcProgramType.Drilling:
                         rewritedNCPrograms.AddRange(RewriteCNCProgramForDrilling(
                             rewritableCode,
                             rewriteByToolRecord.Material,
@@ -126,7 +126,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                             reamingParameter,
                             rewriteByToolRecord.SubProgramNumber));
                         break;
-                    case NCProgramType.Chamfering:
+                    case NcProgramType.Chamfering:
                         if (reamingParameter.ChamferingDepth != null)
                             rewritedNCPrograms.Add(ChamferingProgramRewriter.Rewrite(
                                 rewritableCode,
@@ -134,7 +134,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                                 reamingParameter,
                                 rewriteByToolRecord.SubProgramNumber));
                         break;
-                    case NCProgramType.Reaming:
+                    case NcProgramType.Reaming:
                         rewritedNCPrograms.Add(ReamingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,

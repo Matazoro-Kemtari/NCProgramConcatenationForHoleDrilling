@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNCProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNcProgramApplication.csproj" />
   </ItemGroup>
 
 </Project>

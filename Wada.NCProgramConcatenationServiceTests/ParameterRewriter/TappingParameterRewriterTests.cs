@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
+namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 {
     [TestClass()]
     public class TappingParameterRewriterTests
@@ -20,20 +20,20 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NCProgramType.CenterDrilling);
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NcProgramType.CenterDrilling);
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
-            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.CenterDrilling);
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NcProgramType.CenterDrilling);
             decimal expectedCenterDrillDepth = param.TapParameters
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値");
 
-            var rewritedFeed = NCWordから値を取得する(actual, 'F', NCProgramType.CenterDrilling);
+            var rewritedFeed = NCWordから値を取得する(actual, 'F', NcProgramType.CenterDrilling);
             Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
 
-        private static decimal NCWordから値を取得する(IEnumerable<NCProgramCode> expected, char address, NCProgramType ncProgram, int skip = 0)
+        private static decimal NCWordから値を取得する(IEnumerable<NcProgramCode> expected, char address, NcProgramType ncProgram, int skip = 0)
         {
             return expected
                 .Where(x => x.MainProgramClassification == ncProgram)
@@ -44,8 +44,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x?.NCWords)
                 .Where(x => x != null)
                 .SelectMany(x => x!)
-                .Where(y => y!.GetType() == typeof(NCWord))
-                .Cast<NCWord>()
+                .Where(y => y!.GetType() == typeof(NcWord))
+                .Cast<NcWord>()
                 .Where(z => z.Address.Value == address)
                 .Select(z => z.ValueData.Number)
                 .FirstOrDefault();
@@ -66,11 +66,11 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
                 .Select(x => x.PreparedHoleDiameter)
                 .First();
-            Assert.AreEqual($"DR {drDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Drilling));
-            Assert.AreEqual($"TAP M{directedDiameter}", NCWordから始めのコメントを取得する(actual, NCProgramType.Tapping));
+            Assert.AreEqual($"DR {drDiameter}", NCWordから始めのコメントを取得する(actual, NcProgramType.Drilling));
+            Assert.AreEqual($"TAP M{directedDiameter}", NCWordから始めのコメントを取得する(actual, NcProgramType.Tapping));
         }
 
-        private static string NCWordから始めのコメントを取得する(IEnumerable<NCProgramCode> ncProgramCode, NCProgramType ncProgram)
+        private static string NCWordから始めのコメントを取得する(IEnumerable<NcProgramCode> ncProgramCode, NcProgramType ncProgram)
         {
             return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
                 .Select(x => x.NCBlocks)
@@ -79,8 +79,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
                 .Select(x => x?.NCWords)
                 .Where(x => x != null)
                 .SelectMany(x => x!)
-                .Where(x => x!.GetType() == typeof(NCComment))
-                .Cast<NCComment>()
+                .Where(x => x!.GetType() == typeof(NcComment))
+                .Cast<NcComment>()
                 .First()
                 .Comment;
         }
@@ -137,21 +137,21 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
-            var rewritedSpin = NCWordから値を取得する(actual, 'S', NCProgramType.Drilling);
+            var rewritedSpin = NCWordから値を取得する(actual, 'S', NcProgramType.Drilling);
             var expectedSpin = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(param, x => x.SpinForAluminum)
                 : ドリルパラメータから値を取得する(param, x => x.SpinForIron);
             Assert.AreEqual(expectedSpin, rewritedSpin, "下穴の回転数");
 
-            decimal rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.Drilling);
+            decimal rewritedDepth = NCWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
             decimal expectedDepth = ドリルパラメータから値を取得する(param, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(expectedDepth, rewritedDepth, "下穴1のZ");
 
-            decimal rewritedCutDepth = NCWordから値を取得する(actual, 'Q', NCProgramType.Drilling);
+            decimal rewritedCutDepth = NCWordから値を取得する(actual, 'Q', NcProgramType.Drilling);
             decimal expectedCutDepth = ドリルパラメータから値を取得する(param, x => x.CutDepth);
             Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴1の切込");
 
-            decimal rewritedFeed = NCWordから値を取得する(actual, 'F', NCProgramType.Drilling);
+            decimal rewritedFeed = NCWordから値を取得する(actual, 'F', NcProgramType.Drilling);
             decimal expectedFeed = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(param, x => x.FeedForAluminum)
                 : ドリルパラメータから値を取得する(param, x => x.FeedForIron);
@@ -217,10 +217,10 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NCProgramType.Chamfering);
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NcProgramType.Chamfering);
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
-            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.Chamfering);
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NcProgramType.Chamfering);
             decimal? expectedChamferingDepth = param.TapParameters
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();
@@ -241,16 +241,16 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Tests
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
-            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NCProgramType.Tapping);
+            decimal rewritedSpin = NCWordから値を取得する(actual, 'S', NcProgramType.Tapping);
             decimal expectedSpin = param.TapParameters
                 .Select(x => material == MaterialType.Aluminum ? x.SpinForAluminum : x.SpinForIron)
                 .FirstOrDefault();
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
-            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NCProgramType.Tapping);
+            var rewritedDepth = NCWordから値を取得する(actual, 'Z', NcProgramType.Tapping);
             Assert.AreEqual((decimal)-expectedThickness - 5m, rewritedDepth, "Z値");
 
-            decimal rewritedFeed = NCWordから値を取得する(actual, 'F', NCProgramType.Tapping);
+            decimal rewritedFeed = NCWordから値を取得する(actual, 'F', NcProgramType.Tapping);
             decimal expectedFeed = param.TapParameters
                 .Select(x => material == MaterialType.Aluminum ? x.FeedForAluminum : x.FeedForIron)
                 .FirstOrDefault();

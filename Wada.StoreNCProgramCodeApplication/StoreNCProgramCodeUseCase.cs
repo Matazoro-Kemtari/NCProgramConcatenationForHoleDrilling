@@ -1,25 +1,25 @@
-﻿using Wada.NCProgramConcatenationService;
+﻿using Wada.NcProgramConcatenationService;
 using Wada.UseCase.DataClass;
 
-namespace Wada.StoreNCProgramCodeApplication
+namespace Wada.StoreNcProgramCodeApplication
 {
-    public interface IStoreNCProgramCodeUseCase
+    public interface IStoreNcProgramCodeUseCase
     {
-        Task ExecuteAsync(string path, NCProgramCodeAttempt storableCode);
+        Task ExecuteAsync(string path, NcProgramCodeAttempt storableCode);
     }
 
-    public class StoreNCProgramCodeUseCase : IStoreNCProgramCodeUseCase
+    public class StoreNcProgramCodeUseCase : IStoreNcProgramCodeUseCase
     {
         private readonly IStreamWriterOpener _streamWriterOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramRepository _ncProgramRepository;
 
-        public StoreNCProgramCodeUseCase(IStreamWriterOpener streamWriterOpener, INCProgramRepository ncProgramRepository)
+        public StoreNcProgramCodeUseCase(IStreamWriterOpener streamWriterOpener, INcProgramRepository ncProgramRepository)
         {
             _streamWriterOpener = streamWriterOpener;
             _ncProgramRepository = ncProgramRepository;
         }
 
-        public async Task ExecuteAsync(string path, NCProgramCodeAttempt storableCode)
+        public async Task ExecuteAsync(string path, NcProgramCodeAttempt storableCode)
         {
             // 結合プログラムを書き込む
             using var writer = _streamWriterOpener.Open(path);

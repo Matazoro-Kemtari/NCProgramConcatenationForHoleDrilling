@@ -1,17 +1,17 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramFile
+namespace Wada.NcProgramFile
 {
-    public class NCProgramRepository : INCProgramRepository
+    public class NCProgramRepository : INcProgramRepository
     {
         [Logging]
-        public async Task<NCProgramCode> ReadAllAsync(StreamReader reader, NCProgramType ncProgram, string programName)
+        public async Task<NcProgramCode> ReadAllAsync(StreamReader reader, NcProgramType ncProgram, string programName)
         {
-            List<NCBlock?> ncBlocks = new();
+            List<NcBlock?> ncBlocks = new();
 
             while (!reader.EndOfStream)
             {
@@ -44,7 +44,7 @@ namespace Wada.NCProgramFile
                     continue;
                 }
 
-                List<INCWord> ncWords = new();
+                List<INcWord> ncWords = new();
                 foreach (Match matchWord in matchedWords.Cast<Match>())
                 {
                     // コメント
@@ -56,20 +56,20 @@ namespace Wada.NCProgramFile
                     var matchVariable = Regex.Match(matchWord.Value, @"\d+(?==)");
                     var matchVarValue = Regex.Match(matchWord.Value, @"(?<==)-?\d+(\.\d*)?");
 
-                    INCWord ncWord;
+                    INcWord ncWord;
                     if (matchComment.Success)
                     {
-                        ncWord = new NCComment(matchComment.Value);
+                        ncWord = new NcComment(matchComment.Value);
                     }
                     else if (matchAddress.Success && matchData.Success)
                     {
-                        ncWord = new NCWord(
+                        ncWord = new NcWord(
                             new Address(matchAddress.Value.ToCharArray()[0]),
                             new NumericalValue(matchData.Value));
                     }
                     else if (matchVariable.Success && matchVarValue.Success)
                     {
-                        ncWord = new NCVariable(
+                        ncWord = new NcVariable(
                             new VariableAddress(uint.Parse(matchVariable.Value)),
                             new CoordinateValue(matchVarValue.Value));
                     }
@@ -79,7 +79,7 @@ namespace Wada.NCProgramFile
                     }
                     ncWords.Add(ncWord);
                 }
-                ncBlocks.Add(new NCBlock(ncWords, hasBlockSkip));
+                ncBlocks.Add(new NcBlock(ncWords, hasBlockSkip));
             }
 
             return new(ncProgram, programName, ncBlocks);

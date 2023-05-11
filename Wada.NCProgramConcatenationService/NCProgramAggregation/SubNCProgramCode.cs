@@ -1,26 +1,26 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.NCProgramAggregation
+namespace Wada.NcProgramConcatenationService.NCProgramAggregation
 {
-    public record class SubNCProgramCode : NCProgramCode
+    public record class SubNcProgramCode : NcProgramCode
     {
-        public SubNCProgramCode(
-            NCProgramType mainProgramClassification,
+        public SubNcProgramCode(
+            NcProgramType mainProgramClassification,
             string programName,
-            IEnumerable<NCBlock?> ncBlocks)
+            IEnumerable<NcBlock?> ncBlocks)
             : base(mainProgramClassification, programName, ncBlocks)
         {
             DirectedOperationClassification = FetchDirectedOperationType(ncBlocks);
             DirectedOperationToolDiameter = FetchDirectedOperationToolDiameter(ncBlocks);
         }
 
-        private SubNCProgramCode(
+        private SubNcProgramCode(
             Ulid id,
-            NCProgramType mainProgramClassification,
+            NcProgramType mainProgramClassification,
             string programName,
-            IEnumerable<NCBlock?> ncBlocks)
+            IEnumerable<NcBlock?> ncBlocks)
             : base(id ,mainProgramClassification, programName, ncBlocks)
         {
             DirectedOperationClassification = FetchDirectedOperationType(ncBlocks);
@@ -33,20 +33,20 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
             return $"%\n{ncBlocksString}\n%\n";
         }
 
-        public static SubNCProgramCode Parse(NCProgramCode ncProgramCode)
+        public static SubNcProgramCode Parse(NcProgramCode ncProgramCode)
         {
-            return new SubNCProgramCode(
+            return new SubNcProgramCode(
                 ncProgramCode.ID,
                 ncProgramCode.MainProgramClassification,
                 ncProgramCode.ProgramName,
                 ncProgramCode.NCBlocks);
         }
 
-        public static new SubNCProgramCode ReConstruct(
+        public static new SubNcProgramCode ReConstruct(
             string id,
-            NCProgramType mainProgramClassification,
+            NcProgramType mainProgramClassification,
             string programName,
-            IEnumerable<NCBlock?> ncBlocks)
+            IEnumerable<NcBlock?> ncBlocks)
             => new(Ulid.Parse(id), mainProgramClassification, programName, ncBlocks);
 
         /// <summary>
@@ -56,13 +56,13 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <exception cref="DirectedOperationNotFoundException"></exception>
         /// <exception cref="DomainException"></exception>
         [Logging]
-        private static DirectedOperationType FetchDirectedOperationType(IEnumerable<NCBlock?> ncBlocks)
+        private static DirectedOperationType FetchDirectedOperationType(IEnumerable<NcBlock?> ncBlocks)
         {
             // 作業指示を探す
             IEnumerable<DirectedOperationType> hasOperationType = ncBlocks
                 .Where(x => x != null)
                 .Select(block => block!.NCWords
-                .Where(w => w.GetType() == typeof(NCComment))
+                .Where(w => w.GetType() == typeof(NcComment))
                 .Select(w =>
                 {
                     DirectedOperationType responce;
@@ -101,13 +101,13 @@ namespace Wada.NCProgramConcatenationService.NCProgramAggregation
         /// <exception cref="DirectedOperationToolDiameterNotFoundException"></exception>
         /// <exception cref="DomainException"></exception>
         [Logging]
-        public static decimal FetchDirectedOperationToolDiameter(IEnumerable<NCBlock?> ncBlocks)
+        public static decimal FetchDirectedOperationToolDiameter(IEnumerable<NcBlock?> ncBlocks)
         {
             // 作業指示を探す
             IEnumerable<decimal> hasOperationType = ncBlocks
                 .Where(x => x != null)
                 .Select(block => block!.NCWords
-                .Where(w => w.GetType() == typeof(NCComment))
+                .Where(w => w.GetType() == typeof(NcComment))
                 .Select(w =>
                 {
                     var tapMatch = Regex.Match(w.ToString()!, @"(?<=-M)\d+(\.\d+)?");

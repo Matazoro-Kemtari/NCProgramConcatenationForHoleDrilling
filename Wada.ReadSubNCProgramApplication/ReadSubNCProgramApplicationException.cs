@@ -1,23 +1,23 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.ReadSubNCProgramApplication
+namespace Wada.ReadSubNcProgramApplication
 {
     [Serializable]
-    public class ReadSubNCProgramApplicationException : Exception
+    public class ReadSubNcProgramApplicationException : Exception
     {
-        public ReadSubNCProgramApplicationException()
+        public ReadSubNcProgramApplicationException()
         {
         }
 
-        public ReadSubNCProgramApplicationException(string? message) : base(message)
+        public ReadSubNcProgramApplicationException(string? message) : base(message)
         {
         }
 
-        public ReadSubNCProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
+        public ReadSubNcProgramApplicationException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 
-        protected ReadSubNCProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ReadSubNcProgramApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

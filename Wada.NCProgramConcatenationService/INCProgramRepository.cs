@@ -1,11 +1,11 @@
-﻿using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+﻿using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService
+namespace Wada.NcProgramConcatenationService
 {
-    public interface INCProgramRepository
+    public interface INcProgramRepository
     {
-        Task<NCProgramCode> ReadAllAsync(StreamReader reader, NCProgramType ncProgram, string programName);
+        Task<NcProgramCode> ReadAllAsync(StreamReader reader, NcProgramType ncProgram, string programName);
         
         Task WriteAllAsync(StreamWriter writer, string ncProgramCode);
     }

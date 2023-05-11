@@ -1,23 +1,23 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.ParameterRewriter;
 using Wada.UseCase.DataClass;
 
-namespace Wada.EditNCProgramApplication
+namespace Wada.EditNcProgramApplication
 {
-    public interface IEditNCProgramUseCase
+    public interface IEditNcProgramUseCase
     {
-        Task<EditNCProgramDTO> ExecuteAsync(EditNCProgramPram editNCProgramPram);
+        Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram editNCProgramPram);
     }
 
-    public class EditNCProgramUseCase : IEditNCProgramUseCase
+    public class EditNcProgramUseCase : IEditNcProgramUseCase
     {
         private readonly IMainProgramParameterRewriter _crystalReamingParameterRewriter;
         private readonly IMainProgramParameterRewriter _skillReamingParameterRewriter;
         private readonly IMainProgramParameterRewriter _tappingParameterRewriter;
         private readonly IMainProgramParameterRewriter _drillingParameterRewriter;
 
-        public EditNCProgramUseCase(
+        public EditNcProgramUseCase(
             CrystalReamingParameterRewriter crystalReamingParameterRewriter,
             SkillReamingParameterRewriter skillReamingParameterRewriter,
             TappingParameterRewriter tappingParameterRewriter,
@@ -30,7 +30,7 @@ namespace Wada.EditNCProgramApplication
         }
 
         [Logging]
-        public async Task<EditNCProgramDTO> ExecuteAsync(EditNCProgramPram editNCProgramPram)
+        public async Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram editNCProgramPram)
         {
             // EditNCProgramPramのValidateで不整合状態は確認済み
             IMainProgramParameterRewriter rewriter = editNCProgramPram.DirectedOperation switch
@@ -47,33 +47,33 @@ namespace Wada.EditNCProgramApplication
                 editNCProgramPram.Thickness,
                 editNCProgramPram.SubProgramNumger,
                 editNCProgramPram.DirectedOperationToolDiameter,
-                editNCProgramPram.MainNCProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.TapParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNCProgramParameters.DrillingPrameters.Select(x => x.Convert()));
+                editNCProgramPram.MainNcProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNcProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNcProgramParameters.TapParameters.Select(x => x.Convert()),
+                editNCProgramPram.MainNcProgramParameters.DrillingPrameters.Select(x => x.Convert()));
 
             try
             {
                 return await Task.Run(
-                    () => new EditNCProgramDTO(rewriter.RewriteByTool(param)
-                        .Select(x => NCProgramCodeAttempt.Parse(x))));
+                    () => new EditNcProgramDto(rewriter.RewriteByTool(param)
+                        .Select(x => NcProgramCodeAttempt.Parse(x))));
             }
             catch (DomainException ex)
             {
-                throw new EditNCProgramApplicationException(ex.Message, ex);
+                throw new EditNcProgramApplicationException(ex.Message, ex);
             }
         }
     }
 
-    public record class EditNCProgramPram(
+    public record class EditNcProgramPram(
         DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
         decimal DirectedOperationToolDiameter,
-        IEnumerable<NCProgramCodeAttempt> RewritableCodeds,
+        IEnumerable<NcProgramCodeAttempt> RewritableCodeds,
         MaterialTypeAttempt Material,
         ReamerTypeAttempt Reamer,
         decimal Thickness,
-        MainNCProgramParametersAttempt MainNCProgramParameters)
+        MainNcProgramParametersAttempt MainNcProgramParameters)
     {
         private static ReamerTypeAttempt Validate(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
         {
@@ -87,58 +87,58 @@ namespace Wada.EditNCProgramApplication
         public ReamerTypeAttempt Reamer { get; init; } = Validate(DirectedOperation, Reamer);
     }
 
-    public class TestEditNCProgramPramFactory
+    public class TestEditNcProgramPramFactory
     {
-        public static EditNCProgramPram Create(
+        public static EditNcProgramPram Create(
             DirectedOperationTypeAttempt directedOperation = DirectedOperationTypeAttempt.Drilling,
             string subProgramNumger = "8000",
             decimal directedOperationToolDiameter = 13.2m,
-            IEnumerable<NCProgramCodeAttempt>? rewritableCodes = default,
+            IEnumerable<NcProgramCodeAttempt>? rewritableCodes = default,
             MaterialTypeAttempt material = MaterialTypeAttempt.Aluminum,
             ReamerTypeAttempt reamer = ReamerTypeAttempt.Crystal,
             decimal thickness = 15,
-            MainNCProgramParametersAttempt? mainNCProgramParameters = default)
+            MainNcProgramParametersAttempt? mainNcProgramParameters = default)
         {
-            rewritableCodes ??= new List<NCProgramCodeAttempt>
+            rewritableCodes ??= new List<NcProgramCodeAttempt>
             {
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.CenterDrilling,
                     ProgramName: "O1000",
-                    new List<NCBlockAttempt>
+                    new List<NcBlockAttempt>
                     {
-                        TestNCBlockAttemptFactory.Create(),
+                        TestNcBlockAttemptFactory.Create(),
                     }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Drilling,
                     ProgramName: "O2000",
-                    new List<NCBlockAttempt>
+                    new List<NcBlockAttempt>
                     {
-                        TestNCBlockAttemptFactory.Create(),
+                        TestNcBlockAttemptFactory.Create(),
                     }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Chamfering,
                     ProgramName: "O3000",
-                    new List<NCBlockAttempt>
+                    new List<NcBlockAttempt>
                     {
-                        TestNCBlockAttemptFactory.Create(),
+                        TestNcBlockAttemptFactory.Create(),
                     }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Reaming,
                     ProgramName: "O4000",
-                    new List<NCBlockAttempt>
+                    new List<NcBlockAttempt>
                     {
-                        TestNCBlockAttemptFactory.Create(),
+                        TestNcBlockAttemptFactory.Create(),
                     }),
                 new(Ulid.NewUlid().ToString(),
                     MainProgramTypeAttempt.Tapping,
                     ProgramName: "O5000",
-                    new List<NCBlockAttempt>
+                    new List<NcBlockAttempt>
                     {
-                        TestNCBlockAttemptFactory.Create(),
+                        TestNcBlockAttemptFactory.Create(),
                     }),
             };
 
-            mainNCProgramParameters ??= TestMainNCProgramParametersPramFactory.Create();
+            mainNcProgramParameters ??= TestMainNcProgramParametersPramFactory.Create();
 
             return new(directedOperation,
                        subProgramNumger,
@@ -147,9 +147,9 @@ namespace Wada.EditNCProgramApplication
                        material,
                        reamer,
                        thickness,
-                       mainNCProgramParameters);
+                       mainNcProgramParameters);
         }
     }
 
-    public record class EditNCProgramDTO(IEnumerable<NCProgramCodeAttempt> NCProgramCodes);
+    public record class EditNcProgramDto(IEnumerable<NcProgramCodeAttempt> NcProgramCodes);
 }

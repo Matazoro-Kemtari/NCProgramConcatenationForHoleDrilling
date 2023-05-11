@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
+namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
 {
     public interface IMainProgramPrameter
     {
