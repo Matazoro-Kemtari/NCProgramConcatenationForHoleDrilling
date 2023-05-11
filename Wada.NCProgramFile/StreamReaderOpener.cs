@@ -15,12 +15,12 @@ namespace Wada.NcProgramFile
             }
             catch (FileNotFoundException ex)
             {
-                string msg = "ファイルが見つかりません";
+                string msg = $"ファイルが見つかりません ファイル: {path}";
                 throw new OpenFileStreamReaderException(msg, ex);
             }
             catch (IOException ex)
             {
-                string msg = "ファイルが使用中です";
+                string msg = $"ファイルが使用中です ファイル: {path}";
                 throw new OpenFileStreamReaderException(msg, ex);
             }
 
