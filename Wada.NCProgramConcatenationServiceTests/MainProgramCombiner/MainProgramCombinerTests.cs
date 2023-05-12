@@ -40,11 +40,11 @@ namespace Wada.NcProgramConcatenationService.MainProgramCombiner.Tests
             var count = 1;
             count += combinableCodes.Count() - 1;
             count += combinableCodes
-                .Select(x => x.NCBlocks.Count())
+                .Select(x => x.NcBlocks.Count())
                 .Sum();
-            Assert.AreEqual(count, combinedCode.NCBlocks.Count());
+            Assert.AreEqual(count, combinedCode.NcBlocks.Count());
 
-            Assert.AreEqual($"{machineToolName}-{materialName}", combinedCode.NCBlocks.First()?.NCWords.Cast<NcComment>().First().Comment);
+            Assert.AreEqual($"{machineToolName}-{materialName}", combinedCode.NcBlocks.First()?.NCWords.Cast<NcComment>().First().Comment);
         }
     }
 }

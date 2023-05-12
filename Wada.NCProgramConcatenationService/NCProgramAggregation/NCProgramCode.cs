@@ -15,7 +15,7 @@ namespace Wada.NcProgramConcatenationService.NCProgramAggregation
                 NcProgramType.SubProgram => FetchProgramNumber(programName),
                 _ => programName,
             };
-            NCBlocks = ncBlocks;
+            NcBlocks = ncBlocks;
         }
 
         protected NcProgramCode(Ulid id, NcProgramType mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
@@ -23,7 +23,7 @@ namespace Wada.NcProgramConcatenationService.NCProgramAggregation
             ID = id;
             MainProgramClassification = mainProgramClassification;
             ProgramName = programName;
-            NCBlocks = ncBlocks;
+            NcBlocks = ncBlocks;
         }
 
         private static string FetchProgramNumber(string programName)
@@ -39,7 +39,7 @@ namespace Wada.NcProgramConcatenationService.NCProgramAggregation
 
         public override string ToString()
         {
-            var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
+            var ncBlocksString = string.Join("\n", NcBlocks.Select(x => x?.ToString()));
             return $"%\n{ncBlocksString}\n%\n";
         }
 
@@ -61,7 +61,7 @@ namespace Wada.NcProgramConcatenationService.NCProgramAggregation
         /// </summary>
         public string ProgramName { get; init; }
 
-        public IEnumerable<NcBlock?> NCBlocks { get; init; }
+        public IEnumerable<NcBlock?> NcBlocks { get; init; }
     }
 
     /// <summary>

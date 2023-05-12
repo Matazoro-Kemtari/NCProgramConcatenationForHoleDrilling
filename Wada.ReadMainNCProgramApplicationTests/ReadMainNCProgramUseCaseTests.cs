@@ -14,7 +14,7 @@ namespace Wada.ReadMainNcProgramApplication.Tests
         {
             // given
             Mock<IStreamReaderOpener> mock_reader = new();
-            Mock<INcProgramRepository> mock_nc = new();
+            Mock<INcProgramReadWriter> mock_nc = new();
             mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()))
                 .ReturnsAsync(TestNCProgramCodeFactory.Create());
 

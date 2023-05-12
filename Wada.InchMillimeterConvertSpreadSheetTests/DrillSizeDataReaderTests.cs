@@ -1,11 +1,9 @@
-﻿using Wada.MainProgramPrameterSpreadSheet;
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.RegularExpressions;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NcProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.NcProgramAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet.Tests
+namespace Wada.InchMillimeterConvertSpreadSheet.Tests
 {
     [TestClass()]
     public class DrillSizeDataReaderTests
@@ -83,24 +81,24 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
 
         private static IEnumerable<DrillSizeData> TestDrillSizeDatas() => new List<DrillSizeData>
         {
-            TestDrillSizeDataFactory.Create("#60", 0.0399d, 1.01d),
-            TestDrillSizeDataFactory.Create("#59", 0.043d, 1.09d),
-            TestDrillSizeDataFactory.Create("#58", 0.0461d, 1.17d),
-            TestDrillSizeDataFactory.Create("#57", 0.0491d, 1.25d),
-            TestDrillSizeDataFactory.Create("#56", 0.0522d, 1.33d),
-            TestDrillSizeDataFactory.Create("#55", 0.0553d, 1.4d),
-            TestDrillSizeDataFactory.Create("#54", 0.0584d, 1.48d),
-            TestDrillSizeDataFactory.Create("1/16", 0.0625d, 1.59d),
-            TestDrillSizeDataFactory.Create("5/64", 0.0781d, 1.98d),
-            TestDrillSizeDataFactory.Create("3/32", 0.0938d, 2.38d),
-            TestDrillSizeDataFactory.Create("7/64", 0.1094d, 2.78d),
-            TestDrillSizeDataFactory.Create("1/8", 0.1250d, 3.18d),
-            TestDrillSizeDataFactory.Create("9/64", 0.1406d, 3.57d),
-            TestDrillSizeDataFactory.Create("#A", 0.234d, 5.94d),
-            TestDrillSizeDataFactory.Create("#B", 0.238d, 6.05d),
-            TestDrillSizeDataFactory.Create("#C", 0.242d, 6.15d),
-            TestDrillSizeDataFactory.Create("#D", 0.246d, 6.25d),
-            TestDrillSizeDataFactory.Create("#E", 0.25d, 6.35d),
+            TestDrillSizeDataFactory.Create("#60", 0.0399m, 1.01m),
+            TestDrillSizeDataFactory.Create("#59", 0.043m, 1.09m),
+            TestDrillSizeDataFactory.Create("#58", 0.0461m, 1.17m),
+            TestDrillSizeDataFactory.Create("#57", 0.0491m, 1.25m),
+            TestDrillSizeDataFactory.Create("#56", 0.0522m, 1.33m),
+            TestDrillSizeDataFactory.Create("#55", 0.0553m, 1.4m),
+            TestDrillSizeDataFactory.Create("#54", 0.0584m, 1.48m),
+            TestDrillSizeDataFactory.Create("1/16", 0.0625m, 1.59m),
+            TestDrillSizeDataFactory.Create("5/64", 0.0781m, 1.98m),
+            TestDrillSizeDataFactory.Create("3/32", 0.0938m, 2.38m),
+            TestDrillSizeDataFactory.Create("7/64", 0.1094m, 2.78m),
+            TestDrillSizeDataFactory.Create("1/8", 0.1250m, 3.18m),
+            TestDrillSizeDataFactory.Create("9/64", 0.1406m, 3.57m),
+            TestDrillSizeDataFactory.Create("#A", 0.234m, 5.94m),
+            TestDrillSizeDataFactory.Create("#B", 0.238m, 6.05m),
+            TestDrillSizeDataFactory.Create("#C", 0.242m, 6.15m),
+            TestDrillSizeDataFactory.Create("#D", 0.246m, 6.25m),
+            TestDrillSizeDataFactory.Create("#E", 0.25m, 6.35m),
         };
 
         private static IXLWorkbook MakeTestBook()

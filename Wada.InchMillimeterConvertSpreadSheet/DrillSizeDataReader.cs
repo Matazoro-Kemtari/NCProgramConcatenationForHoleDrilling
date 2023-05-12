@@ -1,9 +1,9 @@
 ﻿using ClosedXML.Excel;
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NcProgramAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet;
+namespace Wada.InchMillimeterConvertSpreadSheet;
 
 public class DrillSizeDataReader : IDrillSizeDataReader
 {
@@ -43,11 +43,11 @@ public class DrillSizeDataReader : IDrillSizeDataReader
                     // 列から値を取得し、ドリルサイズオブジェクトを作成する
                     string sizeIdentifier = y.Cell(idIndex).GetString();
 
-                    if (!y.Cell(inchIndex).TryGetValue(out double inch))
+                    if (!y.Cell(inchIndex).TryGetValue(out decimal inch))
                         throw new DrillSizeDataException(
                             $"Inchesが取得できませんでした 行: {y.RowNumber()}, 列: {inchIndex}");
 
-                    if (!y.Cell(millIndex).TryGetValue(out double millimeter))
+                    if (!y.Cell(millIndex).TryGetValue(out decimal millimeter))
                         throw new DrillSizeDataException(
                             $"ISO Metric drill size(㎜)が取得できませんでした 行: {y.RowNumber()}, 列: {inchIndex}");
 

@@ -41,22 +41,13 @@ namespace Wada.EditNcProgramApplication
         [Logging]
         public async Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram editNCProgramPram)
         {
-            RewriteByToolRecord param = new(
-                editNCProgramPram.RewritableCodeds.Select(x => x.Convert()),
-                (MaterialType)editNCProgramPram.Material,
-                editNCProgramPram.Thickness,
-                editNCProgramPram.SubProgramNumger,
-                editNCProgramPram.DirectedOperationToolDiameter,
-                editNCProgramPram.MainNcProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNcProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNcProgramParameters.TapParameters.Select(x => x.Convert()),
-                editNCProgramPram.MainNcProgramParameters.DrillingPrameters.Select(x => x.Convert()));
+            var rewriteByToolRecord = editNCProgramPram.ToRewriteByToolRecord();
 
             try
             {
                 return await Task.Run(
                     () => new EditNcProgramDto(
-                        _rewriter[editNCProgramPram.RewriterSelector].RewriteByTool(param)
+                        _rewriter[editNCProgramPram.RewriterSelector].RewriteByTool(rewriteByToolRecord)
                         .Select(x => NcProgramCodeAttempt.Parse(x))));
             }
             catch (DomainException ex)
@@ -87,6 +78,17 @@ namespace Wada.EditNcProgramApplication
         decimal Thickness,
         MainNcProgramParametersAttempt MainNcProgramParameters)
     {
+        internal RewriteByToolRecord ToRewriteByToolRecord() => new(
+            RewritableCodeds.Select(x => x.Convert()),
+            (MaterialType)Material,
+            Thickness,
+            SubProgramNumger,
+            DirectedOperationToolDiameter,
+            MainNcProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
+            MainNcProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
+            MainNcProgramParameters.TapParameters.Select(x => x.Convert()),
+            MainNcProgramParameters.DrillingPrameters.Select(x => x.Convert()));
+
         private RewriterSelectorAttempt GetRewriterSelection() => DirectedOperation switch
         {
             DirectedOperationTypeAttempt.Tapping => RewriterSelectorAttempt.Tapping,

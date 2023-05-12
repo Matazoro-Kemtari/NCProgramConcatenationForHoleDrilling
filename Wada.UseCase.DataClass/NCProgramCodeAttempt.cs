@@ -28,7 +28,7 @@ namespace Wada.UseCase.DataClass
             ncProgramCode.ID.ToString(),
             (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
             ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)));
+            ncProgramCode.NcBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)));
 
         public NcProgramCode Convert() => NcProgramCode.ReConstruct(ID, (NcProgramType)MainProgramClassification, ProgramName, NCBlocks.Select(x => x?.Convert()));
     }
@@ -61,7 +61,7 @@ namespace Wada.UseCase.DataClass
     }
 
     /// <summary>
-    /// サブプログラム用NCプログラム
+    /// 作業指示者
     /// </summary>
     /// <param name="ID"></param>
     /// <param name="MainProgramClassification"></param>
@@ -69,48 +69,29 @@ namespace Wada.UseCase.DataClass
     /// <param name="NCBlocks"></param>
     /// <param name="DirectedOperationClassification"></param>
     /// <param name="DirectedOperationToolDiameter"></param>
-    public record class SubNcProgramCodeAttemp(
-        string ID,
-        MainProgramTypeAttempt MainProgramClassification,
-        string ProgramName,
-        IEnumerable<NcBlockAttempt?> NCBlocks,
+    public record class OperationDirecterAttemp(
+        NcProgramCodeAttempt SubNcProgramCode,
         DirectedOperationTypeAttempt DirectedOperationClassification,
         decimal DirectedOperationToolDiameter)
-        : NcProgramCodeAttempt(ID, MainProgramClassification, ProgramName, NCBlocks)
     {
-        public override string ToString()
-        {
-            var ncBlocksString = string.Join("\n", NCBlocks.Select(x => x?.ToString()));
-            return $"%\n{ncBlocksString}\n%\n";
-        }
-
-        public static SubNcProgramCodeAttemp Parse(SubNcProgramCode ncProgramCode) => new(
-            ncProgramCode.ID.ToString(),
-            (MainProgramTypeAttempt)ncProgramCode.MainProgramClassification,
-            ncProgramCode.ProgramName,
-            ncProgramCode.NCBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)),
-            (DirectedOperationTypeAttempt)ncProgramCode.DirectedOperationClassification,
-            ncProgramCode.DirectedOperationToolDiameter);
+        public static OperationDirecterAttemp Parse(OperationDirecter operationDirecter)
+            => new(
+                NcProgramCodeAttempt.Parse(operationDirecter.SubNcProgramCode),
+                (DirectedOperationTypeAttempt)operationDirecter.DirectedOperationClassification,
+                operationDirecter.DirectedOperationToolDiameter);
     }
 
     public class TestSubNcProgramCodeAttemptFactory
     {
-        public static SubNcProgramCodeAttemp Create(
-            string id = "01GQK2ATZNJTVTGC6A0SD00JB6",
-            MainProgramTypeAttempt mainProgramClassification = MainProgramTypeAttempt.CenterDrilling,
-            string programName = "O1234",
-            IEnumerable<NcBlockAttempt?>? ncBlocks = null,
+        public static OperationDirecterAttemp Create(
+            NcProgramCodeAttempt? subNcProgramCode = default,
             DirectedOperationTypeAttempt directedOperationClassification = DirectedOperationTypeAttempt.Reaming,
             decimal directedOperationToolDiameter = 13.3m)
         {
-            var ncProgram = TestNcProgramCodeAttemptFactory.Create(
-                id, mainProgramClassification, programName, ncBlocks);
+            subNcProgramCode ??= TestNcProgramCodeAttemptFactory.Create();
 
-            return new SubNcProgramCodeAttemp(
-                ncProgram.ID,
-                ncProgram.MainProgramClassification,
-                ncProgram.ProgramName,
-                ncProgram.NCBlocks,
+            return new OperationDirecterAttemp(
+                subNcProgramCode,
                 directedOperationClassification,
                 directedOperationToolDiameter);
         }

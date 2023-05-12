@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.NCProgramAggregation;
@@ -13,18 +14,28 @@ namespace Wada.ReadSubNcProgramApplication.Tests
         public async Task 正常系_ユースケースを実行するとリポジトリが実行されること()
         {
             // given
+            Mock<IConfiguration> configMock = new();
+            configMock.Setup(x => x["applicationConfiguration:ListDirectory"])
+                .Returns("リスト");
+            configMock.Setup(x => x["applicationConfiguration:InchTable"])
+                .Returns("インチ.xlsx");
             Mock<IStreamReaderOpener> mock_reader = new();
-            Mock<INcProgramRepository> mock_nc = new();
+            Mock<INcProgramReadWriter> mock_nc = new();
             mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()))
                 .ReturnsAsync(TestNCProgramCodeFactory.Create(
-                    ncBlocks: new List<NcBlock> 
+                    ncBlocks: new List<NcBlock>
                     {
                         TestNCBlockFactory.Create(new List<INcWord> { new NcComment("3-M10") })
                     }));
-            
+            Mock<IStreamOpener> streamMock = new();
+            Mock<IDrillSizeDataReader> drillSizeMock = new();
 
             // when
-            IReadSubNcProgramUseCase readSubNCProgramUseCase = new ReadSubNcProgramUseCase(mock_reader.Object, mock_nc.Object);
+            var readSubNCProgramUseCase = new ReadSubNcProgramUseCase(configMock.Object,
+                                                                      mock_reader.Object,
+                                                                      mock_nc.Object,
+                                                                      streamMock.Object,
+                                                                      drillSizeMock.Object);
             _ = await readSubNCProgramUseCase.ExecuteAsync(string.Empty);
 
             // then

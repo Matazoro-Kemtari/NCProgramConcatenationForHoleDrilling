@@ -234,10 +234,10 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                 return;
 
             // サブプログラムを読み込む
-            SubNcProgramCodeAttemp subNCProcramCode;
+            OperationDirecterAttemp operationDirecter;
             try
             {
-                subNCProcramCode = await _readSubNCProgramUseCase.ExecuteAsync(path);
+                operationDirecter = await _readSubNCProgramUseCase.ExecuteAsync(path);
             }
             catch (ReadSubNcProgramUseCaseException ex)
             {
@@ -250,12 +250,12 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
             }
 
             // 読み込んだサブプログラムの作業指示を取得する
-            _concatenation.FetchedOperationType.Value = (DirectedOperation)subNCProcramCode.DirectedOperationClassification;
-            _concatenation.DirectedOperationToolDiameter.Value = subNCProcramCode.DirectedOperationToolDiameter;
-            _concatenation.SubProgramNumber.Value = subNCProcramCode.ProgramName;
+            _concatenation.FetchedOperationType.Value = (DirectedOperation)operationDirecter.DirectedOperationClassification;
+            _concatenation.DirectedOperationToolDiameter.Value = operationDirecter.DirectedOperationToolDiameter;
+            _concatenation.SubProgramNumber.Value = operationDirecter.SubNcProgramCode.ProgramName;
 
             IDialogParameters parameters = new DialogParameters(
-                $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={subNCProcramCode}");
+                $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={operationDirecter.SubNcProgramCode}");
             IDialogResult? dialogResult = default;
             _dialogService.ShowDialog(nameof(NotationContentConfirmationDialog),
                 parameters,

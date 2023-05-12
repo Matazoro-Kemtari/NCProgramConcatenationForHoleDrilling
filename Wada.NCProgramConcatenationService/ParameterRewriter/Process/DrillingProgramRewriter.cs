@@ -28,7 +28,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             decimal drillDiameter)
         {
             // NCプログラムを走査して書き換え対象を探す
-            var rewritedNCBlocks = rewritableCode.NCBlocks
+            var rewritedNCBlocks = rewritableCode.NcBlocks
                 .Select(x =>
                 {
                     if (x == null)
@@ -77,7 +77,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
 
             return rewritableCode with
             {
-                NCBlocks = rewritedNCBlocks
+                NcBlocks = rewritedNCBlocks
             };
         }
 

@@ -26,16 +26,16 @@ namespace Wada.NcProgramFile.Tests
             string pgName = "O0150";
             Match pgNameMatcher = Regex.Match(pgName, @"\d+");
             NcProgramType ncProgram = NcProgramType.SubProgram;
-            INcProgramRepository ncProgramRepository = new NCProgramRepository();
-            NcProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, pgName);
+            INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
+            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, pgName);
 
             // then
             NcProgramCode expected = new(ncProgram, pgName, testNCBlocks);
             Assert.AreEqual(pgNameMatcher.Value, actual.ProgramName);
 
             CollectionAssert.AreEqual(
-                expected.NCBlocks.Select(x => x?.ToString()).ToList(),
-                actual.NCBlocks.Select(x => x?.ToString()).ToList());
+                expected.NcBlocks.Select(x => x?.ToString()).ToList(),
+                actual.NcBlocks.Select(x => x?.ToString()).ToList());
         }
 
         internal static readonly string ncProgramSource =
@@ -130,16 +130,16 @@ M02
                     "StreamReader作るときに失敗した");
 
             // when
-            INcProgramRepository ncProgramRepository = new NCProgramRepository();
+            INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
             NcProgramType ncProgram = NcProgramType.CenterDrilling;
-            NcProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, string.Empty);
+            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, string.Empty);
 
             // then
             NcProgramCode expected = new(ncProgram, string.Empty, testNCBlocks);
             Assert.AreEqual(string.Empty, actual.ProgramName);
-            Assert.AreEqual(count, actual.NCBlocks.Count());
-            Assert.AreEqual(sourceType, actual.NCBlocks.FirstOrDefault()?.ToString());
-            var actualParameterAddresses = actual.NCBlocks
+            Assert.AreEqual(count, actual.NcBlocks.Count());
+            Assert.AreEqual(sourceType, actual.NcBlocks.FirstOrDefault()?.ToString());
+            var actualParameterAddresses = actual.NcBlocks
                 .Where(x => x != null)
                 .Select(x => x!.NCWords
                     .Where(y => y.GetType() == typeof(NcWord))
@@ -289,8 +289,8 @@ M1
             using MemoryStream stream = new();
             using StreamWriter writer = new(stream);
             var expected = TestNCProgramCodeFactory.Create().ToString();
-            INcProgramRepository repository = new NCProgramRepository();
-            await repository.WriteAllAsync(writer, expected);
+            INcProgramReadWriter readWriter = new NcProgramReadWriter();
+            await readWriter.WriteAllAsync(writer, expected);
 
             // then
             // ストリームの位置を戻す

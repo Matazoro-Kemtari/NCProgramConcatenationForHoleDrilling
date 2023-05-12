@@ -38,7 +38,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             return ncProgramCode
                 .Where(x => x.MainProgramClassification == ncProgram)
                 .Skip(skip)
-                .Select(x => x.NCBlocks)
+                .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
                 .Select(x => x?.NCWords)
@@ -78,7 +78,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
                 .Skip(skip)
-                .Select(x => x.NCBlocks)
+                .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
                 .Select(x => x?.NCWords)

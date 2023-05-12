@@ -39,7 +39,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             return ncProgramCode
                 .Where(x => x.MainProgramClassification == ncProgram)
                 .Skip(skip)
-                .Select(x => x.NCBlocks)
+                .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
                 .Select(x => x?.NCWords)
@@ -69,7 +69,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         private static string NCWordから始めのコメントを取得する(IEnumerable<NcProgramCode> ncProgramCode, NcProgramType ncProgram)
         {
             return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
-                .Select(x => x.NCBlocks)
+                .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
                 .Select(x => x?.NCWords)
@@ -194,7 +194,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramType.Chamfering)
-                .Select(x => x.NCBlocks)
+                .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
                 .Select(x => x?.NCWords)

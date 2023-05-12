@@ -20,12 +20,12 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
         private readonly PreviewPageModel _previewPageModel = new();
         private IRegionNavigationService? _regionNavigationService;
         private readonly IStreamWriterOpener _streamWriterOpener;
-        private readonly INcProgramRepository _ncProgramRepository;
+        private readonly INcProgramReadWriter _ncProgramReadWriter;
 
-        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INcProgramRepository ncProgramRepository)
+        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INcProgramReadWriter ncProgramReadWriter)
         {
             _streamWriterOpener = streamWriterOpener;
-            _ncProgramRepository = ncProgramRepository;
+            _ncProgramReadWriter = ncProgramReadWriter;
 
             CombinedProgramSource = _previewPageModel
                 .CombinedProgramSource
@@ -63,7 +63,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 
             var savingFilePath = message.Response[0];
             using var writer = _streamWriterOpener.Open(savingFilePath);
-            await _ncProgramRepository.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
+            await _ncProgramReadWriter.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
         }
 
         public void Destroy() => Disposables.Dispose();

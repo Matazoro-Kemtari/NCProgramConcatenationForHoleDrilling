@@ -82,7 +82,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 throw new ArgumentException("引数に面取り以外のプログラムコードが指定されました");
 
             bool hasFinded1stWord = false;
-            var rewritedNCBlocks = ncProgramCode.NCBlocks
+            var rewritedNCBlocks = ncProgramCode.NcBlocks
                 .Reverse()
                 .Select(x =>
                 {
@@ -124,7 +124,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
 
             return ncProgramCode with
             {
-                NCBlocks = rewritedNCBlocks
+                NcBlocks = rewritedNCBlocks
             };
         }
     }

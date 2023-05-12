@@ -1,11 +1,10 @@
 ﻿using System.Text.RegularExpressions;
-using System;
 
-namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+namespace Wada.NcProgramConcatenationService.NcProgramAggregation;
 
 public record class DrillSizeData
 {
-    private DrillSizeData(string sizeIdentifier, double inch, double millimeter)
+    private DrillSizeData(string sizeIdentifier, decimal inch, decimal millimeter)
     {
         SizeIdentifier = sizeIdentifier ?? throw new ArgumentNullException(nameof(sizeIdentifier));
         Inch = inch;
@@ -27,19 +26,19 @@ public record class DrillSizeData
 
     }
 
-    public static DrillSizeData Create(string sizeIdentifier, double inch, double millimeter)
+    public static DrillSizeData Create(string sizeIdentifier, decimal inch, decimal millimeter)
         => new(sizeIdentifier, inch, millimeter);
 
     public string SizeIdentifier { get; init; }
-    public double Inch { get; init; }
-    public double Millimeter { get; init; }
+    public decimal Inch { get; init; }
+    public decimal Millimeter { get; init; }
 }
 
 public class TestDrillSizeDataFactory
 {
     public static DrillSizeData Create(
         string sizeIdentifier = "#Q",
-        double inch = 0.332d,
-        double millimeter = 8.43d)
+        decimal inch = 0.332m,
+        decimal millimeter = 8.43m)
         => DrillSizeData.Create(sizeIdentifier, inch, millimeter);
 }

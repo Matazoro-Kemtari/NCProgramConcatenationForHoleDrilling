@@ -22,7 +22,7 @@ namespace Wada.NcProgramConcatenationService.MainProgramCombiner
             var combinedBlocks = combinableCode.Select(
                 (x, i) =>
                 {
-                    var blocks = x.NCBlocks.ToList();
+                    var blocks = x.NcBlocks.ToList();
                     if (i < combinableCode.Count() - 1)
                         blocks.Add(null);
                     return blocks;

@@ -1,4 +1,4 @@
-﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+﻿using Wada.NcProgramConcatenationService.NcProgramAggregation;
 
 namespace Wada.NcProgramConcatenationService;
 

@@ -14,7 +14,7 @@ namespace Wada.StoreNcProgramCodeApplication.Tests
             // given
             // when
             Mock<IStreamWriterOpener> mock_writer = new();
-            Mock<INcProgramRepository> mock_nc = new();
+            Mock<INcProgramReadWriter> mock_nc = new();
 
             IStoreNcProgramCodeUseCase useCase =
                 new StoreNcProgramCodeUseCase(mock_writer.Object, mock_nc.Object);

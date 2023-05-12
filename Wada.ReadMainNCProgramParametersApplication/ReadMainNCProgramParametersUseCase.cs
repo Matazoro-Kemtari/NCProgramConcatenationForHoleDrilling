@@ -1,4 +1,5 @@
-﻿using Wada.AOP.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Wada.AOP.Logging;
 using Wada.MainProgramPrameterSpreadSheet;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
@@ -19,8 +20,7 @@ public record class MainNcProgramParametersDto(
     IEnumerable<ReamingProgramPrameterAttempt> CrystalReamerParameters,
     IEnumerable<ReamingProgramPrameterAttempt> SkillReamerParameters,
     IEnumerable<TappingProgramPrameterAttempt> TapParameters,
-    IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters,
-    IEnumerable<DrillSizeData> DrillSizeData)
+    IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters)
 {
     public MainNcProgramParametersAttempt Convert()
         => new(CrystalReamerParameters,
@@ -31,19 +31,19 @@ public record class MainNcProgramParametersDto(
 
 public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUseCase
 {
+    private readonly IConfiguration _configuration;
     private readonly IStreamOpener _streamOpener;
     private readonly IMainProgramPrameterReader _reamingPrameterReader;
     private readonly IMainProgramPrameterReader _tappingPrameterReader;
     private readonly IMainProgramPrameterReader _drillingPrameterReader;
-    private readonly IDrillSizeDataReader _drillSizeDataReader;
 
-    public ReadMainNcProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterReader reamingPrameterReader, TappingPrameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader, IDrillSizeDataReader drillSizeDataReader)
+    public ReadMainNcProgramParametersUseCase(IConfiguration configuration, IStreamOpener streamOpener, ReamingPrameterReader reamingPrameterReader, TappingPrameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader)
     {
+        _configuration = configuration;
         _streamOpener = streamOpener;
         _reamingPrameterReader = reamingPrameterReader;
         _tappingPrameterReader = tappingPrameterReader;
         _drillingPrameterReader = drillingPrameterReader;
-        _drillSizeDataReader = drillSizeDataReader;
     }
 
     [Logging]
@@ -52,33 +52,47 @@ public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUs
         string directory = Path.Combine(
             AppDomain.CurrentDomain.BaseDirectory,
             "..",
-            "リスト");
+            _configuration["applicationConfiguration:ListDirectory"]
+            ?? throw new InvalidOperationException(
+                "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                "applicationConfiguration:ListDirectory"));
 
         IEnumerable<IMainProgramPrameter>[] parameters;
-        IEnumerable<DrillSizeData> drillSizeData;
         try
         {
             var crystalRemmerPath = Path.Combine(
                 directory,
-                "クリスタルリーマー.xlsx");
+                _configuration["applicationConfiguration:CrystalRemmerTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:CrystalRemmerTable"));
             using Stream crystalRemmerStream = _streamOpener.Open(crystalRemmerPath);
             var crystalReamerTask = _reamingPrameterReader.ReadAllAsync(crystalRemmerStream);
 
             var skillReammerPath = Path.Combine(
                 directory,
-                "スキルリーマー.xlsx");
+                _configuration["applicationConfiguration:SkillRemmerTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:SkillRemmerTable"));
             using Stream skillReammerStream = _streamOpener.Open(skillReammerPath);
             var skillReamerTask = _reamingPrameterReader.ReadAllAsync(skillReammerStream);
 
             var tapPath = Path.Combine(
                 directory,
-                "タップ.xlsx");
+                _configuration["applicationConfiguration:TapTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:TapTable"));
             using Stream tapStream = _streamOpener.Open(tapPath);
             var tapTask = _tappingPrameterReader.ReadAllAsync(tapStream);
 
             var drillPath = Path.Combine(
                 directory,
-                "ドリル.xlsx");
+                _configuration["applicationConfiguration:DrillTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:DrillTable"));
             using Stream drillStream = _streamOpener.Open(drillPath);
             var drillTask = _drillingPrameterReader.ReadAllAsync(drillStream);
 
@@ -86,12 +100,6 @@ public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUs
                                             skillReamerTask,
                                             tapTask,
                                             drillTask);
-
-            var inchPath = Path.Combine(
-                directory,
-                "インチ.xlsx");
-            using Stream inchSream = _streamOpener.Open(inchPath);
-            drillSizeData = await _drillSizeDataReader.ReadAllAsync(inchSream);
         }
         catch (OpenFileStreamException ex)
         {
@@ -107,7 +115,6 @@ public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUs
             parameters[0].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
             parameters[1].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
             parameters[2].Select(x => TappingProgramPrameterAttempt.Parse((TappingProgramPrameter)x)),
-            parameters[3].Select(x => DrillingProgramPrameterAttempt.Parse((DrillingProgramPrameter)x)),
-            drillSizeData);
+            parameters[3].Select(x => DrillingProgramPrameterAttempt.Parse((DrillingProgramPrameter)x)));
     }
 }

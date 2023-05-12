@@ -47,9 +47,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             // 下穴 1回目
             var fastDrillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
-                .MaxBy(x => x.DirectedOperationToolDiameter);
-            if (fastDrillingParameter == null)
-                throw new DomainException(
+                .MaxBy(x => x.DirectedOperationToolDiameter)
+                ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,
@@ -62,9 +61,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             // 下穴 2回目
             var secondDrillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
-                .MaxBy(x => x.DirectedOperationToolDiameter);
-            if (secondDrillingParameter == null)
-                throw new DomainException(
+                .MaxBy(x => x.DirectedOperationToolDiameter)
+                ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,

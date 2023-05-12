@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="NLog" Version="5.1.1" />
@@ -24,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.EditNCProgramApplication\Wada.EditNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj" />
     <ProjectReference Include="..\Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj" />
     <ProjectReference Include="..\Wada.NCProgramConcatenationForHoleDrilling\Wada.NcProgramConcatenationForHoleDrilling.csproj" />
     <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
@@ -34,9 +34,6 @@
     <ProjectReference Include="..\Wada.StoreNCProgramCodeApplication\Wada.StoreNcProgramCodeApplication.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update=".env">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

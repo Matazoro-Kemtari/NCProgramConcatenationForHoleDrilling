@@ -58,6 +58,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeAppl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeApplicationTests", "Wada.StoreNcProgramCodeApplicationTests\Wada.StoreNcProgramCodeApplicationTests.csproj", "{9D663703-E241-4158-865F-C584749A495D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.InchMillimeterConvertSpreadSheet", "Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj", "{88FBC851-C8C0-4036-AB04-0785941DE73A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.InchMillimeterConvertSpreadSheetTests", "Wada.InchMillimeterConvertSpreadSheetTests\Wada.InchMillimeterConvertSpreadSheetTests.csproj", "{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,6 +160,14 @@ Global
 		{9D663703-E241-4158-865F-C584749A495D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D663703-E241-4158-865F-C584749A495D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88FBC851-C8C0-4036-AB04-0785941DE73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88FBC851-C8C0-4036-AB04-0785941DE73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88FBC851-C8C0-4036-AB04-0785941DE73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88FBC851-C8C0-4036-AB04-0785941DE73A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -183,6 +195,8 @@ Global
 		{F9B98D5B-A185-4EF4-B55A-3A614DCA4686} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{74633620-388C-4573-B6D8-AE32D5AE957D} = {D3D9615A-1602-44DB-883B-5D520011579A}
 		{9D663703-E241-4158-865F-C584749A495D} = {D3D9615A-1602-44DB-883B-5D520011579A}
+		{88FBC851-C8C0-4036-AB04-0785941DE73A} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
+		{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4} = {6CA6A240-9B6E-4F45-B371-694B79D19BBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF00B0F9-07EA-4A5B-BDCF-E0EA373D3274}

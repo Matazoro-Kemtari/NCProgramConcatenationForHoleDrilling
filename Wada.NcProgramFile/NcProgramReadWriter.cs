@@ -6,7 +6,7 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramFile
 {
-    public class NCProgramRepository : INcProgramRepository
+    public class NcProgramReadWriter : INcProgramReadWriter
     {
         [Logging]
         public async Task<NcProgramCode> ReadAllAsync(StreamReader reader, NcProgramType ncProgram, string programName)

@@ -17,12 +17,12 @@ namespace Wada.ReadMainNcProgramApplication
     public class ReadMainNcProgramUseCase : IReadMainNcProgramUseCase
     {
         private readonly IStreamReaderOpener _streamReaderOpener;
-        private readonly INcProgramRepository _ncProgramRepository;
+        private readonly INcProgramReadWriter _ncProgramReadWriter;
 
-        public ReadMainNcProgramUseCase(IStreamReaderOpener streamReaderOpener, INcProgramRepository ncProgramRepository)
+        public ReadMainNcProgramUseCase(IStreamReaderOpener streamReaderOpener, INcProgramReadWriter ncProgramReadWriter)
         {
             _streamReaderOpener = streamReaderOpener;
-            _ncProgramRepository = ncProgramRepository;
+            _ncProgramReadWriter = ncProgramReadWriter;
         }
 
         [Logging]
@@ -61,7 +61,7 @@ namespace Wada.ReadMainNcProgramApplication
 
                         // メインプログラムを読み込む
                         using StreamReader reader = _streamReaderOpener.Open(path);
-                        var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
+                        var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, program.NCProgramType, fileName);
                         return NcProgramCodeAttempt.Parse(ncProgramCode);
                     }));
                 }

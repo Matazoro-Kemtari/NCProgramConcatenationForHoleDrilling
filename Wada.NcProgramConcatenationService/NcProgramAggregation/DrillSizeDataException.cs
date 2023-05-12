@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
+namespace Wada.NcProgramConcatenationService.NcProgramAggregation
 {
     public class DrillSizeDataException : DomainException
     {
