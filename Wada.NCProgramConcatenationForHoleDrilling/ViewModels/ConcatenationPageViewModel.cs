@@ -149,7 +149,7 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
                     mainPrograms.ToList().ForEach(
                         x => _concatenation.MainProgramCodes.Add(MainNcProgramCodeRequest.Parse(x)));
                 }
-                catch (ReadMainNcProgramUseCaseException ex)
+                catch (Exception ex) when (ex is InvalidOperationException or ReadMainNcProgramUseCaseException)
                 {
                     var message = MessageNotificationViaLivet.MakeErrorMessage(ex.Message);
                     await Messenger.RaiseAsync(message);

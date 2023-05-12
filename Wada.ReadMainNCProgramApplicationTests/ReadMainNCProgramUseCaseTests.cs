@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.NCProgramAggregation;
@@ -13,13 +15,28 @@ namespace Wada.ReadMainNcProgramApplication.Tests
         public async Task 正常系_ユースケースを実行するとリポジトリが実行されること()
         {
             // given
+            var inMemorySettings = new Dictionary<string, string?>
+            {
+                { "applicationConfiguration:MainNcProgramDirectory", "メインプログラム"},
+                { "applicationConfiguration:MachineNames:0", "RB250F" },
+                { "applicationConfiguration:MachineNames:1", "RB260" },
+                { "applicationConfiguration:MachineNames:2", "3軸立型" },
+                { "applicationConfiguration:CenterDrillingProgramName", "CD.txt" },
+                { "applicationConfiguration:DrillingProgramName", "DR.txt" },
+                { "applicationConfiguration:ChamferingProgramName", "MENTORI.txt" },
+                { "applicationConfiguration:ReamingProgramName", "REAMER.txt" },
+                { "applicationConfiguration:TappingProgramName", "TAP.txt" },
+            };
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INcProgramReadWriter> mock_nc = new();
             mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()))
                 .ReturnsAsync(TestNCProgramCodeFactory.Create());
 
             // when
-            IReadMainNcProgramUseCase readSubNCProgramUseCase = new ReadMainNcProgramUseCase(mock_reader.Object, mock_nc.Object);
+            IReadMainNcProgramUseCase readSubNCProgramUseCase = new ReadMainNcProgramUseCase(configuration, mock_reader.Object, mock_nc.Object);
             _ = await readSubNCProgramUseCase.ExecuteAsync();
 
             // then
