@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramFile\Wada.NcProgramFile.csproj" />
   </ItemGroup>
 
 </Project>

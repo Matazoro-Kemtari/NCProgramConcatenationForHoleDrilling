@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.100.2" />
+    <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
   </ItemGroup>
 
 </Project>

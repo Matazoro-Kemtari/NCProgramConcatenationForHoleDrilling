@@ -1,19 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
-    <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
-    <PackageReference Include="Wada.Extensions" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Wada.AOP.Logging\Wada.AOP.Logging.csproj" />
     <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
   </ItemGroup>
 

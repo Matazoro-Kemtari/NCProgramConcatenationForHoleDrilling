@@ -1,6 +1,6 @@
 # 穴加工用マシニングソフト
 
-NCProgramConcatenationForHoleDrilling
+NcProgramConcatenationForHoleDrilling
 
 ## 使用方法
 
