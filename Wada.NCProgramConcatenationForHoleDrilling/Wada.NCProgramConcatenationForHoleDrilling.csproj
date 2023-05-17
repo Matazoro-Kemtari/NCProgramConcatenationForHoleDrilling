@@ -12,12 +12,13 @@
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="ReactiveProperty.WPF" Version="8.2.0" />
+    <PackageReference Include="Wada.Extensions" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNCProgramApplication.csproj" />
-    <ProjectReference Include="..\Wada.EditNCProgramApplication\Wada.EditNCProgramApplication.csproj" />
-    <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNCProgramApplication.csproj" />
-    <ProjectReference Include="..\Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNCProgramParametersApplication.csproj" />
-    <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNCProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.EditNCProgramApplication\Wada.EditNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNCProgramApplication\Wada.ReadMainNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNcProgramParametersApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadSubNCProgramApplication\Wada.ReadSubNcProgramApplication.csproj" />
   </ItemGroup>
 </Project>

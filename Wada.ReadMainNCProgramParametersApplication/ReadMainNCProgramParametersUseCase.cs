@@ -1,111 +1,120 @@
-﻿using Wada.AOP.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Wada.AOP.Logging;
 using Wada.MainProgramPrameterSpreadSheet;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.UseCase.DataClass;
 
-namespace Wada.ReadMainNCProgramParametersApplication
+namespace Wada.ReadMainNcProgramParametersApplication;
+
+public interface IReadMainNcProgramParametersUseCase
 {
-    public interface IReadMainNCProgramParametersUseCase
+    /// <summary>
+    /// リストフォルダのエクセルを読み込む
+    /// </summary>
+    /// <returns></returns>
+    Task<MainNcProgramParametersDto> ExecuteAsync();
+}
+
+public record class MainNcProgramParametersDto(
+    IEnumerable<ReamingProgramPrameterAttempt> CrystalReamerParameters,
+    IEnumerable<ReamingProgramPrameterAttempt> SkillReamerParameters,
+    IEnumerable<TappingProgramPrameterAttempt> TapParameters,
+    IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters)
+{
+    public MainNcProgramParametersAttempt Convert()
+        => new(CrystalReamerParameters,
+               SkillReamerParameters,
+               TapParameters,
+               DrillingPrameters);
+}
+
+public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUseCase
+{
+    private readonly IConfiguration _configuration;
+    private readonly IStreamOpener _streamOpener;
+    private readonly IMainProgramPrameterReader _reamingPrameterReader;
+    private readonly IMainProgramPrameterReader _tappingPrameterReader;
+    private readonly IMainProgramPrameterReader _drillingPrameterReader;
+
+    public ReadMainNcProgramParametersUseCase(IConfiguration configuration, IStreamOpener streamOpener, ReamingPrameterReader reamingPrameterReader, TappingPrameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader)
     {
-        Task<MainNCProgramParametersDTO> ExecuteAsync();
+        _configuration = configuration;
+        _streamOpener = streamOpener;
+        _reamingPrameterReader = reamingPrameterReader;
+        _tappingPrameterReader = tappingPrameterReader;
+        _drillingPrameterReader = drillingPrameterReader;
     }
 
-    public record class MainNCProgramParametersDTO(
-        IEnumerable<ReamingProgramPrameterAttempt> CrystalReamerParameters,
-        IEnumerable<ReamingProgramPrameterAttempt> SkillReamerParameters,
-        IEnumerable<TappingProgramPrameterAttempt> TapParameters,
-        IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters)
+    [Logging]
+    public async Task<MainNcProgramParametersDto> ExecuteAsync()
     {
-        public MainNCProgramParametersAttempt Convert()
-            => new(CrystalReamerParameters,
-                   SkillReamerParameters,
-                   TapParameters,
-                   DrillingPrameters);
-    }
+        string directory = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "..",
+            _configuration["applicationConfiguration:ListDirectory"]
+            ?? throw new InvalidOperationException(
+                "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                "applicationConfiguration:ListDirectory"));
 
-    public class ReadMainNCProgramParametersUseCase : IReadMainNCProgramParametersUseCase
-    {
-        private readonly IStreamOpener _streamOpener;
-        private readonly IMainProgramPrameterRepository _reamingPrameterRepository;
-        private readonly IMainProgramPrameterRepository _tappingPrameterRepository;
-        private readonly IMainProgramPrameterRepository _drillingPrameterRepository;
-
-        public ReadMainNCProgramParametersUseCase(IStreamOpener streamOpener, ReamingPrameterRepository reamingPrameterRepository, TappingPrameterRepository tappingPrameterRepository, DrillingParameterRepositoy drillingPrameterRepository)
+        IEnumerable<IMainProgramPrameter>[] parameters;
+        try
         {
-            _streamOpener = streamOpener;
-            _reamingPrameterRepository = reamingPrameterRepository;
-            _tappingPrameterRepository = tappingPrameterRepository;
-            _drillingPrameterRepository = drillingPrameterRepository;
+            var crystalRemmerPath = Path.Combine(
+                directory,
+                _configuration["applicationConfiguration:CrystalRemmerTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:CrystalRemmerTable"));
+            using Stream crystalRemmerStream = _streamOpener.Open(crystalRemmerPath);
+            var crystalReamerTask = _reamingPrameterReader.ReadAllAsync(crystalRemmerStream);
+
+            var skillReammerPath = Path.Combine(
+                directory,
+                _configuration["applicationConfiguration:SkillRemmerTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:SkillRemmerTable"));
+            using Stream skillReammerStream = _streamOpener.Open(skillReammerPath);
+            var skillReamerTask = _reamingPrameterReader.ReadAllAsync(skillReammerStream);
+
+            var tapPath = Path.Combine(
+                directory,
+                _configuration["applicationConfiguration:TapTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:TapTable"));
+            using Stream tapStream = _streamOpener.Open(tapPath);
+            var tapTask = _tappingPrameterReader.ReadAllAsync(tapStream);
+
+            var drillPath = Path.Combine(
+                directory,
+                _configuration["applicationConfiguration:DrillTable"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:DrillTable"));
+            using Stream drillStream = _streamOpener.Open(drillPath);
+            var drillTask = _drillingPrameterReader.ReadAllAsync(drillStream);
+
+            parameters = await Task.WhenAll(crystalReamerTask,
+                                            skillReamerTask,
+                                            tapTask,
+                                            drillTask);
+        }
+        catch (OpenFileStreamException ex)
+        {
+            throw new ReadMainNcProgramParametersUseCaseException(ex.Message);
+        }
+        catch (Exception ex) when (ex is DomainException or InvalidOperationException)
+        {
+            throw new ReadMainNcProgramParametersUseCaseException(
+                $"リストの読み込みでエラーが発生しました\n{ex.Message}", ex);
         }
 
-        [Logging]
-        public async Task<MainNCProgramParametersDTO> ExecuteAsync()
-        {
-            string directory = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "..",
-                "リスト");
-
-            Task<IEnumerable<IMainProgramPrameter>> crystalReamerTask;
-            Task<IEnumerable<IMainProgramPrameter>> skillReamerTask;
-            Task<IEnumerable<IMainProgramPrameter>> tapTask;
-            Task<IEnumerable<IMainProgramPrameter>> drillTask;
-            try
-            {
-                crystalReamerTask = Task.Run(() =>
-                {
-                    var path = Path.Combine(
-                        directory,
-                        "クリスタルリーマー.xlsx");
-                    using Stream stream = _streamOpener.Open(path);
-                    return _reamingPrameterRepository.ReadAll(stream);
-                });
-
-                skillReamerTask = Task.Run(() =>
-                {
-                    var path = Path.Combine(
-                        directory,
-                        "スキルリーマー.xlsx");
-                    using Stream stream = _streamOpener.Open(path);
-                    return _reamingPrameterRepository.ReadAll(stream);
-                });
-
-                tapTask = Task.Run(() =>
-                {
-                    var path = Path.Combine(
-                        directory,
-                        "タップ.xlsx");
-                    using Stream stream = _streamOpener.Open(path);
-                    return _tappingPrameterRepository.ReadAll(stream);
-                });
-
-                drillTask = Task.Run(() =>
-                {
-                    var path = Path.Combine(
-                        directory,
-                        "ドリル.xlsx");
-                    using Stream stream = _streamOpener.Open(path);
-                    return _drillingPrameterRepository.ReadAll(stream);
-                });
-            }
-            catch (OpenFileStreamException ex)
-            {
-                throw new ReadMainNCProgramParametersApplicationException(ex.Message);
-            }
-            catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
-            {
-                throw new ReadMainNCProgramParametersApplicationException(
-                    $"リストの読み込みでエラーが発生しました\n{ex.Message}", ex);
-            }
-
-            IEnumerable<IMainProgramPrameter>[] parameters =
-                await Task.WhenAll(crystalReamerTask, skillReamerTask, tapTask, drillTask);
-            return new MainNCProgramParametersDTO(
-                parameters[0].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
-                parameters[1].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
-                parameters[2].Select(x => TappingProgramPrameterAttempt.Parse((TappingProgramPrameter)x)),
-                parameters[3].Select(x => DrillingProgramPrameterAttempt.Parse((DrillingProgramPrameter)x)));
-        }
+        return new MainNcProgramParametersDto(
+            parameters[0].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
+            parameters[1].Select(x => ReamingProgramPrameterAttempt.Parse((ReamingProgramPrameter)x)),
+            parameters[2].Select(x => TappingProgramPrameterAttempt.Parse((TappingProgramPrameter)x)),
+            parameters[3].Select(x => DrillingProgramPrameterAttempt.Parse((DrillingProgramPrameter)x)));
     }
 }

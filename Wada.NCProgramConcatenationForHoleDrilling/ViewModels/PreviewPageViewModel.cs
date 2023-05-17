@@ -8,25 +8,24 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
-using System.Windows;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationForHoleDrilling.Models;
-using Wada.NCProgramConcatenationForHoleDrilling.Views;
-using Wada.NCProgramConcatenationService;
+using Wada.NcProgramConcatenationForHoleDrilling.Models;
+using Wada.NcProgramConcatenationForHoleDrilling.Views;
+using Wada.NcProgramConcatenationService;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructible
     {
         private readonly PreviewPageModel _previewPageModel = new();
         private IRegionNavigationService? _regionNavigationService;
         private readonly IStreamWriterOpener _streamWriterOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramReadWriter _ncProgramReadWriter;
 
-        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INCProgramRepository ncProgramRepository)
+        public PreviewPageViewModel(IStreamWriterOpener streamWriterOpener, INcProgramReadWriter ncProgramReadWriter)
         {
             _streamWriterOpener = streamWriterOpener;
-            _ncProgramRepository = ncProgramRepository;
+            _ncProgramReadWriter = ncProgramReadWriter;
 
             CombinedProgramSource = _previewPageModel
                 .CombinedProgramSource
@@ -64,7 +63,7 @@ namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
 
             var savingFilePath = message.Response[0];
             using var writer = _streamWriterOpener.Open(savingFilePath);
-            await _ncProgramRepository.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
+            await _ncProgramReadWriter.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
         }
 
         public void Destroy() => Disposables.Dispose();

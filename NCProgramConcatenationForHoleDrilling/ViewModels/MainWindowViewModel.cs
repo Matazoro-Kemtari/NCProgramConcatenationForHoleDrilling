@@ -2,7 +2,7 @@
 using System.Reflection;
 using System;
 
-namespace NCProgramConcatenationForHoleDrilling.ViewModels
+namespace NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {

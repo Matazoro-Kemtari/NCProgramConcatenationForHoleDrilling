@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNCProgramParametersApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNCProgramParametersApplication\Wada.ReadMainNcProgramParametersApplication.csproj" />
   </ItemGroup>
 
 </Project>

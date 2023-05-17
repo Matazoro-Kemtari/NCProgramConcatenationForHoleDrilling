@@ -1,57 +1,50 @@
-﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.ValueObjects;
+﻿using Microsoft.Extensions.Configuration;
+using Wada.AOP.Logging;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 
-namespace Wada.ReadMainNCProgramApplication
+namespace Wada.ReadMainNcProgramApplication
 {
-    public interface IReadMainNCProgramUseCase
+    public interface IReadMainNcProgramUseCase
     {
-        Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync();
+        Task<IEnumerable<MainNcProgramCodeDto>> ExecuteAsync();
     }
 
-    public record class MainNCProgramCodeDTO(
+    public record class MainNcProgramCodeDto(
         MachineToolTypeAttempt MachineToolClassification,
-        IEnumerable<NCProgramCodeAttempt> NCProgramCodeAttempts);
+        IEnumerable<NcProgramCodeAttempt> NcProgramCodeAttempts);
 
-    public class ReadMainNCProgramUseCase : IReadMainNCProgramUseCase
+    public class ReadMainNcProgramUseCase : IReadMainNcProgramUseCase
     {
+        private readonly IConfiguration _configuration;
         private readonly IStreamReaderOpener _streamReaderOpener;
-        private readonly INCProgramRepository _ncProgramRepository;
+        private readonly INcProgramReadWriter _ncProgramReadWriter;
 
-        public ReadMainNCProgramUseCase(IStreamReaderOpener streamReaderOpener, INCProgramRepository ncProgramRepository)
+        public ReadMainNcProgramUseCase(IConfiguration configuration, IStreamReaderOpener streamReaderOpener, INcProgramReadWriter ncProgramReadWriter)
         {
+            _configuration = configuration;
             _streamReaderOpener = streamReaderOpener;
-            _ncProgramRepository = ncProgramRepository;
+            _ncProgramReadWriter = ncProgramReadWriter;
         }
 
         [Logging]
-        public async Task<IEnumerable<MainNCProgramCodeDTO>> ExecuteAsync()
+        public async Task<IEnumerable<MainNcProgramCodeDto>> ExecuteAsync()
         {
-            List<(string FileName, NCProgramType NCProgramType)> mainPrograms = new()
-            {
-                ("CD.txt",NCProgramType.CenterDrilling),
-                ("DR.txt",NCProgramType.Drilling),
-                ("MENTORI.txt",NCProgramType.Chamfering),
-                ("REAMER.txt",NCProgramType.Reaming),
-                ("TAP.txt",NCProgramType.Tapping),
-            };
+            var mainPrograms = FetchMainPrograms();
+            var machineNames = FetchMachineNames();
 
-            List<string> machineName = new()
-            {
-                "RB250F",
-                "RB260",
-                "3軸立型",
-            };
-
-            string directory = Path.Combine(
+            var directory = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
                 "..",
-                "メインプログラム");
+                _configuration["applicationConfiguration:MainNcProgramDirectory"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:MainNcProgramDirectory"));
 
-            var task = machineName.Select(async machine =>
+            var task = machineNames.Select(async machine =>
             {
-                NCProgramCodeAttempt[] ncProgramCodeAttempts;
+                NcProgramCodeAttempt[] ncProgramCodeAttempts;
                 try
                 {
                     ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
@@ -61,17 +54,17 @@ namespace Wada.ReadMainNCProgramApplication
 
                         // メインプログラムを読み込む
                         using StreamReader reader = _streamReaderOpener.Open(path);
-                        var ncProgramCode = await _ncProgramRepository.ReadAllAsync(reader, program.NCProgramType, fileName);
-                        return NCProgramCodeAttempt.Parse(ncProgramCode);
+                        var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, program.NCProgramType, fileName);
+                        return NcProgramCodeAttempt.Parse(ncProgramCode);
                     }));
                 }
                 catch (OpenFileStreamReaderException ex)
                 {
-                    throw new ReadMainNCProgramApplicationException(ex.Message);
+                    throw new ReadMainNcProgramUseCaseException(ex.Message);
                 }
-                catch (Exception ex) when (ex is NCProgramConcatenationServiceException || ex is InvalidOperationException)
+                catch (Exception ex) when (ex is DomainException || ex is InvalidOperationException)
                 {
-                    throw new ReadMainNCProgramApplicationException(
+                    throw new ReadMainNcProgramUseCaseException(
                         $"メインプログラムの読み込みでエラーが発生しました\n{ex.Message}", ex);
                 }
 
@@ -83,12 +76,61 @@ namespace Wada.ReadMainNCProgramApplication
                     _ => throw new NotImplementedException(),
                 };
 
-                return new MainNCProgramCodeDTO(
+                return new MainNcProgramCodeDto(
                     machineClassification,
                     ncProgramCodeAttempts);
             });
 
             return await Task.WhenAll(task);
+        }
+
+        /// <summary>
+        /// 設定ファイルから設備名のリストを取得する
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private List<string> FetchMachineNames()
+            => _configuration.GetSection("applicationConfiguration:MachineNames")
+                             .Get<List<string>>()
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:MachineNames");
+
+        /// <summary>
+        /// 設定ファイルからメインプログラム名を取得してtupleのリストを返す
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private List<(string FileName, NcProgramType NCProgramType)> FetchMainPrograms()
+        {
+            return new()
+            {
+                (_configuration["applicationConfiguration:CenterDrillingProgramName"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:CenterDrillingProgramName"),
+                    NcProgramType.CenterDrilling),
+                (_configuration["applicationConfiguration:DrillingProgramName"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:DrillingProgramName"),
+                    NcProgramType.Drilling),
+                (_configuration["applicationConfiguration:ChamferingProgramName"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:ChamferingProgramName"),
+                    NcProgramType.Chamfering),
+                (_configuration["applicationConfiguration:ReamingProgramName"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:ReamingProgramName"),
+                    NcProgramType.Reaming),
+                (_configuration["applicationConfiguration:TappingProgramName"]
+                ?? throw new InvalidOperationException(
+                    "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
+                    "applicationConfiguration:TappingProgramName"),
+                    NcProgramType.Tapping),
+            };
         }
     }
 }

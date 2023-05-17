@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Wada.AOP.Logging\Wada.AOP.Logging.csproj" />
-    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
   </ItemGroup>
 
 </Project>

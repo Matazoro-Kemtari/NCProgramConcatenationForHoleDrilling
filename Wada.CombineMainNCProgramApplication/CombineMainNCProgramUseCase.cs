@@ -1,27 +1,27 @@
-﻿using Wada.Extension;
-using Wada.NCProgramConcatenationService.MainProgramCombiner;
+﻿using Wada.Extensions;
+using Wada.NcProgramConcatenationService.MainProgramCombiner;
 using Wada.UseCase.DataClass;
 
-namespace Wada.CombineMainNCProgramApplication
+namespace Wada.CombineMainNcProgramApplication
 {
-    public interface ICombineMainNCProgramUseCase
+    public interface ICombineMainNcProgramUseCase
     {
-        Task<CombineMainNCProgramDTO> ExecuteAsync(CombineMainNCProgramParam combineMainNCProgramParam);
+        Task<CombineMainNCProgramDto> ExecuteAsync(CombineMainNcProgramParam combineMainNCProgramParam);
     }
 
-    public class CombineMainNCProgramUseCase : ICombineMainNCProgramUseCase
+    public class CombineMainNcProgramUseCase : ICombineMainNcProgramUseCase
     {
         private readonly IMainProgramCombiner _mainProgramCombiner;
 
-        public CombineMainNCProgramUseCase(IMainProgramCombiner mainProgramCombiner)
+        public CombineMainNcProgramUseCase(IMainProgramCombiner mainProgramCombiner)
         {
             _mainProgramCombiner = mainProgramCombiner;
         }
 
-        public async Task<CombineMainNCProgramDTO> ExecuteAsync(CombineMainNCProgramParam combineMainNCProgramParam)
+        public async Task<CombineMainNCProgramDto> ExecuteAsync(CombineMainNcProgramParam combineMainNCProgramParam)
             => await Task.Run(
-                async () => new CombineMainNCProgramDTO(
-                    NCProgramCodeAttempt.Parse(
+                async () => new CombineMainNCProgramDto(
+                    NcProgramCodeAttempt.Parse(
                         _mainProgramCombiner.Combine(
                             await Task.WhenAll(
                                 combineMainNCProgramParam.CombinableCodes
@@ -31,7 +31,7 @@ namespace Wada.CombineMainNCProgramApplication
                             combineMainNCProgramParam.Material.GetEnumDisplayName() ?? string.Empty))));
     }
 
-    public record class CombineMainNCProgramParam(IEnumerable<NCProgramCodeAttempt> CombinableCodes, MachineToolTypeAttempt MachineTool, MaterialTypeAttempt Material);
+    public record class CombineMainNcProgramParam(IEnumerable<NcProgramCodeAttempt> CombinableCodes, MachineToolTypeAttempt MachineTool, MaterialTypeAttempt Material);
 
-    public record class CombineMainNCProgramDTO(NCProgramCodeAttempt NCProgramCode);
+    public record class CombineMainNCProgramDto(NcProgramCodeAttempt NCProgramCode);
 }

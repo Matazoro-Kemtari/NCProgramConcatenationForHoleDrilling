@@ -1,15 +1,15 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.MainProgramPrameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class ReamingPrameterRepositoryTests
+    public class ReamingPrameterReaderTests
     {
         [TestMethod()]
-        public void 正常系_リーマパラメータエクセルが読み込めること()
+        public async Task 正常系_リーマパラメータエクセルが読み込めること()
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -17,15 +17,15 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
         }
 
         [TestMethod()]
-        public void 正常系_面取り深さの値が無でもパラメータエクセルが読み込めること()
+        public async Task 正常系_面取り深さの値が無でもパラメータエクセルが読み込めること()
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -34,8 +34,8 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = reamingPrameterRepository.ReadAll(xlsStream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
             Assert.AreEqual(1, reamingProgramPrameters.Count());
@@ -49,7 +49,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_リーマ径に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_リーマ径に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -58,12 +58,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            Task target() =>
+                 reamingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"リーマ径が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: A2";
@@ -77,7 +77,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_DR1に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_DR1に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -86,12 +86,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            Task target() =>
+                 reamingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"DR1(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: B2";
@@ -105,7 +105,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_DR2に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_DR2に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -114,12 +114,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            Task target() =>
+                 reamingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"DR2(φ)が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: C2";
@@ -133,7 +133,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public void 異常系_CDに数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_CDに数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -142,12 +142,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterRepository reamingPrameterRepository = new ReamingPrameterRepository();
-            void target() =>
-                 reamingPrameterRepository.ReadAll(stream);
+            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            Task target() =>
+                 reamingPrameterReader.ReadAllAsync(stream);
 
             // then
-            var ex = Assert.ThrowsException<NCProgramConcatenationServiceException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
             string expected = $"C/D深さが取得できません" +
                 $" シート: Sheet1," +
                 $" セル: D2";

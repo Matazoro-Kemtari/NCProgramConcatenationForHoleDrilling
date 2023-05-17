@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Wada.NCProgramConcatenationService
+namespace Wada.NcProgramConcatenationService
 {
     [Serializable]
-    public class OpenFileStreamReaderException : Exception
+    public class OpenFileStreamReaderException : DomainException
     {
         public OpenFileStreamReaderException()
         {

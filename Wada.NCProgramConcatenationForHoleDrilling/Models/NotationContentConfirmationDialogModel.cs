@@ -1,6 +1,6 @@
 ﻿using Reactive.Bindings;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Models
+namespace Wada.NcProgramConcatenationForHoleDrilling.Models
 {
     internal record class NotationContentConfirmationDialogModel
     {

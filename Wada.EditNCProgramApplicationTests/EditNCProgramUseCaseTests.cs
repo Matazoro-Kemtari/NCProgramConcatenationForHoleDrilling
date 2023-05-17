@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Wada.NCProgramConcatenationService.ParameterRewriter;
+using Wada.NcProgramConcatenationService.ParameterRewriter;
 using Wada.UseCase.DataClass;
 
-namespace Wada.EditNCProgramApplication.Tests
+namespace Wada.EditNcProgramApplication.Tests
 {
     [TestClass()]
-    public class EditNCProgramUseCaseTests
+    public class EditNcProgramUseCaseTests
     {
         [DataTestMethod()]
         [DataRow(DirectedOperationTypeAttempt.Tapping, ReamerTypeAttempt.Undefined)]
@@ -24,17 +24,17 @@ namespace Wada.EditNCProgramApplication.Tests
             Mock<TappingParameterRewriter> mock_tap = new();
             Mock<DrillingParameterRewriter> mock_drill = new();
 
-            var editNCProgramPram = TestEditNCProgramPramFactory.Create(
+            var editNcProgramPram = TestEditNcProgramPramFactory.Create(
                 directedOperation: directedOperation,
                 reamer: reamer);
 
-            IEditNCProgramUseCase editNCProgramUseCase =
-                 new EditNCProgramUseCase(
+            IEditNcProgramUseCase editNcProgramUseCase =
+                 new EditNcProgramUseCase(
                      mock_crystal.Object,
                      mock_skill.Object,
                      mock_tap.Object,
                      mock_drill.Object);
-            _ = await editNCProgramUseCase.ExecuteAsync(editNCProgramPram);
+            _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramPram);
 
             // then
             mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),

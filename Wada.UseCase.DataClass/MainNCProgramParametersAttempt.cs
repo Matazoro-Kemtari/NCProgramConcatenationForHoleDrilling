@@ -1,16 +1,16 @@
-﻿using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
+﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
 namespace Wada.UseCase.DataClass
 {
-    public record class MainNCProgramParametersAttempt(
+    public record class MainNcProgramParametersAttempt(
         IEnumerable<ReamingProgramPrameterAttempt> CrystalReamerParameters,
         IEnumerable<ReamingProgramPrameterAttempt> SkillReamerParameters,
         IEnumerable<TappingProgramPrameterAttempt> TapParameters,
         IEnumerable<DrillingProgramPrameterAttempt> DrillingPrameters);
 
-    public class TestMainNCProgramParametersPramFactory
+    public class TestMainNcProgramParametersPramFactory
     {
-        public static MainNCProgramParametersAttempt Create(
+        public static MainNcProgramParametersAttempt Create(
             IEnumerable<ReamingProgramPrameterAttempt>? crystalReamerParameters = default,
             IEnumerable<ReamingProgramPrameterAttempt>? skillReamerParameters = default,
             IEnumerable<TappingProgramPrameterAttempt>? tapParameters = default,

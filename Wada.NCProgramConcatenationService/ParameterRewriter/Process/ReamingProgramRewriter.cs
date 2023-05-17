@@ -1,10 +1,10 @@
 ﻿using System;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
+namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
 {
     internal class ReamingProgramRewriter
     {
@@ -18,8 +18,8 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         /// <param name="rewritingParameter">対象のパラメータ</param>
         /// <returns></returns>
         [Logging]
-        internal static NCProgramCode Rewrite(
-            NCProgramCode rewritableCode,
+        internal static NcProgramCode Rewrite(
+            NcProgramCode rewritableCode,
             MaterialType material,
             ReamerType reamer,
             decimal thickness,
@@ -27,7 +27,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
             string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す
-            var rewritedNCBlocks = rewritableCode.NCBlocks
+            var rewritedNCBlocks = rewritableCode.NcBlocks
                 .Select(x =>
                 {
                     if (x == null)
@@ -36,12 +36,12 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                     var rewritedNCWords = x.NCWords
                         .Select(y =>
                         {
-                            INCWord result;
-                            if (y.GetType() == typeof(NCComment))
+                            INcWord result;
+                            if (y.GetType() == typeof(NcComment))
                             {
-                                NCComment nCComment = (NCComment)y;
+                                NcComment nCComment = (NcComment)y;
                                 if (nCComment.Comment == "REAMER")
-                                    result = new NCComment(
+                                    result = new NcComment(
                                         string.Concat(
                                             nCComment.Comment,
                                             ' ',
@@ -49,9 +49,9 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                                 else
                                     result = y;
                             }
-                            else if (y.GetType() == typeof(NCWord))
+                            else if (y.GetType() == typeof(NcWord))
                             {
-                                NCWord ncWord = (NCWord)y;
+                                NcWord ncWord = (NcWord)y;
                                 if (ncWord.ValueData.Indefinite)
                                     result = ncWord.Address.Value switch
                                     {
@@ -70,17 +70,17 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
                             return result;
                         });
 
-                    return new NCBlock(rewritedNCWords, x.HasBlockSkip);
+                    return new NcBlock(rewritedNCWords, x.HasBlockSkip);
                 });
 
             return rewritableCode with
             {
-                NCBlocks = rewritedNCBlocks
+                NcBlocks = rewritedNCBlocks
             };
         }
 
         [Logging]
-        private static INCWord RewriteSubProgramNumber(string subProgramNumber, NCWord ncWord)
+        private static INcWord RewriteSubProgramNumber(string subProgramNumber, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -89,7 +89,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteFeed(MaterialType material, ReamerType reamer, decimal diameter, NCWord ncWord)
+        private static INcWord RewriteFeed(MaterialType material, ReamerType reamer, decimal diameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -102,7 +102,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteReamingDepth(decimal thickness, NCWord ncWord)
+        private static INcWord RewriteReamingDepth(decimal thickness, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -115,7 +115,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INCWord RewriteSpin(MaterialType material, ReamerType reamer, decimal diameter, NCWord ncWord)
+        private static INcWord RewriteSpin(MaterialType material, ReamerType reamer, decimal diameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;

@@ -3,7 +3,7 @@ using Livet.Messaging.IO;
 using System.Windows;
 using Wada.AOP.Logging;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.ViewModels
+namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels
 {
     public class MessageNotificationViaLivet
     {

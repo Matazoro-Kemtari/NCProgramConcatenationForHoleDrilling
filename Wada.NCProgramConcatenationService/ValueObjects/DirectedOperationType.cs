@@ -1,4 +1,4 @@
-﻿namespace Wada.NCProgramConcatenationService.ValueObjects
+﻿namespace Wada.NcProgramConcatenationService.ValueObjects
 {
     public enum DirectedOperationType
     {

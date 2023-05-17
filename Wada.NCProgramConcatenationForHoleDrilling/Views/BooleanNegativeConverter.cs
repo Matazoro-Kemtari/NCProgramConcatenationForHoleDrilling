@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Views
+namespace Wada.NcProgramConcatenationForHoleDrilling.Views
 {
     /// <summary>
     /// boolを反転するコンバーター

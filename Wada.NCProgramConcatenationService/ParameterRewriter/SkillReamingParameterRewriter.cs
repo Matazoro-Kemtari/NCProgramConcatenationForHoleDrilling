@@ -1,4 +1,4 @@
-﻿namespace Wada.NCProgramConcatenationService.ParameterRewriter
+﻿namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
     /// <summary>
     /// スキルリーマのパラメータを書き換える

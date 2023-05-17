@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Wada.NCProgramConcatenationService.MainProgramCombiner;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.MainProgramCombiner;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
 using Wada.UseCase.DataClass;
 
-namespace Wada.CombineMainNCProgramApplication.Tests
+namespace Wada.CombineMainNcProgramApplication.Tests
 {
     [TestClass()]
-    public class CombineMainNCProgramUseCaseTests
+    public class CombineMainNcProgramUseCaseTests
     {
         [TestMethod()]
         public async Task 正常系_ユースケースを実行するとドメインサービスが実行されること()
@@ -15,19 +15,19 @@ namespace Wada.CombineMainNCProgramApplication.Tests
             // given
             // when
             Mock<IMainProgramCombiner> mock_comviner = new();
-            mock_comviner.Setup(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()))
+            mock_comviner.Setup(x => x.Combine(It.IsAny<IEnumerable<NcProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(TestNCProgramCodeFactory.Create());
-            ICombineMainNCProgramUseCase useCase = new CombineMainNCProgramUseCase(mock_comviner.Object);
+            ICombineMainNcProgramUseCase useCase = new CombineMainNcProgramUseCase(mock_comviner.Object);
 
-            List<NCProgramCodeAttempt> combinableCodesInUseCase = new()
+            List<NcProgramCodeAttempt> combinableCodesInUseCase = new()
             {
-                TestNCProgramCodeAttemptFactory.Create(),
+                TestNcProgramCodeAttemptFactory.Create(),
             };
-            CombineMainNCProgramParam param = new(combinableCodesInUseCase, MachineToolTypeAttempt.RB250F, MaterialTypeAttempt.Aluminum);
+            CombineMainNcProgramParam param = new(combinableCodesInUseCase, MachineToolTypeAttempt.RB250F, MaterialTypeAttempt.Aluminum);
             _ = await useCase.ExecuteAsync(param);
 
             // then
-            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NCProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+            mock_comviner.Verify(x => x.Combine(It.IsAny<IEnumerable<NcProgramCode>>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
     }
 }

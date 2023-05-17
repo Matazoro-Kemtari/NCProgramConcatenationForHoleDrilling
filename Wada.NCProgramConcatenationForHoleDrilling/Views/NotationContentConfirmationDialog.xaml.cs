@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Views
+namespace Wada.NcProgramConcatenationForHoleDrilling.Views
 {
     /// <summary>
     /// Interaction logic for NotationContentConfirmationDialog

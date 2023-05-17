@@ -1,15 +1,15 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ParameterRewriter.Process;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter
+namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
     public class DrillingParameterRewriter : IMainProgramParameterRewriter
     {
         [Logging]
-        public virtual IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
+        public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
         {
             if (rewriteByToolRecord.Material == MaterialType.Undefined)
                 throw new ArgumentException("素材が未定義です");
@@ -18,33 +18,33 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             var drillingParameters = rewriteByToolRecord.DrillingPrameters;
 
             // メインプログラムを工程ごとに取り出す
-            List<NCProgramCode> rewritedNCPrograms = new();
+            List<NcProgramCode> rewritedNCPrograms = new();
             foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
                 var maxDiameter = drillingParameters.MaxBy(x => x.DirectedOperationToolDiameter)
                     ?.DirectedOperationToolDiameter;
                 if (maxDiameter == null
                     || maxDiameter + 0.5m < rewriteByToolRecord.DirectedOperationToolDiameter)
-                    throw new NCProgramConcatenationServiceException(
+                    throw new DomainException(
                         $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません\n" +
                         $"リストの最大ドリル径({maxDiameter})を超えています");
 
                 DrillingProgramPrameter drillingParameter = drillingParameters
                     .Where(x => x.DirectedOperationToolDiameter <= rewriteByToolRecord.DirectedOperationToolDiameter)
                     .MaxBy(x => x.DirectedOperationToolDiameter)
-                    ?? throw new NCProgramConcatenationServiceException(
+                    ?? throw new DomainException(
                         $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
 
                 switch (rewritableCode.MainProgramClassification)
                 {
-                    case NCProgramType.CenterDrilling:
+                    case NcProgramType.CenterDrilling:
                         rewritedNCPrograms.Add(CenterDrillingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,
                             drillingParameter,
                             rewriteByToolRecord.SubProgramNumber));
                         break;
-                    case NCProgramType.Drilling:
+                    case NcProgramType.Drilling:
                         rewritedNCPrograms.Add(DrillingProgramRewriter.Rewrite(
                                 rewritableCode,
                                 rewriteByToolRecord.Material,
@@ -53,7 +53,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                                 rewriteByToolRecord.SubProgramNumber,
                                 rewriteByToolRecord.DirectedOperationToolDiameter));
                         break;
-                    case NCProgramType.Chamfering:
+                    case NcProgramType.Chamfering:
                         rewritedNCPrograms.Add(ReplaceLastM1ToM30(
                                 ChamferingProgramRewriter.Rewrite(
                                     rewritableCode,
@@ -76,13 +76,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         [Logging]
-        public static NCProgramCode ReplaceLastM1ToM30(NCProgramCode ncProgramCode)
+        public static NcProgramCode ReplaceLastM1ToM30(NcProgramCode ncProgramCode)
         {
-            if (ncProgramCode.MainProgramClassification != NCProgramType.Chamfering)
+            if (ncProgramCode.MainProgramClassification != NcProgramType.Chamfering)
                 throw new ArgumentException("引数に面取り以外のプログラムコードが指定されました");
 
             bool hasFinded1stWord = false;
-            var rewritedNCBlocks = ncProgramCode.NCBlocks
+            var rewritedNCBlocks = ncProgramCode.NcBlocks
                 .Reverse()
                 .Select(x =>
                 {
@@ -92,13 +92,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
                     var rewitedNCWords = x.NCWords
                         .Select(y =>
                         {
-                            INCWord resuld;
+                            INcWord resuld;
                             if (hasFinded1stWord == false
-                            && y.GetType() == typeof(NCWord))
+                            && y.GetType() == typeof(NcWord))
                             {
                                 hasFinded1stWord = true;
 
-                                NCWord ncWord = (NCWord)y;
+                                NcWord ncWord = (NcWord)y;
                                 if (ncWord.Address.Value == 'M'
                                 && ncWord.ValueData.Number == 1)
                                     resuld = ncWord with
@@ -124,7 +124,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
 
             return ncProgramCode with
             {
-                NCBlocks = rewritedNCBlocks
+                NcBlocks = rewritedNCBlocks
             };
         }
     }

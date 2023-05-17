@@ -1,8 +1,8 @@
-﻿using Wada.NCProgramConcatenationService.MainProgramParameterAggregation;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.ParameterRewriter
+namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
     public interface IMainProgramParameterRewriter
     {
@@ -11,7 +11,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
         /// </summary>
         /// <param name="rewriteByToolRecord"></param>
         /// <returns></returns>
-        IEnumerable<NCProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord);
+        IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord);
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     /// <param name="TapParameters">タップパラメータ</param>
     /// <param name="DrillingPrameters">ドリルパラメータ</param>
     public record class RewriteByToolRecord(
-        IEnumerable<NCProgramCode> RewritableCodes,
+        IEnumerable<NcProgramCode> RewritableCodes,
         MaterialType Material,
         decimal Thickness,
         string SubProgramNumber,
@@ -40,7 +40,7 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
     public class TestRewriteByToolRecordFactory
     {
         public static RewriteByToolRecord Create(
-            IEnumerable<NCProgramCode>? rewritableCodes = default,
+            IEnumerable<NcProgramCode>? rewritableCodes = default,
             MaterialType material = MaterialType.Aluminum,
             decimal thickness = 12.3m,
             string subProgramNumber = "1000",
@@ -50,13 +50,13 @@ namespace Wada.NCProgramConcatenationService.ParameterRewriter
             IEnumerable<TappingProgramPrameter>? tapParameters = default,
             IEnumerable<DrillingProgramPrameter>? drillingPrameters = default)
         {
-            rewritableCodes ??= new List<NCProgramCode>
+            rewritableCodes ??= new List<NcProgramCode>
             {
-                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.CenterDrilling),
-                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Drilling),
-                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Chamfering),
-                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Reaming),
-                TestNCProgramCodeFactory.Create(mainProgramType: NCProgramType.Tapping),
+                TestNCProgramCodeFactory.Create(mainProgramType: NcProgramType.CenterDrilling),
+                TestNCProgramCodeFactory.Create(mainProgramType: NcProgramType.Drilling),
+                TestNCProgramCodeFactory.Create(mainProgramType: NcProgramType.Chamfering),
+                TestNCProgramCodeFactory.Create(mainProgramType: NcProgramType.Reaming),
+                TestNCProgramCodeFactory.Create(mainProgramType: NcProgramType.Tapping),
             };
             crystalReamerParameters ??= new List<ReamingProgramPrameter>
             {

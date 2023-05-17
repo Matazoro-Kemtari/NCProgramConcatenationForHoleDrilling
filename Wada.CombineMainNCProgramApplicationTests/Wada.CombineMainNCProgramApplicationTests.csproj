@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNCProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.CombineMainNCProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />
   </ItemGroup>
 
 </Project>

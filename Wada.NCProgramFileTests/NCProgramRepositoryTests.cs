@@ -1,12 +1,12 @@
-﻿using Wada.NCProgramFile;
+﻿using Wada.NcProgramFile;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
-using Wada.NCProgramConcatenationService;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 using System.Text.RegularExpressions;
 
-namespace Wada.NCProgramFile.Tests
+namespace Wada.NcProgramFile.Tests
 {
     [TestClass()]
     public class NCProgramRepositoryTests
@@ -19,23 +19,23 @@ namespace Wada.NCProgramFile.Tests
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(ncProgramSource)))
-                ?? throw new NCProgramConcatenationServiceException(
+                ?? throw new DomainException(
                     "StreamReader作るときに失敗した");
 
             // when
             string pgName = "O0150";
             Match pgNameMatcher = Regex.Match(pgName, @"\d+");
-            NCProgramType ncProgram = NCProgramType.SubProgram;
-            INCProgramRepository ncProgramRepository = new NCProgramRepository();
-            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, pgName);
+            NcProgramType ncProgram = NcProgramType.SubProgram;
+            INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
+            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, pgName);
 
             // then
-            NCProgramCode expected = new(ncProgram, pgName, testNCBlocks);
+            NcProgramCode expected = new(ncProgram, pgName, testNCBlocks);
             Assert.AreEqual(pgNameMatcher.Value, actual.ProgramName);
 
             CollectionAssert.AreEqual(
-                expected.NCBlocks.Select(x => x?.ToString()).ToList(),
-                actual.NCBlocks.Select(x => x?.ToString()).ToList());
+                expected.NcBlocks.Select(x => x?.ToString()).ToList(),
+                actual.NcBlocks.Select(x => x?.ToString()).ToList());
         }
 
         internal static readonly string ncProgramSource =
@@ -52,67 +52,67 @@ M5
 M02
 %
 ";
-        internal static readonly IEnumerable<NCBlock?> testNCBlocks =
-            new List<NCBlock?>
+        internal static readonly IEnumerable<NcBlock?> testNCBlocks =
+            new List<NcBlock?>
             {
-                new NCBlock(
-                    new List< INCWord>
+                new NcBlock(
+                    new List< INcWord>
                     {
-                        new NCWord(new Address('O'),new NumericalValue("1000")),
-                        new NCComment("SAMPLE"),
+                        new NcWord(new Address('O'),new NumericalValue("1000")),
+                        new NcComment("SAMPLE"),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCComment("3-M10"),
+                        new NcComment("3-M10"),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCVariable(new VariableAddress(100),new CoordinateValue("10.")),
+                        new NcVariable(new VariableAddress(100),new CoordinateValue("10.")),
                     },
                     OptionalBlockSkip.None),
                 null,
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('N'),new NumericalValue("100")),
+                        new NcWord(new Address('N'),new NumericalValue("100")),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('S'),new NumericalValue("2000")),
+                        new NcWord(new Address('S'),new NumericalValue("2000")),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('M'),new NumericalValue("3")),
+                        new NcWord(new Address('M'),new NumericalValue("3")),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('G'),new NumericalValue("01")),
-                        new NCWord(new Address('X'),new CoordinateValue("50.")),
-                        new NCWord(new Address('Y'),new CoordinateValue("-50.")),
-                        new NCWord(new Address('Z'),new CoordinateValue("-10.")),
-                        new NCWord(new Address('F'),new NumericalValue("500")),
+                        new NcWord(new Address('G'),new NumericalValue("01")),
+                        new NcWord(new Address('X'),new CoordinateValue("50.")),
+                        new NcWord(new Address('Y'),new CoordinateValue("-50.")),
+                        new NcWord(new Address('Z'),new CoordinateValue("-10.")),
+                        new NcWord(new Address('F'),new NumericalValue("500")),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('M'),new NumericalValue("5")),
+                        new NcWord(new Address('M'),new NumericalValue("5")),
                     },
                     OptionalBlockSkip.None),
-                new NCBlock(
-                    new List<INCWord>
+                new NcBlock(
+                    new List<INcWord>
                     {
-                        new NCWord(new Address('M'),new NumericalValue("02")),
+                        new NcWord(new Address('M'),new NumericalValue("02")),
                     },
                     OptionalBlockSkip.None),
             };
@@ -126,24 +126,24 @@ M02
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(mainSource)))
-                ?? throw new NCProgramConcatenationServiceException(
+                ?? throw new DomainException(
                     "StreamReader作るときに失敗した");
 
             // when
-            INCProgramRepository ncProgramRepository = new NCProgramRepository();
-            NCProgramType ncProgram = NCProgramType.CenterDrilling;
-            NCProgramCode actual = await ncProgramRepository.ReadAllAsync(reader, ncProgram, string.Empty);
+            INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
+            NcProgramType ncProgram = NcProgramType.CenterDrilling;
+            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, string.Empty);
 
             // then
-            NCProgramCode expected = new(ncProgram, string.Empty, testNCBlocks);
+            NcProgramCode expected = new(ncProgram, string.Empty, testNCBlocks);
             Assert.AreEqual(string.Empty, actual.ProgramName);
-            Assert.AreEqual(count, actual.NCBlocks.Count());
-            Assert.AreEqual(sourceType, actual.NCBlocks.FirstOrDefault()?.ToString());
-            var actualParameterAddresses = actual.NCBlocks
+            Assert.AreEqual(count, actual.NcBlocks.Count());
+            Assert.AreEqual(sourceType, actual.NcBlocks.FirstOrDefault()?.ToString());
+            var actualParameterAddresses = actual.NcBlocks
                 .Where(x => x != null)
                 .Select(x => x!.NCWords
-                    .Where(y => y.GetType() == typeof(NCWord))
-                    .Cast<NCWord>()
+                    .Where(y => y.GetType() == typeof(NcWord))
+                    .Cast<NcWord>()
                     .Where(y => y.ValueData.Value.Contains('*'))
                     .Select(y => y.Address.Value)
                 )
@@ -289,8 +289,8 @@ M1
             using MemoryStream stream = new();
             using StreamWriter writer = new(stream);
             var expected = TestNCProgramCodeFactory.Create().ToString();
-            INCProgramRepository repository = new NCProgramRepository();
-            await repository.WriteAllAsync(writer, expected);
+            INcProgramReadWriter readWriter = new NcProgramReadWriter();
+            await readWriter.WriteAllAsync(writer, expected);
 
             // then
             // ストリームの位置を戻す

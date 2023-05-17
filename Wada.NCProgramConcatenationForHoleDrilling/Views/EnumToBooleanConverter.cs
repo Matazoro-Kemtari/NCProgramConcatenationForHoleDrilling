@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling.Views
+namespace Wada.NcProgramConcatenationForHoleDrilling.Views
 {
     /// <summary>
     /// 列挙型をBooleanに変換するコンバータ

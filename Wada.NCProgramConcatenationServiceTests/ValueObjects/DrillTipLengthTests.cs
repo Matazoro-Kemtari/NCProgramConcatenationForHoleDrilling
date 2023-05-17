@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Wada.NCProgramConcatenationService.ValueObjects.Tests
+namespace Wada.NcProgramConcatenationService.ValueObjects.Tests
 {
     [TestClass()]
     public class DrillTipLengthTests

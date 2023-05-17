@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Wada.NCProgramConcatenationForHoleDrilling
+namespace Wada.NcProgramConcatenationForHoleDrilling
 {
     [Serializable]
-    internal class NCProgramConcatenationForHoleDrillingException : Exception
+    internal class NcProgramConcatenationForHoleDrillingException : Exception
     {
-        public NCProgramConcatenationForHoleDrillingException()
+        public NcProgramConcatenationForHoleDrillingException()
         {
         }
 
-        public NCProgramConcatenationForHoleDrillingException(string? message) : base(message)
+        public NcProgramConcatenationForHoleDrillingException(string? message) : base(message)
         {
         }
 
-        public NCProgramConcatenationForHoleDrillingException(string? message, Exception? innerException) : base(message, innerException)
+        public NcProgramConcatenationForHoleDrillingException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
 
-        protected NCProgramConcatenationForHoleDrillingException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected NcProgramConcatenationForHoleDrillingException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

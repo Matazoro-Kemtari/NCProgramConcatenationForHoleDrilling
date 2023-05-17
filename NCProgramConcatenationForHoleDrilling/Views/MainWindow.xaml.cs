@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace NCProgramConcatenationForHoleDrilling.Views
+namespace NcProgramConcatenationForHoleDrilling.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

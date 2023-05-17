@@ -1,6 +1,6 @@
 ﻿using Wada.AOP.Logging;
 
-namespace Wada.NCProgramConcatenationService.ValueObjects
+namespace Wada.NcProgramConcatenationService.ValueObjects
 {
     public record class DrillTipLength
     {

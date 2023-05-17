@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
+namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
 {
     public interface IMainProgramPrameter
     {
@@ -102,7 +102,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramParameterAggregation
         {
             var matchedDiameter = Regex.Match(value, @"(?<=M)\d+(\.\d)?");
             if (!matchedDiameter.Success)
-                throw new NCProgramConcatenationServiceException(
+                throw new DomainException(
                     "タップ径の値が読み取れません\n" +
                     $"書式を確認してください タップ径: {value}");
 

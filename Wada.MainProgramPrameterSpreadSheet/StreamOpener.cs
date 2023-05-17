@@ -1,5 +1,5 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NCProgramConcatenationService;
+using Wada.NcProgramConcatenationService;
 
 namespace Wada.MainProgramPrameterSpreadSheet
 {
@@ -15,12 +15,12 @@ namespace Wada.MainProgramPrameterSpreadSheet
             }
             catch (FileNotFoundException ex)
             {
-                string msg = "ファイルが見つかりません";
+                string msg = $"ファイルが見つかりません ファイル: {path}";
                 throw new OpenFileStreamException(msg, ex);
             }
             catch (IOException ex)
             {
-                string msg = "ファイルが使用中です";
+                string msg = $"ファイルが使用中です ファイル: {path}";
                 throw new OpenFileStreamException(msg, ex);
             }
 

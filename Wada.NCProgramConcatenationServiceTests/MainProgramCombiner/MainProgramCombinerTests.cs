@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Wada.NCProgramConcatenationService.NCProgramAggregation;
-using Wada.NCProgramConcatenationService.ValueObjects;
+using Wada.NcProgramConcatenationService.NCProgramAggregation;
+using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NCProgramConcatenationService.MainProgramCombiner.Tests
+namespace Wada.NcProgramConcatenationService.MainProgramCombiner.Tests
 {
     [TestClass()]
     public class MainProgramCombinerTests
@@ -24,7 +24,7 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner.Tests
                 "O0002",
                 "O0003",
             };
-            List<NCProgramCode> combinableCodes = new()
+            List<NcProgramCode> combinableCodes = new()
             {
                 TestNCProgramCodeFactory.Create(programName: name[0]),
                 TestNCProgramCodeFactory.Create(programName: name[1]),
@@ -40,11 +40,11 @@ namespace Wada.NCProgramConcatenationService.MainProgramCombiner.Tests
             var count = 1;
             count += combinableCodes.Count() - 1;
             count += combinableCodes
-                .Select(x => x.NCBlocks.Count())
+                .Select(x => x.NcBlocks.Count())
                 .Sum();
-            Assert.AreEqual(count, combinedCode.NCBlocks.Count());
+            Assert.AreEqual(count, combinedCode.NcBlocks.Count());
 
-            Assert.AreEqual($"{machineToolName}-{materialName}", combinedCode.NCBlocks.First()?.NCWords.Cast<NCComment>().First().Comment);
+            Assert.AreEqual($"{machineToolName}-{materialName}", combinedCode.NcBlocks.First()?.NCWords.Cast<NcComment>().First().Comment);
         }
     }
 }
