@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Wada.MainProgramPrameterSpreadSheet;
+using Wada.MainProgramParameterSpreadSheet;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.UseCase.DataClass;
@@ -29,11 +29,11 @@ namespace Wada.ReadMainNcProgramParametersApplication.Tests
 
             Mock<IStreamOpener> mock_stream = new();
 
-            Mock<ReamingPrameterReader> mock_reamer = new();
+            Mock<ReamingParameterReader> mock_reamer = new();
             mock_reamer.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
                 .ReturnsAsync(new List<ReamingProgramPrameter>());
 
-            Mock<TappingPrameterReader> mock_tap = new();
+            Mock<TappingParameterReader> mock_tap = new();
             mock_tap.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
                 .ReturnsAsync(new List<TappingProgramPrameter>());
 

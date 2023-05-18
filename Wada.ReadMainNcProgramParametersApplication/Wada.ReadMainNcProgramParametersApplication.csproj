@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.MainProgramParameterSpreadSheet\Wada.MainProgramParameterSpreadSheet.csproj" />
     <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
     <ProjectReference Include="..\Wada.UseCase.DataClass\Wada.UseCase.DataClass.csproj" />
   </ItemGroup>

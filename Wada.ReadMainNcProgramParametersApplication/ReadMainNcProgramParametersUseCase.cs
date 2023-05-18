@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Wada.AOP.Logging;
-using Wada.MainProgramPrameterSpreadSheet;
+using Wada.MainProgramParameterSpreadSheet;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.UseCase.DataClass;
@@ -33,11 +33,11 @@ public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUs
 {
     private readonly IConfiguration _configuration;
     private readonly IStreamOpener _streamOpener;
-    private readonly IMainProgramPrameterReader _reamingPrameterReader;
-    private readonly IMainProgramPrameterReader _tappingPrameterReader;
-    private readonly IMainProgramPrameterReader _drillingPrameterReader;
+    private readonly IMainProgramParameterReader _reamingPrameterReader;
+    private readonly IMainProgramParameterReader _tappingPrameterReader;
+    private readonly IMainProgramParameterReader _drillingPrameterReader;
 
-    public ReadMainNcProgramParametersUseCase(IConfiguration configuration, IStreamOpener streamOpener, ReamingPrameterReader reamingPrameterReader, TappingPrameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader)
+    public ReadMainNcProgramParametersUseCase(IConfiguration configuration, IStreamOpener streamOpener, ReamingParameterReader reamingPrameterReader, TappingParameterReader tappingPrameterReader, DrillingParameterReader drillingPrameterReader)
     {
         _configuration = configuration;
         _streamOpener = streamOpener;

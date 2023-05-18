@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet.Tests
+namespace Wada.MainProgramParameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class TappingPrameterReaderTests
+    public class TappingParameterReaderTests
     {
         [TestMethod()]
         public async Task 正常系_タップパラメータエクセルが読み込めること()
@@ -17,7 +17,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             IEnumerable<IMainProgramPrameter> tappingProgramPrameters = await tappingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
@@ -41,7 +41,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -69,7 +69,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -97,7 +97,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -125,7 +125,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -153,7 +153,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -181,7 +181,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 
@@ -209,7 +209,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader tappingPrameterReader = new TappingPrameterReader();
+            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
             Task target() =>
                  tappingPrameterReader.ReadAllAsync(stream);
 

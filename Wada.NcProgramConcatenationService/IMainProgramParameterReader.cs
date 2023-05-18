@@ -2,7 +2,7 @@
 
 namespace Wada.NcProgramConcatenationService
 {
-    public interface IMainProgramPrameterReader
+    public interface IMainProgramParameterReader
     {
         /// <summary>
         /// パラメータエクセルを読みだす

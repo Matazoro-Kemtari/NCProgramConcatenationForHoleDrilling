@@ -3,9 +3,9 @@ using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet;
+namespace Wada.MainProgramParameterSpreadSheet;
 
-public class DrillingParameterReader : IMainProgramPrameterReader
+public class DrillingParameterReader : IMainProgramParameterReader
 {
     [Logging]
     public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)

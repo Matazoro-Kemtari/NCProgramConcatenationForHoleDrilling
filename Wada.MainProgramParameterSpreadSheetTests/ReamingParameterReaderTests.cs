@@ -3,10 +3,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet.Tests
+namespace Wada.MainProgramParameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class ReamingPrameterReaderTests
+    public class ReamingParameterReaderTests
     {
         [TestMethod()]
         public async Task 正常系_リーマパラメータエクセルが読み込めること()
@@ -17,7 +17,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
@@ -34,7 +34,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
 
             // then
@@ -58,7 +58,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             Task target() =>
                  reamingPrameterReader.ReadAllAsync(stream);
 
@@ -86,7 +86,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             Task target() =>
                  reamingPrameterReader.ReadAllAsync(stream);
 
@@ -114,7 +114,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             Task target() =>
                  reamingPrameterReader.ReadAllAsync(stream);
 
@@ -142,7 +142,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
             Task target() =>
                  reamingPrameterReader.ReadAllAsync(stream);
 

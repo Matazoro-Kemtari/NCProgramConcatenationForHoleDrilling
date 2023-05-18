@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet.Tests
+namespace Wada.MainProgramParameterSpreadSheet.Tests
 {
     [TestClass()]
     public class DrillingParameterReaderTests
@@ -44,7 +44,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -72,7 +72,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -100,7 +100,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -128,7 +128,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -156,7 +156,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -184,7 +184,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
@@ -212,7 +212,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
             Task target() =>
                  drillingPrameterReader.ReadAllAsync(stream);
 
