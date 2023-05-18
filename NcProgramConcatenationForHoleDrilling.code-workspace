@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"markdown-pdf.styles": [
+			"markdown.css"
+		],
+		"markdownlint.config": {
+			"MD033": false
+		},
+		"gopls": {
+			"analyses": {
+				"ST1003": true,
+				"ST1016": true,
+				"ST1020": true,
+				"ST1021": true,
+				"ST1022": true
+			}
+		}
+	}
+}

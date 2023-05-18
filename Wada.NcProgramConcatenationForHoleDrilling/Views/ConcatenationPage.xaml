@@ -1,0 +1,237 @@
+﻿<UserControl x:Class="Wada.NcProgramConcatenationForHoleDrilling.Views.ConcatenationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Wada.NcProgramConcatenationForHoleDrilling.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewmodels="clr-namespace:Wada.NcProgramConcatenationForHoleDrilling.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="350" d:DesignWidth="400"
+             d:Background="LightGray"
+             d:DataContext="{d:DesignInstance Type=viewmodels:ConcatenationPageViewModel}"
+             xmlns:dd="urn:gong-wpf-dragdrop"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+             FontSize="16">
+
+    <UserControl.Resources>
+        <!--ValidationError時のトリガ-->
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Background" Value="LightPink"/>
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                   Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type StackPanel}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Background" Value="LightPink"/>
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                   Path=(Validation.Errors)[0].ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- https://livealoneblog.com/wpf-validationrule-validating-data/ OR https://livealoneblog.com/wpf-annotations-validating-data/ -->
+        <ControlTemplate x:Key="ValidationTemplate">
+            <Border BorderBrush="Red" BorderThickness="2">
+                <AdornedElementPlaceholder x:Name="adornedelem"/>
+            </Border>
+        </ControlTemplate>
+
+        <!-- BooleanをVisibility列挙型に変換するコンバータ 組み込みコンバータ -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <!-- enumをbooleanに変換するコンバーター -->
+        <local:EnumToBooleanConverter x:Key="EnumToBoolean"/>
+        <!-- enumをbooleanにして True/Falseを反転して Visibility列挙型に変換する -->
+        <local:ValueConverterGroup x:Key="EnumVisibilityConverter">
+            <local:EnumToBooleanConverter/>
+            <BooleanToVisibilityConverter/>
+        </local:ValueConverterGroup>
+    </UserControl.Resources>
+
+    <i:Interaction.Triggers>
+        <l:InteractionMessageTrigger MessageKey="Info" Messenger="{Binding Messenger}">
+            <l:InformationDialogInteractionMessageAction/>
+        </l:InteractionMessageTrigger>
+        <l:InteractionMessageTrigger MessageKey="Confirm" Messenger="{Binding Messenger}">
+            <l:ConfirmationDialogInteractionMessageAction/>
+        </l:InteractionMessageTrigger>
+    </i:Interaction.Triggers>
+
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="クリア(_C)"
+                    MinWidth="70"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding ClearCommand}"/>
+            <Button Content="進む(_N)"
+                    MinWidth="70"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding NextViewCommand}"/>
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0"
+                       Margin="5"
+                       Fill="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                       Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                       StrokeThickness="3"
+                       StrokeDashArray="2"
+                       SnapsToDevicePixels="True"
+                       StrokeStartLineCap="Round"
+                       StrokeEndLineCap="Round"
+                       dd:DragDrop.IsDropTarget="True"
+                       dd:DragDrop.DropHandler="{Binding}"/>
+            <TextBlock Grid.Row="0"
+                       Margin="20"
+                       x:Name="NcProgramFileName"
+                       Text="{Binding NcProgramFileName.Value}"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                <Validation.ErrorTemplate>
+                    <!-- エラー時に赤枠を表示させない -->
+                    <ControlTemplate/>
+                </Validation.ErrorTemplate>
+            </TextBlock>
+            <TextBlock Grid.Row="0"
+                       Margin="20"
+                       Text="{Binding ErrorMsgNcProgramFileName.Value}"
+                       Foreground="Red"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"
+                       Visibility="{Binding (Validation.HasError), ElementName=NcProgramFileName, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition Height="0*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" Text="加工機" HorizontalAlignment="Right"/>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                    <StackPanel x:Name="MachineTool" Tag="{Binding MachineTool.Value}" Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                        <RadioButton Margin="5" Content="RB-250F" VerticalAlignment="Center"
+                                        IsChecked="{Binding MachineTool.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=RB250F, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton Margin="5" Content="RB-260" VerticalAlignment="Center"
+                                        IsChecked="{Binding MachineTool.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=RB260, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton Margin="5" Content="3軸立型" VerticalAlignment="Center"
+                                        IsChecked="{Binding MachineTool.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Triaxial, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                    <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgMachineTool.Value}"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=MachineTool, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" Text="材質" HorizontalAlignment="Right"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                    <StackPanel x:Name="Material" Tag="{Binding Material.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                        <RadioButton Margin="5" Content="AL" VerticalAlignment="Center"
+                                     IsChecked="{Binding Material.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Aluminum, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton Margin="5" Content="SS400" VerticalAlignment="Center"
+                                     IsChecked="{Binding Material.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Iron, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                    <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgMaterial.Value}"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=Material, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="8" Text="リーマ" HorizontalAlignment="Right"
+                           Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="3" Orientation="Horizontal"
+                            Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}">
+                    <StackPanel x:Name="Reamer" Tag="{Binding Reamer.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
+                        <RadioButton Margin="5" Content="クリスタルリーマ" VerticalAlignment="Center"
+                                     IsChecked="{Binding Reamer.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Crystal, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton Margin="5" Content="スキルリーマ" VerticalAlignment="Center"
+                                     IsChecked="{Binding Reamer.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Skill, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                    <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgReamer.Value}"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=Reamer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Text="板厚" HorizontalAlignment="Right"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <TextBox x:Name="Thickness"
+                                 Text="{Binding Thickness.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                                 MinWidth="50"
+                                 VerticalAlignment="Bottom"
+                                 InputMethod.IsInputMethodEnabled="False"/>
+                        <TextBlock Text="mm" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                    <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgThickness.Value}"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=Thickness, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>
