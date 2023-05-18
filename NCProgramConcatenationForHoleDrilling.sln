@@ -38,9 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadMainNcProgramAppli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.ReadMainNcProgramParametersApplication", "Wada.ReadMainNcProgramParametersApplication\Wada.ReadMainNcProgramParametersApplication.csproj", "{4D3D1BF8-B527-4E3A-ABEC-073A4C9E425D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramPrameterSpreadSheet", "Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj", "{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramParameterSpreadSheet", "Wada.MainProgramParameterSpreadSheet\Wada.MainProgramParameterSpreadSheet.csproj", "{C6BAEA1F-ACF3-471F-8ED6-3723BDBBAA76}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramPrameterSpreadSheetTests", "Wada.MainProgramPrameterSpreadSheetTests\Wada.MainProgramPrameterSpreadSheetTests.csproj", "{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.MainProgramParameterSpreadSheetTests", "Wada.MainProgramParameterSpreadSheetTests\Wada.MainProgramParameterSpreadSheetTests.csproj", "{5EDFAA2B-D1B1-4F6D-8980-07FCA000E7E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.EditNcProgramApplication", "Wada.EditNcProgramApplication\Wada.EditNcProgramApplication.csproj", "{1A8D09D8-BE91-48B5-B48B-ECBBB0768F2D}"
 EndProject

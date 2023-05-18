@@ -58,9 +58,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeAppl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.StoreNcProgramCodeApplicationTests", "Wada.StoreNcProgramCodeApplicationTests\Wada.StoreNcProgramCodeApplicationTests.csproj", "{9D663703-E241-4158-865F-C584749A495D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.InchMillimeterConvertSpreadSheet", "Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj", "{88FBC851-C8C0-4036-AB04-0785941DE73A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.InchMillimeterConvertSpreadSheet", "Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj", "{88FBC851-C8C0-4036-AB04-0785941DE73A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wada.InchMillimeterConvertSpreadSheetTests", "Wada.InchMillimeterConvertSpreadSheetTests\Wada.InchMillimeterConvertSpreadSheetTests.csproj", "{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wada.InchMillimeterConvertSpreadSheetTests", "Wada.InchMillimeterConvertSpreadSheetTests\Wada.InchMillimeterConvertSpreadSheetTests.csproj", "{C1B0C746-E7C0-4E26-A23E-65B62C9D8CA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
