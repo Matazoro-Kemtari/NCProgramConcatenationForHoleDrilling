@@ -50,8 +50,6 @@ public class ReadMainNcProgramParametersUseCase : IReadMainNcProgramParametersUs
     public async Task<MainNcProgramParametersDto> ExecuteAsync()
     {
         string directory = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
-            "..",
             _configuration["applicationConfiguration:ListDirectory"]
             ?? throw new InvalidOperationException(
                 "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +

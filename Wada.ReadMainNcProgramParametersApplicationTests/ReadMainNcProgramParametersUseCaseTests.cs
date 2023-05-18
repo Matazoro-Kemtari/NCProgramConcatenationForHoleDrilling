@@ -17,7 +17,7 @@ namespace Wada.ReadMainNcProgramParametersApplication.Tests
             // given
             Mock<IConfiguration> configMock = new();
             configMock.Setup(x => x["applicationConfiguration:ListDirectory"])
-                .Returns("リスト");
+                .Returns(@"..\リスト");
             configMock.Setup(x => x["applicationConfiguration:CrystalRemmerTable"])
                 .Returns("クリスタルリーマー.xlsx");
             configMock.Setup(x => x["applicationConfiguration:SkillRemmerTable"])

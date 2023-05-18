@@ -16,7 +16,7 @@ namespace Wada.ReadSubNcProgramApplication.Tests
             // given
             Mock<IConfiguration> configMock = new();
             configMock.Setup(x => x["applicationConfiguration:ListDirectory"])
-                .Returns("リスト");
+                .Returns(@"..\リスト");
             configMock.Setup(x => x["applicationConfiguration:InchTable"])
                 .Returns("インチ.xlsx");
             Mock<IStreamReaderOpener> mock_reader = new();

@@ -17,7 +17,7 @@ namespace Wada.ReadMainNcProgramApplication.Tests
             // given
             var inMemorySettings = new Dictionary<string, string?>
             {
-                { "applicationConfiguration:MainNcProgramDirectory", "メインプログラム"},
+                { "applicationConfiguration:MainNcProgramDirectory", @"..\メインプログラム"},
                 { "applicationConfiguration:MachineNames:0", "RB250F" },
                 { "applicationConfiguration:MachineNames:1", "RB260" },
                 { "applicationConfiguration:MachineNames:2", "3軸立型" },

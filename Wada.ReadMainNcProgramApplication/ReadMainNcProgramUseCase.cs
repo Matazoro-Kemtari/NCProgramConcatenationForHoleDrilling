@@ -35,8 +35,6 @@ namespace Wada.ReadMainNcProgramApplication
             var machineNames = FetchMachineNames();
 
             var directory = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                "..",
                 _configuration["applicationConfiguration:MainNcProgramDirectory"]
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
