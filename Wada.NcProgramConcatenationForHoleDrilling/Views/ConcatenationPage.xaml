@@ -283,7 +283,7 @@
                                    TextWrapping="Wrap"
                                    Visibility="{Binding (Validation.HasError), ElementName=PilotHoleDepth, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </StackPanel>
-                        <TextBlock Grid.Row="1" Margin="5" Text="加工穴深さ" HorizontalAlignment="Right"
+                        <TextBlock Grid.Row="1" Margin="5" Text="止まり穴深さ" HorizontalAlignment="Right"
                                    Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Undetected}" VerticalAlignment="Center"/>
                         <TextBlock Grid.Row="1" Margin="5" Text="タップ深さ" HorizontalAlignment="Right"
                                    Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Tapping}"

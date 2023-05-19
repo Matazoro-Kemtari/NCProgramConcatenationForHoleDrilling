@@ -7,6 +7,7 @@ using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
@@ -103,6 +104,8 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
 
         BlindPilotHoleDepth = _concatenation.BlindPilotHoleDepth.ToReactivePropertyAsSynchronized(x => x.Value)
                                                                 .SetValidateAttribute(() => BlindPilotHoleDepth)
+                                                                .SetValidateNotifyError(v => ValidatePilotHoleDepthIsDeeper(v))
+                                                                .SetValidateNotifyError(v => ValidatePilotHoleAgainstThickness(v))
                                                                 .AddTo(Disposables);
 
         ErrorMsgBlindPilotHoleDepth = BlindPilotHoleDepth
@@ -112,6 +115,8 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
 
         BlindHoleDepth = _concatenation.BlindHoleDepth.ToReactivePropertyAsSynchronized(x => x.Value)
                                                       .SetValidateAttribute(() => BlindHoleDepth)
+                                                      .SetValidateNotifyError(v => ValidateHoleDepthIsShallower(v))
+                                                      .SetValidateNotifyError(v => ValidateBlindHoleAgainstThickness(v))
                                                       .AddTo(Disposables);
 
         ErrorMsgBlindHoleDepth = BlindHoleDepth
@@ -121,6 +126,8 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
 
         Thickness = _concatenation.Thickness.ToReactivePropertyAsSynchronized(x => x.Value)
                                             .SetValidateAttribute(() => Thickness)
+                                            .SetValidateNotifyError(v => ValidateThicknessAgainstPilotHoleDepth(v))
+                                            .SetValidateNotifyError(v => ValidateThicknessAgainstBlindHoleDepth(v))
                                             .AddTo(Disposables);
 
         ErrorMsgThickness = Thickness
@@ -300,6 +307,148 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
             dragFileList.FirstOrDefault(x => Path.GetExtension(x) == string.Empty) ?? string.Empty;
     }
 
+    /// <summary>
+    /// 下穴深さの方がより深いか検証する
+    /// </summary>
+    /// <param name="value">下穴深さ</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidatePilotHoleDepthIsDeeper(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(value, out var blindPilotHoleDepth))
+            return null;
+        if (!double.TryParse(_concatenation.BlindHoleDepth.Value, out var blindHoleDepth))
+            return null;
+
+        if (blindPilotHoleDepth <= blindHoleDepth)
+        {
+            var blindHoleName = _concatenation.FetchedOperationType.Value == DirectedOperation.Undetected
+                ? "止まり穴"
+                : _concatenation.FetchedOperationType.Value.GetEnumDisplayName();
+            return $"{blindHoleName}深さを超える値を入力してください";
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 下穴深さが板厚を超えていないか検証する
+    /// </summary>
+    /// <param name="value">下穴深さ</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidatePilotHoleAgainstThickness(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(value, out var blindPilotHoleDepth))
+            return null;
+        if (!double.TryParse(_concatenation.Thickness.Value, out var thickness))
+            return null;
+
+        if (thickness <= blindPilotHoleDepth)
+            return "板厚を超えない値を入力してください";
+
+        return null;
+    }
+
+    /// <summary>
+    /// 加工穴深さの方がより浅いか検証する
+    /// </summary>
+    /// <param name="value">加工穴深さ</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidateHoleDepthIsShallower(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(_concatenation.BlindPilotHoleDepth.Value, out var blindPilotHoleDepth))
+            return null;
+        if (!double.TryParse(value, out var blindHoleDepth))
+            return null;
+
+        if (blindPilotHoleDepth <= blindHoleDepth)
+            return "下穴深さ未満の値を入力してください";
+
+        return null;
+    }
+
+    /// <summary>
+    /// 止まり穴深さが板厚を超えていないか検証する
+    /// </summary>
+    /// <param name="value">止まり穴深さ</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidateBlindHoleAgainstThickness(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(value, out var blindHoleDepth))
+            return null;
+        if (!double.TryParse(_concatenation.Thickness.Value, out var thickness))
+            return null;
+
+        if (thickness <= blindHoleDepth)
+            return "板厚を超えない値を入力してください";
+
+        return null;
+    }
+
+    /// <summary>
+    /// 板厚が下穴深さより薄くないか検証する
+    /// </summary>
+    /// <param name="value">板厚</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidateThicknessAgainstPilotHoleDepth(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(value, out var thickness))
+            return null;
+        if (!double.TryParse(_concatenation.BlindPilotHoleDepth.Value, out var blindPilotHoleDepth))
+            return null;
+
+        if (thickness <= blindPilotHoleDepth)
+            return "下穴深さを超える値を入力してください";
+
+        return null;
+    }
+
+    /// <summary>
+    /// 板厚が止まり穴深さより薄くないか検証する
+    /// </summary>
+    /// <param name="value">板厚</param>
+    /// <returns></returns>
+    [Logging]
+    private string? ValidateThicknessAgainstBlindHoleDepth(string? value)
+    {
+        if (value == null)
+            return null;
+
+        if (!double.TryParse(value, out var thickness))
+            return null;
+        if (!double.TryParse(_concatenation.BlindHoleDepth.Value, out var blindHoleDepth))
+            return null;
+
+        if (thickness <= blindHoleDepth)
+        {
+            var blindHoleName = _concatenation.FetchedOperationType.Value == DirectedOperation.Undetected
+                ? "止まり穴"
+                : _concatenation.FetchedOperationType.Value.GetEnumDisplayName();
+            return $"{blindHoleName}深さを超える値を入力してください";
+        }
+        
+        return null;
+    }
+
     [Logging]
     public void Destroy() => Disposables.Dispose();
 
@@ -347,7 +496,7 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
     [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
     public ReactiveProperty<DrillingMethod> HoleType { get; }
 
-    [Display(Name = "止まり穴深さ(下穴)")]
+    [Display(Name = "下穴深さ")]
     [Required(ErrorMessage = "{0}を入力してください")]
     [RegularExpression(@"[0-9]+(\.[0-9]+)?", ErrorMessage = "半角の整数または小数を入力してください")]
     [Range(1, double.MaxValue, ErrorMessage = "{0}は{1:F}～{2:F}の範囲を入力してください")]
