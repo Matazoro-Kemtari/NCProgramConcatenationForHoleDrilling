@@ -20,6 +20,9 @@ internal record class ConcatenationPageModel
         MachineTool.Value = Models.MachineTool.Undefined;
         Material.Value = Models.Material.Undefined;
         Reamer.Value = ReamerType.Undefined;
+        HoleType.Value = DrillingMethod.Undefined;
+        BlindPilotHoleDepth.Value = string.Empty;
+        BlindHoleDepth.Value = string.Empty;
         Thickness.Value = string.Empty;
     }
 
@@ -30,35 +33,41 @@ internal record class ConcatenationPageModel
                DirectedOperationToolDiameter.Value,
                MainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value).Select(x => x.NcProgramCodes).First(),
                (MaterialTypeAttempt)Material.Value,
-               (ReamerTypeAttempt)Reamer.Value,
+               (ReamerTypeAttempt)Reamer.Value,// TODO: 穴加工と深さを追加
                decimal.Parse(Thickness.Value),
                MainNcProgramParameters
                ?? throw new InvalidOperationException(
                    "リストの準備が出来ていないか 失敗しています"));
 
     [Logging]
-    public void SetMainNcProgramParameters(MainNcProgramParametersAttempt mainNcProgramParametersAttempt)
+    internal void SetMainNcProgramParameters(MainNcProgramParametersAttempt mainNcProgramParametersAttempt)
         => MainNcProgramParameters = mainNcProgramParametersAttempt;
 
-    public ReactivePropertySlim<string> NcProgramFile { get; } = new();
+    internal ReactivePropertySlim<string> NcProgramFile { get; } = new();
 
-    public ReactivePropertySlim<DirectedOperation> FetchedOperationType { get; } = new(DirectedOperation.Undetected);
+    internal ReactivePropertySlim<DirectedOperation> FetchedOperationType { get; } = new(DirectedOperation.Undetected);
 
-    public ReactivePropertySlim<MachineTool> MachineTool { get; } = new();
+    internal ReactivePropertySlim<MachineTool> MachineTool { get; } = new();
 
-    public ReactivePropertySlim<Material> Material { get; } = new();
+    internal ReactivePropertySlim<Material> Material { get; } = new();
 
-    public ReactivePropertySlim<ReamerType> Reamer { get; } = new();
+    internal ReactivePropertySlim<ReamerType> Reamer { get; } = new();
 
-    public ReactivePropertySlim<string> Thickness { get; } = new(string.Empty);
+    internal ReactivePropertySlim<DrillingMethod> HoleType { get; } = new();
 
-    public ReactivePropertySlim<string> SubProgramNumber { get; } = new(string.Empty);
+    internal ReactivePropertySlim<string> BlindPilotHoleDepth { get; } = new();
 
-    public ReactivePropertySlim<decimal> DirectedOperationToolDiameter { get; } = new();
+    internal ReactivePropertySlim<string> BlindHoleDepth { get; } = new();
 
-    public IList<MainNcProgramCodeRequest> MainProgramCodes { get; } = new List<MainNcProgramCodeRequest>();
+    internal ReactivePropertySlim<string> Thickness { get; } = new(string.Empty);
 
-    public MainNcProgramParametersAttempt? MainNcProgramParameters { get; private set; } = null;
+    internal ReactivePropertySlim<string> SubProgramNumber { get; } = new(string.Empty);
+
+    internal ReactivePropertySlim<decimal> DirectedOperationToolDiameter { get; } = new();
+
+    internal IList<MainNcProgramCodeRequest> MainProgramCodes { get; } = new List<MainNcProgramCodeRequest>();
+
+    internal MainNcProgramParametersAttempt? MainNcProgramParameters { get; private set; } = null;
 }
 
 public enum DirectedOperation
@@ -106,6 +115,15 @@ public enum ReamerType
     Undefined,
     Crystal,
     Skill
+}
+
+public enum DrillingMethod
+{
+    Undefined,
+    // 通し穴
+    ThroughHole,
+    // 止まり穴
+    BlindHole,
 }
 
 public record class MainNcProgramCodeRequest(

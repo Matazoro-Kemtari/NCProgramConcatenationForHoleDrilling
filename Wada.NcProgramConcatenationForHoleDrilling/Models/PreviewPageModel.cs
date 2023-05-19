@@ -4,6 +4,6 @@ namespace Wada.NcProgramConcatenationForHoleDrilling.Models
 {
     internal record class PreviewPageModel
     {
-        public ReactivePropertySlim<string> CombinedProgramSource { get; } = new();
+        internal ReactivePropertySlim<string> CombinedProgramSource { get; } = new();
     }
 }

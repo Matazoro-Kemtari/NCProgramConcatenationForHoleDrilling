@@ -15,7 +15,7 @@ namespace Wada.NcProgramFile.Tests
         public async Task 正常系_NCプログラムが読み込めること()
         {
             // given
-            // テストデータ作成
+            // エラーメッセージ作成
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(ncProgramSource)))
@@ -122,7 +122,7 @@ M02
         public async Task 正常系_メインプログラムが読み込めること(string mainSource, int count, string sourceType, char[] parameterAddresses)
         {
             // given
-            // テストデータ作成
+            // エラーメッセージ作成
             using StreamReader reader = new StreamReader(
                 new MemoryStream(
                     Encoding.UTF8.GetBytes(mainSource)))
