@@ -26,6 +26,9 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
+            // TODO: 引数に止まり穴追加
+            // Dictionaryに関数を追加して呼び分けるようにする
+
             // NCプログラムを走査して書き換え対象を探す
             var rewrittenNcBlocks = rewritableCode.NcBlocks
                 .Select(x =>

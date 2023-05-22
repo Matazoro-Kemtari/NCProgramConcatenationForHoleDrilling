@@ -17,7 +17,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
             var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -58,7 +58,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
             var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -89,7 +89,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
             void target()
             {
-                IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+                IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
                 _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
@@ -107,7 +107,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
             void target()
             {
-                IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+                IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
                 _ = drillingParameterRewriter.RewriteByTool(param);
             }
 
@@ -127,7 +127,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
-            var drillingParameterRewriter = new DrillingParameterRewriter();
+            var drillingParameterRewriter = new DrillingSequenceBuilder();
             var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -168,7 +168,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
             var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -189,7 +189,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramParameterRewriter drillingParameterRewriter = new DrillingParameterRewriter();
+            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
             var actual = drillingParameterRewriter.RewriteByTool(param);
 
             // then

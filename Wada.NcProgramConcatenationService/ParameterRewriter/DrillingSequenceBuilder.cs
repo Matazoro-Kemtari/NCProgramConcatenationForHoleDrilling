@@ -6,7 +6,7 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
-    public class DrillingParameterRewriter : IMainProgramParameterRewriter
+    public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
     {
         [Logging]
         public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)

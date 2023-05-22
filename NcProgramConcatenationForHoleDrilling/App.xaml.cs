@@ -50,10 +50,10 @@ public partial class App
         _ = containerRegistry.Register<IReadMainNcProgramParametersUseCase, ReadMainNcProgramParametersUseCase>();
 
         // メインプログラムの編集
-        _ = containerRegistry.Register<CrystalReamingParameterRewriter>();
-        _ = containerRegistry.Register<SkillReamingParameterRewriter>();
-        _ = containerRegistry.Register<TappingParameterRewriter>();
-        _ = containerRegistry.Register<DrillingParameterRewriter>();
+        _ = containerRegistry.Register<CrystalReamingSequenceBuilder>();
+        _ = containerRegistry.Register<SkillReamingSequenceBuilder>();
+        _ = containerRegistry.Register<TappingSequenceBuilder>();
+        _ = containerRegistry.Register<DrillingSequenceBuilder>();
         _ = containerRegistry.Register<IEditNcProgramUseCase, EditNcProgramUseCase>();
 
         // メインプログラムの結合

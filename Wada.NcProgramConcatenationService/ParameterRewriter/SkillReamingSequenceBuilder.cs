@@ -3,9 +3,9 @@
     /// <summary>
     /// スキルリーマのパラメータを書き換える
     /// </summary>
-    public class SkillReamingParameterRewriter : ReamingParameterRewriterBase, IMainProgramParameterRewriter
+    public class SkillReamingSequenceBuilder : ReamingSequenceBuilderBase, IMainProgramSequenceBuilder
     {
-        public SkillReamingParameterRewriter()
+        public SkillReamingSequenceBuilder()
           : base(ParameterType.SkillReamerParameter, ReamerType.SkillReamerParameter)
         { }
     }

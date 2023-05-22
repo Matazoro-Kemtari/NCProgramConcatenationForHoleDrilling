@@ -3,9 +3,9 @@
     /// <summary>
     /// クリスタルリーマのパラメータを書き換える
     /// </summary>
-    public class CrystalReamingParameterRewriter : ReamingParameterRewriterBase, IMainProgramParameterRewriter
+    public class CrystalReamingSequenceBuilder : ReamingSequenceBuilderBase, IMainProgramSequenceBuilder
     {
-        public CrystalReamingParameterRewriter()
+        public CrystalReamingSequenceBuilder()
             : base(ParameterType.CrystalReamerParameter, ReamerType.CrystalReamerParameter)
         { }
     }

@@ -16,7 +16,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -57,7 +57,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -98,7 +98,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
             void target()
             {
-                IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+                IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
                 _ = skillReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -117,7 +117,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+                IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
                 _ = skillReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -135,7 +135,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material, thickness: (decimal)thickness);
-            var skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            var skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -208,7 +208,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+                IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
                 _ = skillReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -244,7 +244,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+                IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
                 _ = skillReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -266,7 +266,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
 
-            IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -289,7 +289,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             {
                 new("13.3", 10m, 20m, 0.1m, null),
             });
-            IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -313,7 +313,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)expectedThickness,
                 directedOperationToolDiameter: (decimal)toolDiameter);
-            IMainProgramParameterRewriter skillReamingParameterRewriter = new SkillReamingParameterRewriter();
+            IMainProgramSequenceBuilder skillReamingParameterRewriter = new SkillReamingSequenceBuilder();
             var actual = skillReamingParameterRewriter.RewriteByTool(param);
 
             // then

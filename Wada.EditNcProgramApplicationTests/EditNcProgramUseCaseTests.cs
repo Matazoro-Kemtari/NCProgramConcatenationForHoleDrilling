@@ -19,10 +19,10 @@ namespace Wada.EditNcProgramApplication.Tests
         {
             // given
             // when
-            Mock<CrystalReamingParameterRewriter> mock_crystal = new();
-            Mock<SkillReamingParameterRewriter> mock_skill = new();
-            Mock<TappingParameterRewriter> mock_tap = new();
-            Mock<DrillingParameterRewriter> mock_drill = new();
+            Mock<CrystalReamingSequenceBuilder> mock_crystal = new();
+            Mock<SkillReamingSequenceBuilder> mock_skill = new();
+            Mock<TappingSequenceBuilder> mock_tap = new();
+            Mock<DrillingSequenceBuilder> mock_drill = new();
 
             var editNcProgramParam = TestEditNcProgramParamFactory.Create(
                 directedOperation: directedOperation,

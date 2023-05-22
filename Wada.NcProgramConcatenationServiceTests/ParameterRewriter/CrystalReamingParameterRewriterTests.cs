@@ -16,7 +16,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -57,7 +57,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -98,7 +98,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
             void target()
             {
-                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
                 _ = crystalReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -117,7 +117,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
                 _ = crystalReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -137,7 +137,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
-            var crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            var crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -221,7 +221,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
                 _ = crystalReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -257,7 +257,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+                IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
                 _ = crystalReamingParameterRewriter.RewriteByTool(param);
             }
 
@@ -279,7 +279,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
 
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -301,7 +301,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             {
                 new("13.3", 10m, 20m, 0.1m, null),
             });
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -325,7 +325,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)expectedThickness,
                 directedOperationToolDiameter: (decimal)toolDiameter);
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new CrystalReamingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then

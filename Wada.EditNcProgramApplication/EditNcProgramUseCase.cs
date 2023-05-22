@@ -12,17 +12,17 @@ namespace Wada.EditNcProgramApplication
 
     public class EditNcProgramUseCase : IEditNcProgramUseCase
     {
-        private readonly IMainProgramParameterRewriter _crystalReamingParameterRewriter;
-        private readonly IMainProgramParameterRewriter _skillReamingParameterRewriter;
-        private readonly IMainProgramParameterRewriter _tappingParameterRewriter;
-        private readonly IMainProgramParameterRewriter _drillingParameterRewriter;
-        private readonly Dictionary<RewriterSelectorAttempt, IMainProgramParameterRewriter> _rewriter;
+        private readonly IMainProgramSequenceBuilder _crystalReamingParameterRewriter;
+        private readonly IMainProgramSequenceBuilder _skillReamingParameterRewriter;
+        private readonly IMainProgramSequenceBuilder _tappingParameterRewriter;
+        private readonly IMainProgramSequenceBuilder _drillingParameterRewriter;
+        private readonly Dictionary<RewriterSelectorAttempt, IMainProgramSequenceBuilder> _rewriter;
 
         public EditNcProgramUseCase(
-            CrystalReamingParameterRewriter crystalReamingParameterRewriter,
-            SkillReamingParameterRewriter skillReamingParameterRewriter,
-            TappingParameterRewriter tappingParameterRewriter,
-            DrillingParameterRewriter drillingParameterRewriter)
+            CrystalReamingSequenceBuilder crystalReamingParameterRewriter,
+            SkillReamingSequenceBuilder skillReamingParameterRewriter,
+            TappingSequenceBuilder tappingParameterRewriter,
+            DrillingSequenceBuilder drillingParameterRewriter)
         {
             _crystalReamingParameterRewriter = crystalReamingParameterRewriter;
             _skillReamingParameterRewriter = skillReamingParameterRewriter;

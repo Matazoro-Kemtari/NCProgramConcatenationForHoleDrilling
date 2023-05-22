@@ -6,7 +6,7 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
-    public class TappingParameterRewriter : IMainProgramParameterRewriter
+    public class TappingSequenceBuilder : IMainProgramSequenceBuilder
     {
         [Logging]
         public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)

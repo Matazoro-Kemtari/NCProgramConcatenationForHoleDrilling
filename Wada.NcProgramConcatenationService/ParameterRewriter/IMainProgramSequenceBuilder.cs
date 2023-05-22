@@ -4,7 +4,7 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter
 {
-    public interface IMainProgramParameterRewriter
+    public interface IMainProgramSequenceBuilder
     {
         /// <summary>
         /// メインプログラムのパラメータを書き換える

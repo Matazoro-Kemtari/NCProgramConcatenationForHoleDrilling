@@ -16,7 +16,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -57,7 +57,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramParameterRewriter crystalReamingParameterRewriter = new TappingParameterRewriter();
+            IMainProgramSequenceBuilder crystalReamingParameterRewriter = new TappingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -94,7 +94,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
                 _ = tappingParameterRewriter.RewriteByTool(param);
             }
 
@@ -113,7 +113,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
                 _ = tappingParameterRewriter.RewriteByTool(param);
             }
 
@@ -133,7 +133,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
-            var tappingParameterRewriter = new TappingParameterRewriter();
+            var tappingParameterRewriter = new TappingSequenceBuilder();
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -191,7 +191,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
                 _ = tappingParameterRewriter.RewriteByTool(param);
             }
 
@@ -213,7 +213,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
 
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
@@ -237,7 +237,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness);
-            IMainProgramParameterRewriter tappingParameterRewriter = new TappingParameterRewriter();
+            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
             var actual = tappingParameterRewriter.RewriteByTool(param);
 
             // then
