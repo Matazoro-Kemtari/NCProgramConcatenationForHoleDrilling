@@ -182,7 +182,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴2の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select, int skip = 0)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select, int skip = 0)
         {
             decimal drillDiameter = skip switch
             {
@@ -195,7 +195,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                         .Select(x => x.PreparedHoleDiameter)
                         .Max(),
             };
-            return param.DrillingPrameters
+            return param.DrillingParameters
                 .Where(x => x.DirectedOperationToolDiameter == drillDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
@@ -209,14 +209,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
-                crystalReamerParameters: new List<ReamingProgramPrameter>
+                crystalReamerParameters: new List<ReamingProgramParameter>
                 {
-                    TestReamingProgramPrameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
+                    TestReamingProgramParameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
                 },
-                drillingPrameters: new List<DrillingProgramPrameter>
+                drillingParameters: new List<DrillingProgramParameter>
                 {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "20"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
             void target()
@@ -242,17 +242,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
-                crystalReamerParameters: new List<ReamingProgramPrameter>
+                crystalReamerParameters: new List<ReamingProgramParameter>
                 {
-                    TestReamingProgramPrameterFactory.Create(
+                    TestReamingProgramParameterFactory.Create(
                         DiameterKey: reamerDiameter.ToString(),
                         PreparedHoleDiameter: 20m,
                         SecondPreparedHoleDiameter: 3m),
                 },
-                drillingPrameters: new List<DrillingProgramPrameter>
+                drillingParameters: new List<DrillingProgramParameter>
                 {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "20"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
             void target()
@@ -297,7 +297,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(crystalReamerParameters: new List<ReamingProgramPrameter>
+            var param = TestRewriteByToolRecordFactory.Create(crystalReamerParameters: new List<ReamingProgramParameter>
             {
                 new("13.3", 10m, 20m, 0.1m, null),
             });

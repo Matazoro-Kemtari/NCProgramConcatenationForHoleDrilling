@@ -39,8 +39,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             NcProgramCode rewritableCode,
             MaterialType material,
             decimal thickness,
-            IEnumerable<DrillingProgramPrameter> drillingParameters,
-            ReamingProgramPrameter reamingParameter,
+            IEnumerable<DrillingProgramParameter> drillingParameters,
+            ReamingProgramParameter reamingParameter,
             string subProgramNumber)
         {
             List<NcProgramCode> ncPrograms = new();
@@ -82,20 +82,20 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 throw new ArgumentException("素材が未定義です");
 
             // _parameterTypeリーマのパラメータを受け取る
-            IEnumerable<ReamingProgramPrameter> reamingParameters;
+            IEnumerable<ReamingProgramParameter> reamingParameters;
             if (_parameterType == ParameterType.CrystalReamerParameter)
                 reamingParameters = rewriteByToolRecord.CrystalReamerParameters;
             else
                 reamingParameters = rewriteByToolRecord.SkillReamerParameters;
 
             // ドリルのパラメータを受け取る
-            var drillingParameters = rewriteByToolRecord.DrillingPrameters;
+            var drillingParameters = rewriteByToolRecord.DrillingParameters;
 
             // メインプログラムを工程ごとに取り出す
             List<NcProgramCode> rewrittenNcPrograms = new();
             foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
-                ReamingProgramPrameter reamingParameter;
+                ReamingProgramParameter reamingParameter;
                 try
                 {
                     reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);

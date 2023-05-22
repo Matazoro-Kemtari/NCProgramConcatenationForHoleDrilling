@@ -23,7 +23,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             NcProgramCode rewritableCode,
             MaterialType material,
             decimal thickness,
-            DrillingProgramPrameter drillingParameter,
+            DrillingProgramParameter drillingParameter,
             string subProgramNumber,
             decimal drillDiameter)
         {
@@ -91,7 +91,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteFeed(MaterialType material, DrillingProgramPrameter drillingParameter, NcWord ncWord)
+        private static INcWord RewriteFeed(MaterialType material, DrillingProgramParameter drillingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -110,7 +110,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteCutDepth(DrillingProgramPrameter drillingParameter, NcWord ncWord)
+        private static INcWord RewriteCutDepth(DrillingProgramParameter drillingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -123,7 +123,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteDrillingDepth(decimal thickness, DrillingProgramPrameter drillingParameter, NcWord ncWord)
+        private static INcWord RewriteDrillingDepth(decimal thickness, DrillingProgramParameter drillingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -138,7 +138,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteSpin(MaterialType material, DrillingProgramPrameter drillingParameter, NcWord ncWord)
+        private static INcWord RewriteSpin(MaterialType material, DrillingProgramParameter drillingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;

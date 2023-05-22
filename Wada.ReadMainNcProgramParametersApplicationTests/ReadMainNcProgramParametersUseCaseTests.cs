@@ -31,15 +31,15 @@ namespace Wada.ReadMainNcProgramParametersApplication.Tests
 
             Mock<ReamingParameterReader> mock_reamer = new();
             mock_reamer.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
-                .ReturnsAsync(new List<ReamingProgramPrameter>());
+                .ReturnsAsync(new List<ReamingProgramParameter>());
 
             Mock<TappingParameterReader> mock_tap = new();
             mock_tap.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
-                .ReturnsAsync(new List<TappingProgramPrameter>());
+                .ReturnsAsync(new List<TappingProgramParameter>());
 
             Mock<DrillingParameterReader> mock_drill = new();
             mock_drill.Setup(x => x.ReadAllAsync(It.IsAny<Stream>()))
-                .ReturnsAsync(new List<DrillingProgramPrameter>());
+                .ReturnsAsync(new List<DrillingProgramParameter>());
 
             // when
             IReadMainNcProgramParametersUseCase useCase =
@@ -52,9 +52,9 @@ namespace Wada.ReadMainNcProgramParametersApplication.Tests
             var actual = await useCase.ExecuteAsync();
 
             // then
-            Assert.IsInstanceOfType(actual.CrystalReamerParameters, typeof(IEnumerable<ReamingProgramPrameterAttempt>));
-            Assert.IsInstanceOfType(actual.SkillReamerParameters, typeof(IEnumerable<ReamingProgramPrameterAttempt>));
-            Assert.IsInstanceOfType(actual.TapParameters, typeof(IEnumerable<TappingProgramPrameterAttempt>));
+            Assert.IsInstanceOfType(actual.CrystalReamerParameters, typeof(IEnumerable<ReamingProgramParameterAttempt>));
+            Assert.IsInstanceOfType(actual.SkillReamerParameters, typeof(IEnumerable<ReamingProgramParameterAttempt>));
+            Assert.IsInstanceOfType(actual.TapParameters, typeof(IEnumerable<TappingProgramParameterAttempt>));
             mock_stream.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(4));
             mock_reamer.Verify(x => x.ReadAllAsync(It.IsAny<Stream>()), Times.Exactly(2));
             mock_tap.Verify(x => x.ReadAllAsync(It.IsAny<Stream>()), Times.Once());

@@ -158,14 +158,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select)
         {
             decimal drillDiameter = param.TapParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
                 .Select(x => x.PreparedHoleDiameter)
                 .First();
 
-            return param.DrillingPrameters
+            return param.DrillingParameters
                 .Where(x => x.DirectedOperationToolDiameter == drillDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
@@ -179,14 +179,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
-                tapParameters: new List<TappingProgramPrameter>
+                tapParameters: new List<TappingProgramParameter>
                 {
-                    TestTappingProgramPrameterFactory.Create(DiameterKey: $"M{reamerDiameter}", PreparedHoleDiameter: 3),
+                    TestTappingProgramParameterFactory.Create(DiameterKey: $"M{reamerDiameter}", PreparedHoleDiameter: 3),
                 },
-                drillingPrameters: new List<DrillingProgramPrameter>
+                drillingParameters: new List<DrillingProgramParameter>
                 {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "20"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
             void target()

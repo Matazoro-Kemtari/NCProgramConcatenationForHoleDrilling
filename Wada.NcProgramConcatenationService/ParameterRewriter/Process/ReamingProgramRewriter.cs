@@ -23,7 +23,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             MaterialType material,
             ReamerType reamer,
             decimal thickness,
-            IMainProgramPrameter rewritingParameter,
+            IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す

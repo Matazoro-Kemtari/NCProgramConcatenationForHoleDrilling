@@ -17,15 +17,15 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            var drillingPrameterReader = new DrillingParameterReader();
-            var drillingProgramPrameters = await drillingPrameterReader.ReadAllAsync(xlsStream);
+            var drillingParameterReader = new DrillingParameterReader();
+            var drillingProgramParameters = await drillingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, drillingProgramPrameters.Count());
-            Assert.AreEqual(10, drillingProgramPrameters.Select(x => x.DirectedOperationToolDiameter).First());
-            Assert.AreEqual(-1.5m, drillingProgramPrameters.Select(x => x.CenterDrillDepth).First());
-            Assert.AreEqual(-5.2m, drillingProgramPrameters.Select(x => x.ChamferingDepth).First());
-            Assert.AreEqual(4.5m, drillingProgramPrameters.Select(x => x.DrillTipLength).First());
+            Assert.AreEqual(1, drillingProgramParameters.Count());
+            Assert.AreEqual(10, drillingProgramParameters.Select(x => x.DirectedOperationToolDiameter).First());
+            Assert.AreEqual(-1.5m, drillingProgramParameters.Select(x => x.CenterDrillDepth).First());
+            Assert.AreEqual(-5.2m, drillingProgramParameters.Select(x => x.ChamferingDepth).First());
+            Assert.AreEqual(4.5m, drillingProgramParameters.Select(x => x.DrillTipLength).First());
         }
 
         [DataTestMethod()]
@@ -44,9 +44,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -72,9 +72,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -100,9 +100,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -128,9 +128,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -156,9 +156,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -184,9 +184,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -212,9 +212,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader drillingPrameterReader = new DrillingParameterReader();
+            IMainProgramParameterReader drillingParameterReader = new DrillingParameterReader();
             Task target() =>
-                 drillingPrameterReader.ReadAllAsync(stream);
+                 drillingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);

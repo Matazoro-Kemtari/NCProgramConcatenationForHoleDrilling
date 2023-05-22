@@ -17,11 +17,11 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
+            IEnumerable<IMainProgramParameter> reamingProgramParameters = await reamingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, reamingProgramPrameters.Count());
+            Assert.AreEqual(1, reamingProgramParameters.Count());
         }
 
         [TestMethod()]
@@ -34,12 +34,12 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
+            IEnumerable<IMainProgramParameter> reamingProgramParameters = await reamingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, reamingProgramPrameters.Count());
-            Assert.IsNull(reamingProgramPrameters.Select(x => x.ChamferingDepth).First());
+            Assert.AreEqual(1, reamingProgramParameters.Count());
+            Assert.IsNull(reamingProgramParameters.Select(x => x.ChamferingDepth).First());
         }
 
         [DataTestMethod()]
@@ -58,9 +58,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -86,9 +86,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -114,9 +114,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -142,9 +142,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader reamingPrameterReader = new ReamingParameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);

@@ -15,7 +15,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 throw new ArgumentException("素材が未定義です");
 
             // ドリルのパラメータを受け取る
-            var drillingParameters = rewriteByToolRecord.DrillingPrameters;
+            var drillingParameters = rewriteByToolRecord.DrillingParameters;
 
             // メインプログラムを工程ごとに取り出す
             List<NcProgramCode> rewrittenNcPrograms = new();
@@ -29,7 +29,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                         $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません\n" +
                         $"リストの最大ドリル径({maxDiameter})を超えています");
 
-                DrillingProgramPrameter drillingParameter = drillingParameters
+                DrillingProgramParameter drillingParameter = drillingParameters
                     .Where(x => x.DirectedOperationToolDiameter <= rewriteByToolRecord.DirectedOperationToolDiameter)
                     .MaxBy(x => x.DirectedOperationToolDiameter)
                     ?? throw new DomainException(

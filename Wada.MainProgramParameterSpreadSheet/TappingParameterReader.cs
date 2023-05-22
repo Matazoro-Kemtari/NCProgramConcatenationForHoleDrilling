@@ -8,7 +8,7 @@ namespace Wada.MainProgramParameterSpreadSheet
     public class TappingParameterReader : IMainProgramParameterReader
     {
         [Logging]
-        public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
+        public virtual async Task<IEnumerable<IMainProgramParameter>> ReadAllAsync(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -27,7 +27,7 @@ namespace Wada.MainProgramParameterSpreadSheet
 
 
         [Logging]
-        private static async Task<TappingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static async Task<TappingProgramParameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
             Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
@@ -50,7 +50,7 @@ namespace Wada.MainProgramParameterSpreadSheet
             var spinForIron = await GetValueWithVaridateAsync<int>("G", "回転(SS400)");
             var feedForIron = await GetValueWithVaridateAsync<int>("H", "送り(SS400)");
 
-            return new TappingProgramPrameter(
+            return new TappingProgramParameter(
                 reamerDiameter,
                 preparedHoleDiameter,
                 centerDrillDepth,

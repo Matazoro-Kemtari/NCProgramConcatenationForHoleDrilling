@@ -25,7 +25,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.CenterDrilling);
-            decimal expectedCenterDrillDepth = param.DrillingPrameters
+            decimal expectedCenterDrillDepth = param.DrillingParameters
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramType.CenterDrilling);
@@ -152,9 +152,9 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramPrameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select)
         {
-            return param.DrillingPrameters
+            return param.DrillingParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
                 .Select(x => select(x))
                 .FirstOrDefault();
@@ -176,7 +176,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
             var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Chamfering);
-            decimal? expectedChamferingDepth = param.DrillingPrameters
+            decimal? expectedChamferingDepth = param.DrillingParameters
                 .Where(x => x.DiameterKey == param.DirectedOperationToolDiameter.ToString())
                 .Select(x => x.ChamferingDepth)
                 .FirstOrDefault();

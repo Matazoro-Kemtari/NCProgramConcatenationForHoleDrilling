@@ -7,7 +7,7 @@ namespace Wada.EditNcProgramApplication
 {
     public interface IEditNcProgramUseCase
     {
-        Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram NcProgramAggregation);
+        Task<EditNcProgramDto> ExecuteAsync(EditNcProgramParam NcProgramAggregation);
     }
 
     public class EditNcProgramUseCase : IEditNcProgramUseCase
@@ -39,15 +39,15 @@ namespace Wada.EditNcProgramApplication
         }
 
         [Logging]
-        public async Task<EditNcProgramDto> ExecuteAsync(EditNcProgramPram editNcProgramPram)
+        public async Task<EditNcProgramDto> ExecuteAsync(EditNcProgramParam editNcProgramParam)
         {
-            var rewriteByToolRecord = editNcProgramPram.ToRewriteByToolRecord();
+            var rewriteByToolRecord = editNcProgramParam.ToRewriteByToolRecord();
 
             try
             {
                 return await Task.Run(
                     () => new EditNcProgramDto(
-                        _rewriter[editNcProgramPram.RewriterSelector].RewriteByTool(rewriteByToolRecord)
+                        _rewriter[editNcProgramParam.RewriterSelector].RewriteByTool(rewriteByToolRecord)
                         .Select(x => NcProgramCodeAttempt.Parse(x))));
             }
             catch (DomainException ex)
@@ -68,13 +68,16 @@ namespace Wada.EditNcProgramApplication
     /// <param name="Reamer">RewriterSelectorAttemptの判断用</param>
     /// <param name="Thickness">板厚</param>
     /// <param name="MainNcProgramParameters">パラメータ</param>
-    public record class EditNcProgramPram(
+    public record class EditNcProgramParam(
         DirectedOperationTypeAttempt DirectedOperation,
         string SubProgramNumger,
         decimal DirectedOperationToolDiameter,
         IEnumerable<NcProgramCodeAttempt> RewritableCodeds,
         MaterialTypeAttempt Material,
         ReamerTypeAttempt Reamer,
+        DrillingMethodAttempt HoleType,
+        string BlindPilotHoleDepth,
+        string BlindHoleDepth,
         decimal Thickness,
         MainNcProgramParametersAttempt MainNcProgramParameters)
     {
@@ -87,7 +90,7 @@ namespace Wada.EditNcProgramApplication
             MainNcProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
             MainNcProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
             MainNcProgramParameters.TapParameters.Select(x => x.Convert()),
-            MainNcProgramParameters.DrillingPrameters.Select(x => x.Convert()));
+            MainNcProgramParameters.DrillingParameters.Select(x => x.Convert()));
 
         private RewriterSelectorAttempt GetRewriterSelection() => DirectedOperation switch
         {
@@ -114,15 +117,18 @@ namespace Wada.EditNcProgramApplication
         public RewriterSelectorAttempt RewriterSelector => GetRewriterSelection();
     }
 
-    public class TestEditNcProgramPramFactory
+    public class TestEditNcProgramParamFactory
     {
-        public static EditNcProgramPram Create(
+        public static EditNcProgramParam Create(
             DirectedOperationTypeAttempt directedOperation = DirectedOperationTypeAttempt.Drilling,
             string subProgramNumger = "8000",
             decimal directedOperationToolDiameter = 13.2m,
             IEnumerable<NcProgramCodeAttempt>? rewritableCodes = default,
             MaterialTypeAttempt material = MaterialTypeAttempt.Aluminum,
             ReamerTypeAttempt reamer = ReamerTypeAttempt.Crystal,
+            DrillingMethodAttempt holeType = DrillingMethodAttempt.ThroughHole,
+            string blindPilotHoleDepth = "0",
+            string blindHoleDepth = "0",
             decimal thickness = 15,
             MainNcProgramParametersAttempt? mainNcProgramParameters = default)
         {
@@ -165,7 +171,7 @@ namespace Wada.EditNcProgramApplication
                     }),
             };
 
-            mainNcProgramParameters ??= TestMainNcProgramParametersPramFactory.Create();
+            mainNcProgramParameters ??= TestMainNcProgramParametersParamFactory.Create();
 
             return new(directedOperation,
                        subProgramNumger,
@@ -173,6 +179,9 @@ namespace Wada.EditNcProgramApplication
                        rewritableCodes,
                        material,
                        reamer,
+                       holeType,
+                       blindPilotHoleDepth,
+                       blindHoleDepth,
                        thickness,
                        mainNcProgramParameters);
         }
@@ -183,6 +192,15 @@ namespace Wada.EditNcProgramApplication
         Undefined,
         Crystal,
         Skill
+    }
+
+    public enum DrillingMethodAttempt
+    {
+        Undefined,
+        // 通し穴
+        ThroughHole,
+        // 止まり穴
+        BlindHole,
     }
 
     public enum RewriterSelectorAttempt

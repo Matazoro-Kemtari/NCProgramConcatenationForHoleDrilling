@@ -8,7 +8,7 @@ namespace Wada.MainProgramParameterSpreadSheet;
 public class ReamingParameterReader : IMainProgramParameterReader
 {
     [Logging]
-    public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
+    public virtual async Task<IEnumerable<IMainProgramParameter>> ReadAllAsync(Stream stream)
     {
         using var xlBook = new XLWorkbook(stream);
         // パラメーターのシートを取得 シートは1つの想定
@@ -26,7 +26,7 @@ public class ReamingParameterReader : IMainProgramParameterReader
     }
 
     [Logging]
-    private static async Task<ReamingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
+    private static async Task<ReamingProgramParameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
     {
         [Logging]
         Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
@@ -57,7 +57,7 @@ public class ReamingParameterReader : IMainProgramParameterReader
         var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("D", "C/D深さ");
         var chamferingDepth = await GetValueWithOutVaridateAsync<decimal?>("E", "面取深さ");
 
-        return new ReamingProgramPrameter(
+        return new ReamingProgramParameter(
             reamerDiameter,
             preparedHoleDiameter,
             secondPreparedHoleDiameter,

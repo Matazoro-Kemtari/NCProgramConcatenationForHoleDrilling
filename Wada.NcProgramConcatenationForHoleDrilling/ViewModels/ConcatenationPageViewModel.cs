@@ -282,7 +282,7 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
         EditNcProgramDto editedCodes;
         try
         {
-            editedCodes = await _editNcProgramUseCase.ExecuteAsync(_concatenation.ToEditNcProgramPram());
+            editedCodes = await _editNcProgramUseCase.ExecuteAsync(_concatenation.ToEditNcProgramParam());
         }
         catch (EditNcProgramUseCaseException ex)
         {

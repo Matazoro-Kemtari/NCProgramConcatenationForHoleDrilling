@@ -24,7 +24,7 @@ namespace Wada.EditNcProgramApplication.Tests
             Mock<TappingParameterRewriter> mock_tap = new();
             Mock<DrillingParameterRewriter> mock_drill = new();
 
-            var editNcProgramPram = TestEditNcProgramPramFactory.Create(
+            var editNcProgramParam = TestEditNcProgramParamFactory.Create(
                 directedOperation: directedOperation,
                 reamer: reamer);
 
@@ -34,7 +34,7 @@ namespace Wada.EditNcProgramApplication.Tests
                      mock_skill.Object,
                      mock_tap.Object,
                      mock_drill.Object);
-            _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramPram);
+            _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramParam);
 
             // then
             mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),

@@ -17,12 +17,12 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
-            IEnumerable<IMainProgramPrameter> tappingProgramPrameters = await tappingPrameterReader.ReadAllAsync(xlsStream);
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
+            IEnumerable<IMainProgramParameter> tappingProgramParameters = await tappingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, tappingProgramPrameters.Count());
-            Assert.AreEqual(10, tappingProgramPrameters.Select(x => x.DirectedOperationToolDiameter).First());
+            Assert.AreEqual(1, tappingProgramParameters.Count());
+            Assert.AreEqual(10, tappingProgramParameters.Select(x => x.DirectedOperationToolDiameter).First());
         }
 
         [DataTestMethod()]
@@ -41,9 +41,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -69,9 +69,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -97,9 +97,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -125,9 +125,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -153,9 +153,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -181,9 +181,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -209,9 +209,9 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramParameterReader tappingPrameterReader = new TappingParameterReader();
+            IMainProgramParameterReader tappingParameterReader = new TappingParameterReader();
             Task target() =>
-                 tappingPrameterReader.ReadAllAsync(stream);
+                 tappingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);

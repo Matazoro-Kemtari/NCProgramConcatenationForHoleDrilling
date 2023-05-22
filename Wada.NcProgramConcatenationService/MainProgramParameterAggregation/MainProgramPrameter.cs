@@ -4,7 +4,7 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
 {
-    public interface IMainProgramPrameter
+    public interface IMainProgramParameter
     {
         /// <summary>
         /// ツール径キー
@@ -41,12 +41,12 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="SecondPreparedHoleDiameter">下穴2</param>
     /// <param name="CenterDrillDepth">C/D深さ</param>
     /// <param name="ChamferingDepth">面取り深さ</param>
-    public record class ReamingProgramPrameter(
+    public record class ReamingProgramParameter(
         string DiameterKey,
         decimal PreparedHoleDiameter,
         decimal SecondPreparedHoleDiameter,
         decimal CenterDrillDepth,
-        decimal? ChamferingDepth) : IMainProgramPrameter
+        decimal? ChamferingDepth) : IMainProgramParameter
     {
         [Logging]
         private static decimal Validate(string value) => decimal.Parse(value);
@@ -66,9 +66,9 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
         public DrillTipLength SecondPreparedHoleDrillTipLength => new(SecondPreparedHoleDiameter);
     }
 
-    public class TestReamingProgramPrameterFactory
+    public class TestReamingProgramParameterFactory
     {
-        public static ReamingProgramPrameter Create(
+        public static ReamingProgramParameter Create(
             string DiameterKey = "13.3",
             decimal PreparedHoleDiameter = 9.1m,
             decimal SecondPreparedHoleDiameter = 11.1m,
@@ -87,7 +87,7 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="FeedForAluminum">送り(アルミ)</param>
     /// <param name="SpinForIron">回転(SS400)</param>
     /// <param name="FeedForIron">送り(SS400)</param>
-    public record class TappingProgramPrameter(
+    public record class TappingProgramParameter(
         string DiameterKey,
         decimal PreparedHoleDiameter,
         decimal CenterDrillDepth,
@@ -95,7 +95,7 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
         int SpinForAluminum,
         int FeedForAluminum,
         int SpinForIron,
-        int FeedForIron) : IMainProgramPrameter
+        int FeedForIron) : IMainProgramParameter
     {
         [Logging]
         private static decimal Validate(string value)
@@ -119,9 +119,9 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
         public DrillTipLength PreparedHoleDrillTipLength => new(PreparedHoleDiameter);
     }
 
-    public class TestTappingProgramPrameterFactory
+    public class TestTappingProgramParameterFactory
     {
-        public static TappingProgramPrameter Create(
+        public static TappingProgramParameter Create(
             string DiameterKey = "M13.3",
             decimal PreparedHoleDiameter = 11.1m,
             decimal CenterDrillDepth = -3.1m,
@@ -141,14 +141,14 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
     /// <param name="FeedForAluminum">送り(アルミ)</param>
     /// <param name="SpinForIron">回転(SS400)</param>
     /// <param name="FeedForIron">送り(SS400)</param>
-    public record class DrillingProgramPrameter(
+    public record class DrillingProgramParameter(
         string DiameterKey,
         decimal CenterDrillDepth,
         decimal CutDepth,
         int SpinForAluminum,
         int FeedForAluminum,
         int SpinForIron,
-        int FeedForIron) : IMainProgramPrameter
+        int FeedForIron) : IMainProgramParameter
     {
         [Logging]
         private static decimal Validate(string value) => decimal.Parse(value);
@@ -163,9 +163,9 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
         public decimal DrillTipLength => new DrillTipLength(DirectedOperationToolDiameter).Value;
     }
 
-    public class TestDrillingProgramPrameterFactory
+    public class TestDrillingProgramParameterFactory
     {
-        public static DrillingProgramPrameter Create(
+        public static DrillingProgramParameter Create(
         string DiameterKey="13.3",
         decimal CenterDrillDepth = -1.5m,
         decimal CutDepth = 3.5m,

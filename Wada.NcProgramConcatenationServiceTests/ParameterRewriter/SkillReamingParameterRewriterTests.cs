@@ -141,48 +141,48 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Drilling);
             var spin = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForAluminum)
-                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForIron);
+                ? ドリルパラメータから値を取得する(param.DrillingParameters, x => x.SpinForAluminum)
+                : ドリルパラメータから値を取得する(param.DrillingParameters, x => x.SpinForIron);
             Assert.AreEqual(spin, rewritedSpin, "下穴1の回転数");
 
             rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Drilling, 1);
             spin = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForAluminum, 1)
-                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.SpinForIron, 1);
+                ? ドリルパラメータから値を取得する(param.DrillingParameters, x => x.SpinForAluminum, 1)
+                : ドリルパラメータから値を取得する(param.DrillingParameters, x => x.SpinForIron, 1);
             Assert.AreEqual(spin, rewritedSpin, "下穴2の回転数");
 
             decimal rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
-            decimal depth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => -x.DrillTipLength - (decimal)thickness);
+            decimal depth = ドリルパラメータから値を取得する(param.DrillingParameters, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(depth, rewritedDepth, "下穴1のZ");
 
             rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling, 1);
-            depth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => -x.DrillTipLength - (decimal)thickness, 1);
+            depth = ドリルパラメータから値を取得する(param.DrillingParameters, x => -x.DrillTipLength - (decimal)thickness, 1);
             Assert.AreEqual(depth, rewritedDepth, "下穴2のZ");
 
             decimal rewritedCutDepth = NcWordから値を取得する(actual, 'Q', NcProgramType.Drilling);
-            decimal cutDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.CutDepth);
+            decimal cutDepth = ドリルパラメータから値を取得する(param.DrillingParameters, x => x.CutDepth);
             Assert.AreEqual(cutDepth, rewritedCutDepth, "下穴1の切込");
 
-            cutDepth = cutDepth = ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.CutDepth, 1);
+            cutDepth = cutDepth = ドリルパラメータから値を取得する(param.DrillingParameters, x => x.CutDepth, 1);
             rewritedCutDepth = NcWordから値を取得する(actual, 'Q', NcProgramType.Drilling, 1);
             Assert.AreEqual(cutDepth, rewritedCutDepth, "下穴2の切込");
 
             decimal rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.Drilling);
             decimal feed = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForAluminum)
-                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForIron);
+                ? ドリルパラメータから値を取得する(param.DrillingParameters, x => x.FeedForAluminum)
+                : ドリルパラメータから値を取得する(param.DrillingParameters, x => x.FeedForIron);
             Assert.AreEqual(feed, rewritedFeed, "下穴1の送り");
 
             rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.Drilling, 1);
             feed = material == MaterialType.Aluminum
-                ? ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForAluminum, 1)
-                : ドリルパラメータから値を取得する(param.DrillingPrameters, x => x.FeedForIron, 1);
+                ? ドリルパラメータから値を取得する(param.DrillingParameters, x => x.FeedForAluminum, 1)
+                : ドリルパラメータから値を取得する(param.DrillingParameters, x => x.FeedForIron, 1);
             Assert.AreEqual(feed, rewritedFeed, "下穴2の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(IEnumerable<DrillingProgramPrameter> drillingProgramPrameter, Func<DrillingProgramPrameter, decimal> select, int skip = 0)
+        private static decimal ドリルパラメータから値を取得する(IEnumerable<DrillingProgramParameter> drillingProgramParameter, Func<DrillingProgramParameter, decimal> select, int skip = 0)
         {
-            return drillingProgramPrameter.Skip(skip)
+            return drillingProgramParameter.Skip(skip)
                 .Select(x => select(x))
                 .FirstOrDefault();
         }
@@ -195,14 +195,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
-                skillReamerParameters: new List<ReamingProgramPrameter>
+                skillReamerParameters: new List<ReamingProgramParameter>
                 {
-                    TestReamingProgramPrameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
+                    TestReamingProgramParameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
                 },
-                drillingPrameters: new List<DrillingProgramPrameter>
+                drillingParameters: new List<DrillingProgramParameter>
                 {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "20"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
 
@@ -229,17 +229,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal reamerDiameter = 5.5m;
             var param = TestRewriteByToolRecordFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
-                skillReamerParameters: new List<ReamingProgramPrameter>
+                skillReamerParameters: new List<ReamingProgramParameter>
                 {
-                    TestReamingProgramPrameterFactory.Create(
+                    TestReamingProgramParameterFactory.Create(
                         DiameterKey: reamerDiameter.ToString(),
                         PreparedHoleDiameter: 20m,
                         SecondPreparedHoleDiameter: 3m),
                 },
-                drillingPrameters: new List<DrillingProgramPrameter>
+                drillingParameters: new List<DrillingProgramParameter>
                 {
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "20"),
-                    TestDrillingProgramPrameterFactory.Create(DiameterKey: "22"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "20"),
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
             void target()
@@ -285,7 +285,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(skillReamerParameters: new List<ReamingProgramPrameter>
+            var param = TestRewriteByToolRecordFactory.Create(skillReamerParameters: new List<ReamingProgramParameter>
             {
                 new("13.3", 10m, 20m, 0.1m, null),
             });

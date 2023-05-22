@@ -25,17 +25,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
     /// <param name="CrystalReamerParameters">クリスタルリーマパラメータ</param>
     /// <param name="SkillReamerParameters">スキルリーマパラメータ</param>
     /// <param name="TapParameters">タップパラメータ</param>
-    /// <param name="DrillingPrameters">ドリルパラメータ</param>
+    /// <param name="DrillingParameters">ドリルパラメータ</param>
     public record class RewriteByToolRecord(
         IEnumerable<NcProgramCode> RewritableCodes,
         MaterialType Material,
         decimal Thickness,
         string SubProgramNumber,
         decimal DirectedOperationToolDiameter,
-        IEnumerable<ReamingProgramPrameter> CrystalReamerParameters,
-        IEnumerable<ReamingProgramPrameter> SkillReamerParameters,
-        IEnumerable<TappingProgramPrameter> TapParameters,
-        IEnumerable<DrillingProgramPrameter> DrillingPrameters);
+        IEnumerable<ReamingProgramParameter> CrystalReamerParameters,
+        IEnumerable<ReamingProgramParameter> SkillReamerParameters,
+        IEnumerable<TappingProgramParameter> TapParameters,
+        IEnumerable<DrillingProgramParameter> DrillingParameters);
 
     public class TestRewriteByToolRecordFactory
     {
@@ -45,10 +45,10 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             decimal thickness = 12.3m,
             string subProgramNumber = "1000",
             decimal directedOperationToolDiameter = 13.3m,
-            IEnumerable<ReamingProgramPrameter>? crystalReamerParameters = default,
-            IEnumerable<ReamingProgramPrameter>? skillReamerParameters = default,
-            IEnumerable<TappingProgramPrameter>? tapParameters = default,
-            IEnumerable<DrillingProgramPrameter>? drillingPrameters = default)
+            IEnumerable<ReamingProgramParameter>? crystalReamerParameters = default,
+            IEnumerable<ReamingProgramParameter>? skillReamerParameters = default,
+            IEnumerable<TappingProgramParameter>? tapParameters = default,
+            IEnumerable<DrillingProgramParameter>? drillingParameters = default)
         {
             rewritableCodes ??= new List<NcProgramCode>
             {
@@ -58,21 +58,21 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Reaming),
                 TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Tapping),
             };
-            crystalReamerParameters ??= new List<ReamingProgramPrameter>
+            crystalReamerParameters ??= new List<ReamingProgramParameter>
             {
-                TestReamingProgramPrameterFactory.Create(),
+                TestReamingProgramParameterFactory.Create(),
             };
-            skillReamerParameters ??= new List<ReamingProgramPrameter>
+            skillReamerParameters ??= new List<ReamingProgramParameter>
             {
-                TestReamingProgramPrameterFactory.Create(),
+                TestReamingProgramParameterFactory.Create(),
             };
-            tapParameters ??= new List<TappingProgramPrameter>
+            tapParameters ??= new List<TappingProgramParameter>
             {
-                TestTappingProgramPrameterFactory.Create(),
+                TestTappingProgramParameterFactory.Create(),
             };
-            drillingPrameters ??= new List<DrillingProgramPrameter>
+            drillingParameters ??= new List<DrillingProgramParameter>
             {
-                TestDrillingProgramPrameterFactory.Create(
+                TestDrillingProgramParameterFactory.Create(
                     DiameterKey: "9.1",
                     CenterDrillDepth: -1.5m,
                     CutDepth: 2.5m,
@@ -80,7 +80,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                     FeedForAluminum: 130,
                     SpinForIron: 710,
                     FeedForIron: 100),
-                TestDrillingProgramPrameterFactory.Create(
+                TestDrillingProgramParameterFactory.Create(
                     DiameterKey: "11.1",
                     CenterDrillDepth: -1.5m,
                     CutDepth: 3,
@@ -88,8 +88,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                     FeedForAluminum: 110,
                     SpinForIron: 580,
                     FeedForIron: 80),
-                TestDrillingProgramPrameterFactory.Create(),
-                TestDrillingProgramPrameterFactory.Create(
+                TestDrillingProgramParameterFactory.Create(),
+                TestDrillingProgramParameterFactory.Create(
                     DiameterKey: "15.3",
                     CenterDrillDepth: -1.5m,
                     CutDepth: 3.5m,
@@ -99,7 +99,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                     FeedForIron: 70),
             };
 
-            return new(rewritableCodes, material, thickness, subProgramNumber, directedOperationToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingPrameters);
+            return new(rewritableCodes, material, thickness, subProgramNumber, directedOperationToolDiameter, crystalReamerParameters, skillReamerParameters, tapParameters, drillingParameters);
         }
     }
     public enum MaterialType

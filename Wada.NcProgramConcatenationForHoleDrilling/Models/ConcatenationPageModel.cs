@@ -27,13 +27,16 @@ internal record class ConcatenationPageModel
     }
 
     [Logging]
-    internal EditNcProgramPram ToEditNcProgramPram()
+    internal EditNcProgramParam ToEditNcProgramParam()
         => new((DirectedOperationTypeAttempt)FetchedOperationType.Value,
                SubProgramNumber.Value,
                DirectedOperationToolDiameter.Value,
                MainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value).Select(x => x.NcProgramCodes).First(),
                (MaterialTypeAttempt)Material.Value,
-               (ReamerTypeAttempt)Reamer.Value,// TODO: 穴加工と深さを追加
+               (ReamerTypeAttempt)Reamer.Value,
+               (DrillingMethodAttempt)HoleType.Value,
+               BlindPilotHoleDepth.Value,
+               BlindHoleDepth.Value,
                decimal.Parse(Thickness.Value),
                MainNcProgramParameters
                ?? throw new InvalidOperationException(

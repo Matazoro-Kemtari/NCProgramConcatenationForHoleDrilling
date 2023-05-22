@@ -20,7 +20,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             NcProgramCode rewritableCode,
             MaterialType material,
             decimal thickness,
-            IMainProgramPrameter rewritingParameter,
+            IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す
@@ -48,14 +48,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
                             }
                             else if (y.GetType() == typeof(NcWord))
                             {
-                                TappingProgramPrameter tappingProgramPrameter = (TappingProgramPrameter)rewritingParameter;
+                                TappingProgramParameter tappingProgramParameter = (TappingProgramParameter)rewritingParameter;
                                 NcWord ncWord = (NcWord)y;
                                 if (ncWord.ValueData.Indefinite)
                                     result = ncWord.Address.Value switch
                                     {
-                                        'S' => RewriteSpin(material, tappingProgramPrameter, ncWord),
+                                        'S' => RewriteSpin(material, tappingProgramParameter, ncWord),
                                         'Z' => RewriteTappingDepth(thickness, ncWord),
-                                        'F' => RewriteFeed(material, tappingProgramPrameter, ncWord),
+                                        'F' => RewriteFeed(material, tappingProgramParameter, ncWord),
                                         'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                         _ => y
                                     };
@@ -87,15 +87,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteFeed(MaterialType material, TappingProgramPrameter tappingProgramPrameter, NcWord ncWord)
+        private static INcWord RewriteFeed(MaterialType material, TappingProgramParameter tappingProgramParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
 
             var feedValue = material switch
             {
-                MaterialType.Aluminum => tappingProgramPrameter.FeedForAluminum.ToString(),
-                MaterialType.Iron => tappingProgramPrameter.FeedForIron.ToString(),
+                MaterialType.Aluminum => tappingProgramParameter.FeedForAluminum.ToString(),
+                MaterialType.Iron => tappingProgramParameter.FeedForIron.ToString(),
                 _ => throw new AggregateException(nameof(material)),
             };
 
@@ -116,7 +116,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteSpin(MaterialType material, TappingProgramPrameter tappingParameter, NcWord ncWord)
+        private static INcWord RewriteSpin(MaterialType material, TappingProgramParameter tappingParameter, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;

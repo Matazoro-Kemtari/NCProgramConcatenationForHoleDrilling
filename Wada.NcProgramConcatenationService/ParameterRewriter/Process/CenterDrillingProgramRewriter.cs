@@ -18,7 +18,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         internal static NcProgramCode Rewrite(
             NcProgramCode rewritableCode,
             MaterialType material,
-            IMainProgramPrameter rewritingParameter,
+            IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
             // NCプログラムを走査して書き換え対象を探す

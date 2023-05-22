@@ -18,13 +18,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             var tappingParameters = rewriteByToolRecord.TapParameters;
 
             // ドリルのパラメータを受け取る
-            var drillingParameters = rewriteByToolRecord.DrillingPrameters;
+            var drillingParameters = rewriteByToolRecord.DrillingParameters;
 
             // メインプログラムを工程ごとに取り出す
             List<NcProgramCode> ncPrograms = new();
             foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
             {
-                TappingProgramPrameter tappingParameter;
+                TappingProgramParameter tappingParameter;
                 try
                 {
                     tappingParameter = tappingParameters
@@ -87,7 +87,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
         /// <param name="tappingParameter"></param>
         /// <returns></returns>
         /// <exception cref="DomainException"></exception>
-        private static NcProgramCode RewriteCncProgramForDrilling(NcProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramPrameter> drillingParameters, TappingProgramPrameter tappingParameter, string subProgramNumber)
+        private static NcProgramCode RewriteCncProgramForDrilling(NcProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramParameter> drillingParameters, TappingProgramParameter tappingParameter, string subProgramNumber)
         {
             var drillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
