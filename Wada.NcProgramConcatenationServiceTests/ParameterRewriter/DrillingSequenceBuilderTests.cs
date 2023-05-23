@@ -209,24 +209,21 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_止まり穴のドリル工程作成できること()
+        public void 正常系_ドリルシーケンスの止まり穴のドリル工程が書き換えられること()
         {
             // given
+            var param = TestRewriteByToolRecordFactory.Create(
+                drillingMethod: DrillingMethod.BlindHole,
+                blindHoleDepth: 4m);
+            
             // when
-            var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var drillingSequenceBuilder = new DrillingSequenceBuilder();
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.CenterDrilling);
-            decimal expectedCenterDrillDepth = param.DrillingParameters
-                .Select(x => x.CenterDrillDepth)
-                .FirstOrDefault();
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            decimal expectedCenterDrillDepth = -param.BlindHoleDepth;
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramType.CenterDrilling);
-
-
-
-            Assert.Fail();
         }
     }
 }

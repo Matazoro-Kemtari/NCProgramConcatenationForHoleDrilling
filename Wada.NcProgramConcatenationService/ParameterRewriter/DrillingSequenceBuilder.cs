@@ -45,7 +45,12 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                             rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NcProgramType.Drilling:
-                        var drillingDepth = rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength;
+                        var drillingDepth = rewriteByToolRecord.DrillingMethod switch
+                        {
+                            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
+                            DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
+                            _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+                        };
                         rewrittenNcPrograms.Add(DrillingProgramRewriter.Rewrite(
                                 rewritableCode,
                                 rewriteByToolRecord.Material,
