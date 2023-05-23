@@ -1,5 +1,4 @@
-﻿using System;
-using Wada.AOP.Logging;
+﻿using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -14,7 +13,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
         /// <param name="reamer"></param>
-        /// <param name="thickness"></param>
+        /// <param name="reamingDepth"></param>
         /// <param name="rewritingParameter">対象のパラメータ</param>
         /// <returns></returns>
         [Logging]
@@ -22,13 +21,10 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             NcProgramCode rewritableCode,
             MaterialType material,
             ReamerType reamer,
-            decimal thickness,
+            decimal reamingDepth,
             IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
-            // TODO: 引数に止まり穴追加
-            // Dictionaryに関数を追加して呼び分けるようにする
-
             // NCプログラムを走査して書き換え対象を探す
             var rewrittenNcBlocks = rewritableCode.NcBlocks
                 .Select(x =>
@@ -59,7 +55,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
                                     result = ncWord.Address.Value switch
                                     {
                                         'S' => RewriteSpin(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
-                                        'Z' => RewriteReamingDepth(thickness, ncWord),
+                                        'Z' => RewriteReamingDepth(reamingDepth, ncWord),
                                         'F' => RewriteFeed(material, reamer, rewritingParameter.DirectedOperationToolDiameter, ncWord),
                                         'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                         _ => y
@@ -105,7 +101,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteReamingDepth(decimal thickness, NcWord ncWord)
+        private static INcWord RewriteReamingDepth(decimal reamingDepth, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -113,7 +109,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             return ncWord with
             {
                 ValueData = new CoordinateValue(
-                    AddDecimalPoint(Convert.ToString(-(thickness + 5m))))
+                    AddDecimalPoint(Convert.ToString(-reamingDepth)))
             };
         }
 

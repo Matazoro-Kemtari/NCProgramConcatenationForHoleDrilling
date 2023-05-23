@@ -50,10 +50,11 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 .MaxBy(x => x.DirectedOperationToolDiameter)
                 ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
+            var fastDrillingDepth = thickness + fastDrillingParameter.DrillTipLength;
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,
                 material,
-                thickness,
+                fastDrillingDepth,
                 fastDrillingParameter,
                 subProgramNumber,
                 reamingParameter.PreparedHoleDiameter));
@@ -64,10 +65,11 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                 .MaxBy(x => x.DirectedOperationToolDiameter)
                 ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
+            var secondDrillingDepth = thickness + secondDrillingParameter.DrillTipLength;
             ncPrograms.Add(DrillingProgramRewriter.Rewrite(
                 rewritableCode,
                 material,
-                thickness,
+                secondDrillingDepth,
                 secondDrillingParameter,
                 subProgramNumber,
                 reamingParameter.SecondPreparedHoleDiameter));
@@ -133,11 +135,12 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                                 rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NcProgramType.Reaming:
+                        var reamingDepth = rewriteByToolRecord.Thickness + 5m;
                         rewrittenNcPrograms.Add(ReamingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,
                             _reamerType,
-                            rewriteByToolRecord.Thickness,
+                            reamingDepth,
                             reamingParameter,
                             rewriteByToolRecord.SubProgramNumber));
                         break;

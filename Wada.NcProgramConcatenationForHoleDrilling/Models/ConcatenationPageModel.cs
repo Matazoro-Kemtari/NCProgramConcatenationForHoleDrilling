@@ -34,10 +34,10 @@ internal record class ConcatenationPageModel
                MainProgramCodes.Where(x => x.MachineToolClassification == MachineTool.Value).Select(x => x.NcProgramCodes).First(),
                (MaterialTypeAttempt)Material.Value,
                (ReamerTypeAttempt)Reamer.Value,
+               decimal.Parse(Thickness.Value),
                (DrillingMethodAttempt)HoleType.Value,
                BlindPilotHoleDepth.Value,
                BlindHoleDepth.Value,
-               decimal.Parse(Thickness.Value),
                MainNcProgramParameters
                ?? throw new InvalidOperationException(
                    "リストの準備が出来ていないか 失敗しています"));

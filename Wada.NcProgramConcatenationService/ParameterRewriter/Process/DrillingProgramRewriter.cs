@@ -13,7 +13,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
         /// <param name="diameter"></param>
-        /// <param name="thickness"></param>
+        /// <param name="drillingDepth"></param>
         /// <param name="drillingParameter"></param>
         /// <param name="subProgramNumber"></param>
         /// <param name="drillDiameter">実際に使用するドリル径</param>
@@ -22,7 +22,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         internal static NcProgramCode Rewrite(
             NcProgramCode rewritableCode,
             MaterialType material,
-            decimal thickness,
+            decimal drillingDepth,
             DrillingProgramParameter drillingParameter,
             string subProgramNumber,
             decimal drillDiameter)
@@ -36,41 +36,41 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
 
                     var rewritedNcWords = x.NcWords
                         .Select(y =>
+                        {
+                            INcWord result;
+                            if (y.GetType() == typeof(NcComment))
                             {
-                                INcWord result;
-                                if (y.GetType() == typeof(NcComment))
-                                {
-                                    NcComment nCComment = (NcComment)y;
-                                    if (nCComment.Comment == "DR")
-                                        result = new NcComment(
-                                            string.Concat(
-                                                nCComment.Comment,
-                                                ' ',
-                                                drillDiameter));
-                                    else
-                                        result = y;
-                                }
-                                else if (y.GetType() == typeof(NcWord))
-                                {
-                                    NcWord ncWord = (NcWord)y;
-                                    if (ncWord.ValueData.Indefinite)
-                                        result = ncWord.Address.Value switch
-                                        {
-                                            'S' => RewriteSpin(material, drillingParameter, ncWord),
-                                            'Z' => RewriteDrillingDepth(thickness, drillingParameter, ncWord),
-                                            'Q' => RewriteCutDepth(drillingParameter, ncWord),
-                                            'F' => RewriteFeed(material, drillingParameter, ncWord),
-                                            'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
-                                            _ => y
-                                        };
-                                    else
-                                        result = y;
-                                }
+                                NcComment nCComment = (NcComment)y;
+                                if (nCComment.Comment == "DR")
+                                    result = new NcComment(
+                                        string.Concat(
+                                            nCComment.Comment,
+                                            ' ',
+                                            drillDiameter));
                                 else
                                     result = y;
+                            }
+                            else if (y.GetType() == typeof(NcWord))
+                            {
+                                NcWord ncWord = (NcWord)y;
+                                if (ncWord.ValueData.Indefinite)
+                                    result = ncWord.Address.Value switch
+                                    {
+                                        'S' => RewriteSpin(material, drillingParameter, ncWord),
+                                        'Z' => RewriteDrillingDepth(drillingDepth, ncWord),
+                                        'Q' => RewriteCutDepth(drillingParameter, ncWord),
+                                        'F' => RewriteFeed(material, drillingParameter, ncWord),
+                                        'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
+                                        _ => y
+                                    };
+                                else
+                                    result = y;
+                            }
+                            else
+                                result = y;
 
-                                return result;
-                            });
+                            return result;
+                        });
 
                     return new NcBlock(rewritedNcWords, x.HasBlockSkip);
                 });
@@ -123,7 +123,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteDrillingDepth(decimal thickness, DrillingProgramParameter drillingParameter, NcWord ncWord)
+        private static INcWord RewriteDrillingDepth(decimal drillingDepth, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -133,7 +133,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
                 // 板厚＋刃先の長さ
                 ValueData = new CoordinateValue(
                     AddDecimalPoint(
-                        Convert.ToString(-(thickness + drillingParameter.DrillTipLength))))
+                        Convert.ToString(-drillingDepth)))
             };
         }
 

@@ -45,10 +45,11 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                             rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NcProgramType.Drilling:
+                        var drillingDepth = rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength;
                         rewrittenNcPrograms.Add(DrillingProgramRewriter.Rewrite(
                                 rewritableCode,
                                 rewriteByToolRecord.Material,
-                                rewriteByToolRecord.Thickness,
+                                drillingDepth,
                                 drillingParameter,
                                 rewriteByToolRecord.SubProgramNumber,
                                 rewriteByToolRecord.DirectedOperationToolDiameter));

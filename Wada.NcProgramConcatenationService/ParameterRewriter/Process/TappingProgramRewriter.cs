@@ -12,14 +12,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         /// </summary>
         /// <param name="rewritableCode"></param>
         /// <param name="material"></param>
-        /// <param name="thickness"></param>
+        /// <param name="tappingDepth"></param>
         /// <param name="rewritingParameter">対象のパラメータ</param>
         /// <returns></returns>
         [Logging]
         internal static NcProgramCode Rewrite(
             NcProgramCode rewritableCode,
             MaterialType material,
-            decimal thickness,
+            decimal tappingDepth,
             IMainProgramParameter rewritingParameter,
             string subProgramNumber)
         {
@@ -54,7 +54,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
                                     result = ncWord.Address.Value switch
                                     {
                                         'S' => RewriteSpin(material, tappingProgramParameter, ncWord),
-                                        'Z' => RewriteTappingDepth(thickness, ncWord),
+                                        'Z' => RewriteTappingDepth(tappingDepth, ncWord),
                                         'F' => RewriteFeed(material, tappingProgramParameter, ncWord),
                                         'P' => RewriteSubProgramNumber(subProgramNumber, ncWord),
                                         _ => y
@@ -103,7 +103,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
         }
 
         [Logging]
-        private static INcWord RewriteTappingDepth(decimal thickness, NcWord ncWord)
+        private static INcWord RewriteTappingDepth(decimal tappingDepth, NcWord ncWord)
         {
             if (!ncWord.ValueData.Indefinite)
                 return ncWord;
@@ -111,7 +111,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process
             return ncWord with
             {
                 ValueData = new CoordinateValue(
-                    AddDecimalPoint(Convert.ToString(-(thickness + 5m))))
+                    AddDecimalPoint(Convert.ToString(-tappingDepth)))
             };
         }
 

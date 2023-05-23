@@ -62,10 +62,11 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                             rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NcProgramType.Tapping:
+                        var tappingDepth = rewriteByToolRecord.Thickness + 5m;
                         ncPrograms.Add(TappingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,
-                            rewriteByToolRecord.Thickness,
+                            tappingDepth,
                             tappingParameter,
                             rewriteByToolRecord.SubProgramNumber));
                         break;
@@ -91,15 +92,16 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
         {
             var drillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
-                .MaxBy(x => x.DirectedOperationToolDiameter);
-            if (drillingParameter == null)
-                throw new DomainException(
+                .MaxBy(x => x.DirectedOperationToolDiameter)
+                ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
-
+            
+            var drillingDepth = thickness + drillingParameter.DrillTipLength;
+            
             return DrillingProgramRewriter.Rewrite(
                 rewritableCode,
                 material,
-                thickness,
+                drillingDepth,
                 drillingParameter,
                 subProgramNumber,
                 tappingParameter.PreparedHoleDiameter);
