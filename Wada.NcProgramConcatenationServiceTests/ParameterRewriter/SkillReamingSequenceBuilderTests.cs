@@ -298,8 +298,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [DataTestMethod()]
-        [DataRow(13.3,MaterialType.Aluminum, 10.5, 1130, 140)]
-        [DataRow(13.3,MaterialType.Iron, 12.4, 360, 40)]
+        [DataRow(13.3, MaterialType.Aluminum, 10.5, 1130, 140)]
+        [DataRow(13.3, MaterialType.Iron, 12.4, 360, 40)]
         public void 正常系_スキルリーマシーケンスのリーマ工程が書き換えられること(
             double toolDiameter,
             MaterialType material,
@@ -325,6 +325,26 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             decimal rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.Reaming);
             Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
+        }
+
+        [TestMethod]
+        public void 正常系_スキルリーマシーケンスの止まり穴の穴深さが書き換えられること()
+        {
+            // given
+            var param = TestRewriteByToolRecordFactory.Create(
+                drillingMethod: DrillingMethod.BlindHole,
+                blindPilotHoleDepth: 10.25m,
+                blindHoleDepth: 8.75m);
+
+            // when
+            var skillReamingSequenceBuilder = new SkillReamingSequenceBuilder();
+            var actual = skillReamingSequenceBuilder.RewriteByTool(param);
+
+            // then
+            var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            Assert.AreEqual(-param.BlindPilotHoleDepth, rewritedPilotDepth, "下穴-Z値");
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Reaming);
+            Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "リーマ-Z値");
         }
     }
 }

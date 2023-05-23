@@ -338,5 +338,25 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.Reaming);
             Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
+
+        [TestMethod]
+        public void 正常系_クリスタルリーマシーケンスの止まり穴の穴深さが書き換えられること()
+        {
+            // given
+            var param = TestRewriteByToolRecordFactory.Create(
+                drillingMethod: DrillingMethod.BlindHole,
+                blindPilotHoleDepth: 10.25m,
+                blindHoleDepth: 8.75m);
+
+            // when
+            var crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
+            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+
+            // then
+            var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            Assert.AreEqual(-param.BlindPilotHoleDepth, rewritedPilotDepth, "下穴-Z値");
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Reaming);
+            Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "リーマ-Z値");
+        }
     }
 }
