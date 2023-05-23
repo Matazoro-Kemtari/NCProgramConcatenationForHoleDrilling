@@ -256,5 +256,25 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 .FirstOrDefault();
             Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
+
+        [TestMethod]
+        public void 正常系_タップシーケンスの止まり穴の穴深さが書き換えられること()
+        {
+            // given
+            var param = TestRewriteByToolRecordFactory.Create(
+                drillingMethod: DrillingMethod.BlindHole,
+                blindPilotHoleDepth: 10.25m,
+                blindHoleDepth: 8.75m);
+
+            // when
+            var tappingSequenceBuilder = new TappingSequenceBuilder();
+            var actual = tappingSequenceBuilder.RewriteByTool(param);
+
+            // then
+            var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            Assert.AreEqual(-param.BlindPilotHoleDepth, rewritedPilotDepth, "下穴-Z値");
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Tapping);
+            Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "タップ-Z値");
+        }
     }
 }

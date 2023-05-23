@@ -50,6 +50,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                             rewritableCode,
                             rewriteByToolRecord.Material,
                             rewriteByToolRecord.Thickness,
+                            rewriteByToolRecord.DrillingMethod,
+                            rewriteByToolRecord.BlindPilotHoleDepth,
                             drillingParameters,
                             tappingParameter,
                             rewriteByToolRecord.SubProgramNumber));
@@ -62,7 +64,12 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                             rewriteByToolRecord.SubProgramNumber));
                         break;
                     case NcProgramType.Tapping:
-                        var tappingDepth = rewriteByToolRecord.Thickness + 5m;
+                        var tappingDepth = rewriteByToolRecord.DrillingMethod switch
+                        {
+                            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + 5m,
+                            DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
+                            _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+                        };
                         ncPrograms.Add(TappingProgramRewriter.Rewrite(
                             rewritableCode,
                             rewriteByToolRecord.Material,
@@ -88,16 +95,29 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
         /// <param name="tappingParameter"></param>
         /// <returns></returns>
         /// <exception cref="DomainException"></exception>
-        private static NcProgramCode RewriteCncProgramForDrilling(NcProgramCode rewritableCode, MaterialType material, decimal thickness, IEnumerable<DrillingProgramParameter> drillingParameters, TappingProgramParameter tappingParameter, string subProgramNumber)
+        private static NcProgramCode RewriteCncProgramForDrilling(
+            NcProgramCode rewritableCode,
+            MaterialType material,
+            decimal thickness,
+            DrillingMethod drillingMethod,
+            decimal blindPilotHoleDepth,
+            IEnumerable<DrillingProgramParameter> drillingParameters,
+            TappingProgramParameter tappingParameter,
+            string subProgramNumber)
         {
             var drillingParameter = drillingParameters
                 .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
                 .MaxBy(x => x.DirectedOperationToolDiameter)
                 ?? throw new DomainException(
                     $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
-            
-            var drillingDepth = thickness + drillingParameter.DrillTipLength;
-            
+
+            var drillingDepth = drillingMethod switch
+            {
+                DrillingMethod.ThroughHole => thickness + drillingParameter.DrillTipLength,
+                DrillingMethod.BlindHole => blindPilotHoleDepth,
+                _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+            };
+
             return DrillingProgramRewriter.Rewrite(
                 rewritableCode,
                 material,
