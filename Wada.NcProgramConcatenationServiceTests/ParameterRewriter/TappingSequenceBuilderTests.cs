@@ -6,18 +6,18 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 {
     [TestClass()]
-    public class TappingParameterRewriterTests
+    public class TappingSequenceBuilderTests
     {
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_工程センタードリルが書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public void 正常系_タップシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+            var actual = tappingSequenceBuilder.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.CenterDrilling);
@@ -94,8 +94,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-                _ = tappingParameterRewriter.RewriteByTool(param);
+                IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+                _ = tappingSequenceBuilder.RewriteByTool(param);
             }
 
             // then
@@ -113,8 +113,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-                _ = tappingParameterRewriter.RewriteByTool(param);
+                IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+                _ = tappingSequenceBuilder.RewriteByTool(param);
             }
 
             // then
@@ -126,15 +126,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_工程下穴が書き換えられること(MaterialType material, double thickness)
+        public void 正常系_タップシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
-            var tappingParameterRewriter = new TappingSequenceBuilder();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            var tappingSequenceBuilder = new TappingSequenceBuilder();
+            var actual = tappingSequenceBuilder.RewriteByTool(param);
 
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Drilling);
@@ -191,8 +191,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             void target()
             {
-                IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-                _ = tappingParameterRewriter.RewriteByTool(param);
+                IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+                _ = tappingSequenceBuilder.RewriteByTool(param);
             }
 
             // then
@@ -207,14 +207,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_工程面取りが書き換えられること(MaterialType material, int expectedSpin)
+        public void 正常系_タップシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
 
-            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+            var actual = tappingSequenceBuilder.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Chamfering);
@@ -230,15 +230,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_工程タップが書き換えられること(MaterialType material, double expectedThickness)
+        public void 正常系_タップシーケンスのタップ工程が書き換えられること(MaterialType material, double expectedThickness)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness);
-            IMainProgramSequenceBuilder tappingParameterRewriter = new TappingSequenceBuilder();
-            var actual = tappingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
+            var actual = tappingSequenceBuilder.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Tapping);

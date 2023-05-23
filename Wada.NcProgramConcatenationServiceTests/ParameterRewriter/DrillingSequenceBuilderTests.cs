@@ -1,5 +1,4 @@
-﻿using Wada.NcProgramConcatenationService.ParameterRewriter;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -7,18 +6,18 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 {
     [TestClass()]
-    public class DrillingParameterRewriterTests
+    public class DrillingSequenceBuilderTests
     {
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_工程センタードリルが書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public void 正常系_ドリルシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-            var actual = drillingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.CenterDrilling);
@@ -58,8 +57,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-            var actual = drillingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             var directedDiameter = param.DirectedOperationToolDiameter;
@@ -89,8 +88,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
             void target()
             {
-                IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-                _ = drillingParameterRewriter.RewriteByTool(param);
+                IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+                _ = drillingSequenceBuilder.RewriteByTool(param);
             }
 
             // then
@@ -107,8 +106,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
             void target()
             {
-                IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-                _ = drillingParameterRewriter.RewriteByTool(param);
+                IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+                _ = drillingSequenceBuilder.RewriteByTool(param);
             }
 
             // then
@@ -120,15 +119,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_工程下穴が書き換えられること(MaterialType material, double thickness)
+        public void 正常系_ドリルシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
-            var drillingParameterRewriter = new DrillingSequenceBuilder();
-            var actual = drillingParameterRewriter.RewriteByTool(param);
+            var drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Drilling);
@@ -163,13 +162,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_工程面取りが書き換えられること(MaterialType material, int expectedSpin)
+        public void 正常系_ドリルシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create(material: material);
-            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-            var actual = drillingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Chamfering);
@@ -189,8 +188,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             var param = TestRewriteByToolRecordFactory.Create();
-            IMainProgramSequenceBuilder drillingParameterRewriter = new DrillingSequenceBuilder();
-            var actual = drillingParameterRewriter.RewriteByTool(param);
+            IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramType.Chamfering)
@@ -207,6 +206,12 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 .Last();
 
             Assert.AreEqual(30, lastM30);
+        }
+
+        [TestMethod]
+        public void 正常系_止まり穴のドリル工程作成できること()
+        {
+            Assert.Fail();
         }
     }
 }
