@@ -68,7 +68,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                         {
                             DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + 5m,
                             DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                            _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+                            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
                         };
                         ncPrograms.Add(TappingProgramRewriter.Rewrite(
                             rewritableCode,
@@ -115,7 +115,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             {
                 DrillingMethod.ThroughHole => thickness + drillingParameter.DrillTipLength,
                 DrillingMethod.BlindHole => blindPilotHoleDepth,
-                _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+                _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
             };
 
             return DrillingProgramRewriter.Rewrite(

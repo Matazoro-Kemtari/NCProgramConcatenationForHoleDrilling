@@ -59,7 +59,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         {
             DrillingMethod.ThroughHole=> thickness + fastDrillingParameter.DrillTipLength,
             DrillingMethod.BlindHole => blindPilotHoleDepth,
-            _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
         };
         ncPrograms.Add(DrillingProgramRewriter.Rewrite(
             rewritableCode,
@@ -151,7 +151,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                     {
                         DrillingMethod.ThroughHole=> rewriteByToolRecord.Thickness + 5m,
                         DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                        _ => throw new InvalidOperationException("DrillingMethodの値が想定外の値です"),
+                        _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
                     };
                     rewrittenNcPrograms.Add(ReamingProgramRewriter.Rewrite(
                         rewritableCode,
