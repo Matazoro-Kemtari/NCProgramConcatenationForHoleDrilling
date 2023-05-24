@@ -6,7 +6,7 @@ namespace Wada.UseCase.DataClass
     {
         [EnumDisplayName("タップ")]
         Tapping,
-        [EnumDisplayName("リーマ")]
+        [EnumDisplayName("リーマー")]
         Reaming,
         [EnumDisplayName("ドリル")]
         Drilling,

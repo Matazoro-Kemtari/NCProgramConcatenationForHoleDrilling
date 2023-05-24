@@ -459,7 +459,7 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
     [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
     public ReactiveProperty<Material> Material { get; }
 
-    [Display(Name = "リーマ")]
+    [Display(Name = "リーマー")]
     [Range(1, int.MaxValue, ErrorMessage = "{0}を選択してください")]
     public ReactiveProperty<ReamerType> Reamer { get; }
 

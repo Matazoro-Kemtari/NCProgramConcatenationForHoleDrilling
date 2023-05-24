@@ -108,7 +108,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_リストに一致するリーマ径が無いとき例外を返すこと()
+        public void 異常系_リストに一致するリーマー径が無いとき例外を返すこと()
         {
             // given
             // when
@@ -123,7 +123,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var ex = Assert.ThrowsException<DomainException>(target);
-            Assert.AreEqual($"リーマ径 {diameter}のリストがありません",
+            Assert.AreEqual($"リーマー径 {diameter}のリストがありません",
                 ex.Message);
         }
 
@@ -300,7 +300,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(13.3, MaterialType.Aluminum, 10.5, 1130, 140)]
         [DataRow(13.3, MaterialType.Iron, 12.4, 360, 40)]
-        public void 正常系_スキルリーマシーケンスのリーマ工程が書き換えられること(
+        public void 正常系_スキルリーマシーケンスのリーマー工程が書き換えられること(
             double toolDiameter,
             MaterialType material,
             double expectedThickness,
@@ -344,7 +344,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
             Assert.AreEqual(-param.BlindPilotHoleDepth, rewritedPilotDepth, "下穴-Z値");
             var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Reaming);
-            Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "リーマ-Z値");
+            Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "リーマー-Z値");
         }
     }
 }

@@ -255,7 +255,7 @@ namespace Wada.NcProgramConcatenationService.ValueObjects
         /// </summary>
         Chamfering,
         /// <summary>
-        /// リーマ
+        /// リーマー
         /// </summary>
         Reaming,
         /// <summary>

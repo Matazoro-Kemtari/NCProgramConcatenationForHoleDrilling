@@ -103,21 +103,23 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         // ドリルのパラメータを受け取る
         var drillingParameters = rewriteByToolRecord.DrillingParameters;
 
+        ReamingProgramParameter reamingParameter;
+        try
+        {
+            reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new DomainException(
+                $"リーマー径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
+        }
+
+        // リーマー
+
         // メインプログラムを工程ごとに取り出す
         List<NcProgramCode> rewrittenNcPrograms = new();
         foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
         {
-            ReamingProgramParameter reamingParameter;
-            try
-            {
-                reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new DomainException(
-                    $"リーマ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
-            }
-
             switch (rewritableCode.MainProgramClassification)
             {
                 case NcProgramType.CenterDrilling:

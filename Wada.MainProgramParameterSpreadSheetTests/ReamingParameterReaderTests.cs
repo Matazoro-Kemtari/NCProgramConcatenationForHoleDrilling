@@ -9,7 +9,7 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
     public class ReamingParameterReaderTests
     {
         [TestMethod()]
-        public async Task 正常系_リーマパラメータエクセルが読み込めること()
+        public async Task 正常系_リーマーパラメータエクセルが読み込めること()
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -49,7 +49,7 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public async Task 異常系_リーマ径に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_リーマー径に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -64,7 +64,7 @@ namespace Wada.MainProgramParameterSpreadSheet.Tests
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
-            string expected = $"リーマ径が取得できません" +
+            string expected = $"リーマー径が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: A2";
             Assert.AreEqual(expected, ex.Message);

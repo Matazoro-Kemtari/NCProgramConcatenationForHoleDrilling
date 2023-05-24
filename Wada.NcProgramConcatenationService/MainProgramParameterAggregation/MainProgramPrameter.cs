@@ -36,7 +36,7 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation
     /// <summary>
     /// リーマパラメータ
     /// </summary>
-    /// <param name="DiameterKey">リーマ径</param>
+    /// <param name="DiameterKey">リーマー径</param>
     /// <param name="PreparedHoleDiameter">下穴1</param>
     /// <param name="SecondPreparedHoleDiameter">下穴2</param>
     /// <param name="CenterDrillDepth">C/D深さ</param>

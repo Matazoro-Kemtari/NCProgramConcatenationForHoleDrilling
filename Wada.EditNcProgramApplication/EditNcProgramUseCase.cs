@@ -111,7 +111,7 @@ public record class EditNcProgramParam(
     {
         if (directedOperation == DirectedOperationTypeAttempt.Reaming
             && reamer == ReamerTypeAttempt.Undefined)
-            throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマ: {reamer}");
+            throw new InvalidOperationException($"指示が不整合です 作業指示: {directedOperation} リーマー: {reamer}");
 
         return reamer switch
         {

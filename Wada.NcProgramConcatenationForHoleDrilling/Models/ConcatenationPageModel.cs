@@ -77,7 +77,7 @@ public enum DirectedOperation
 {
     [EnumDisplayName("タップ")]
     Tapping,
-    [EnumDisplayName("リーマ")]
+    [EnumDisplayName("リーマー")]
     Reaming,
     [EnumDisplayName("ドリル")]
     Drilling,
