@@ -20,69 +20,68 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             // ドリルのパラメータを受け取る
             var drillingParameters = rewriteByToolRecord.DrillingParameters;
 
-            // メインプログラムを工程ごとに取り出す
-            List<NcProgramCode> ncPrograms = new();
-            foreach (var rewritableCode in rewriteByToolRecord.RewritableCodes)
+            TappingProgramParameter tappingParameter;
+            try
             {
-                TappingProgramParameter tappingParameter;
-                try
-                {
-                    tappingParameter = tappingParameters
-                        .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    throw new DomainException(
-                        $"タップ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
-                }
-
-                switch (rewritableCode.MainProgramClassification)
-                {
-                    case NcProgramType.CenterDrilling:
-                        ncPrograms.Add(CenterDrillingProgramRewriter.Rewrite(
-                            rewritableCode,
-                            rewriteByToolRecord.Material,
-                            tappingParameter,
-                            rewriteByToolRecord.SubProgramNumber));
-                        break;
-                    case NcProgramType.Drilling:
-                        ncPrograms.Add(RewriteCncProgramForDrilling(
-                            rewritableCode,
-                            rewriteByToolRecord.Material,
-                            rewriteByToolRecord.Thickness,
-                            rewriteByToolRecord.DrillingMethod,
-                            rewriteByToolRecord.BlindPilotHoleDepth,
-                            drillingParameters,
-                            tappingParameter,
-                            rewriteByToolRecord.SubProgramNumber));
-                        break;
-                    case NcProgramType.Chamfering:
-                        ncPrograms.Add(ChamferingProgramRewriter.Rewrite(
-                            rewritableCode,
-                            rewriteByToolRecord.Material,
-                            tappingParameter,
-                            rewriteByToolRecord.SubProgramNumber));
-                        break;
-                    case NcProgramType.Tapping:
-                        var tappingDepth = rewriteByToolRecord.DrillingMethod switch
-                        {
-                            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + 5m,
-                            DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-                        };
-                        ncPrograms.Add(TappingProgramRewriter.Rewrite(
-                            rewritableCode,
-                            rewriteByToolRecord.Material,
-                            tappingDepth,
-                            tappingParameter,
-                            rewriteByToolRecord.SubProgramNumber));
-                        break;
-                    default:
-                        // 何もしない
-                        break;
-                }
+                tappingParameter = tappingParameters
+                    .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
             }
-            return ncPrograms;
+            catch (InvalidOperationException ex)
+            {
+                throw new DomainException(
+                    $"タップ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
+            }
+
+            // タップの工程
+            NcProgramType[] machiningSequences = new[]
+            {
+                NcProgramType.CenterDrilling,
+                NcProgramType.Drilling,
+                NcProgramType.Chamfering,
+                NcProgramType.Tapping,
+            };
+
+            // メインプログラムを工程ごとに取り出す
+            var rewrittenNcPrograms = machiningSequences.Select(machiningSequence => machiningSequence switch
+            {
+                NcProgramType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                    rewriteByToolRecord.Material,
+                    tappingParameter,
+                    rewriteByToolRecord.SubProgramNumber),
+
+                NcProgramType.Drilling => RewriteCncProgramForDrilling(
+                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                    rewriteByToolRecord.Material,
+                    rewriteByToolRecord.Thickness,
+                    rewriteByToolRecord.DrillingMethod,
+                    rewriteByToolRecord.BlindPilotHoleDepth,
+                    drillingParameters,
+                    tappingParameter,
+                    rewriteByToolRecord.SubProgramNumber),
+
+                NcProgramType.Chamfering => ChamferingProgramRewriter.Rewrite(
+                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                    rewriteByToolRecord.Material,
+                    tappingParameter,
+                    rewriteByToolRecord.SubProgramNumber),
+
+                NcProgramType.Tapping => TappingProgramRewriter.Rewrite(
+                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                    rewriteByToolRecord.Material,
+                    rewriteByToolRecord.DrillingMethod switch
+                    {
+                        DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + 5m,
+                        DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
+                        _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
+                    },
+                    tappingParameter,
+                    rewriteByToolRecord.SubProgramNumber),
+
+                _ => throw new NotImplementedException(),
+            });
+            
+            return rewrittenNcPrograms;
         }
 
         /// <summary>
