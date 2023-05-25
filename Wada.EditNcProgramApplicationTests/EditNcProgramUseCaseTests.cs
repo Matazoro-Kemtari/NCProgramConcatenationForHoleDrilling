@@ -37,13 +37,13 @@ namespace Wada.EditNcProgramApplication.Tests
             _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramParam);
 
             // then
-            mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolArg>()),
                 reamer == ReamerTypeAttempt.Crystal && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_skill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_skill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolArg>()),
                 reamer == ReamerTypeAttempt.Skill && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_tap.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_tap.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolArg>()),
                 directedOperation == DirectedOperationTypeAttempt.Tapping ? Times.Once() : Times.Never());
-            mock_drill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_drill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolArg>()),
                 directedOperation == DirectedOperationTypeAttempt.Drilling ? Times.Once() : Times.Never());
         }
     }

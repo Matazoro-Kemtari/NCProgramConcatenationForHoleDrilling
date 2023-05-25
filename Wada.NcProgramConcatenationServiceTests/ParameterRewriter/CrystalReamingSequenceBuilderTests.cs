@@ -15,7 +15,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
 
@@ -56,7 +56,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create();
+            var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
 
@@ -95,7 +95,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
+            var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
             void target()
             {
                 IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
@@ -113,7 +113,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
+            var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
 
             void target()
             {
@@ -134,7 +134,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
             var crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
@@ -182,7 +182,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴2の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select, int skip = 0)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select, int skip = 0)
         {
             decimal drillDiameter = skip switch
             {
@@ -207,7 +207,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal reamerDiameter = 5.5m;
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
                 crystalReamerParameters: new List<ReamingProgramParameter>
                 {
@@ -240,7 +240,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal reamerDiameter = 5.5m;
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
                 crystalReamerParameters: new List<ReamingProgramParameter>
                 {
@@ -277,7 +277,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
 
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
             var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
@@ -297,7 +297,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(crystalReamerParameters: new List<ReamingProgramParameter>
+            var param = TestRewriteByToolArgFactory.Create(crystalReamerParameters: new List<ReamingProgramParameter>
             {
                 new("13.3", 10m, 20m, 0.1m, null),
             });
@@ -321,7 +321,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness,
                 directedOperationToolDiameter: (decimal)toolDiameter);
@@ -343,7 +343,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         public void 正常系_クリスタルリーマシーケンスの止まり穴の穴深さが書き換えられること()
         {
             // given
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 drillingMethod: DrillingMethod.BlindHole,
                 blindPilotHoleDepth: 10.25m,
                 blindHoleDepth: 8.75m);

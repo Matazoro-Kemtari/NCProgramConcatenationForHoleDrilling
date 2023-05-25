@@ -8,8 +8,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
 {
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteArg, NcProgramCode>> _ncProgramRewriters = new()
+    {
+        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
+        { SequenceOrderType.Drilling, DrillingProgramRewriter.Rewrite },
+        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.Rewrite },
+    };
+
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolRecord rewriteByToolRecord)
+    public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolArg rewriteByToolRecord)
     {
         if (rewriteByToolRecord.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
@@ -40,39 +47,46 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = sequenceOrders.Select(sequenceOrder => sequenceOrder.SequenceOrderType switch
-        {
-            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(new CenterDrillingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                drillingParameter,
-                rewriteByToolRecord.SubProgramNumber)),
+        var rewrittenNcPrograms = sequenceOrders.Select(
+            sequenceOrder => sequenceOrder.SequenceOrderType == SequenceOrderType.Chamfering
+            ? ReplaceLastM1ToM30(_ncProgramRewriters[sequenceOrder.SequenceOrderType](
+                MakeCenterDrillingRewriteArg(sequenceOrder, rewriteByToolRecord, drillingParameter)))
+            : _ncProgramRewriters[sequenceOrder.SequenceOrderType](
+                MakeCenterDrillingRewriteArg(sequenceOrder, rewriteByToolRecord, drillingParameter)));
 
-            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(new DrillingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                rewriteByToolRecord.DrillingMethod switch
-                {
-                    DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
-                    DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                    _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-                },
-                drillingParameter,
-                rewriteByToolRecord.SubProgramNumber,
-                rewriteByToolRecord.DirectedOperationToolDiameter)),
-
-            SequenceOrderType.Chamfering => ReplaceLastM1ToM30(
-                ChamferingProgramRewriter.Rewrite(new ChamferingRewriteArg(
-                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                    rewriteByToolRecord.Material,
-                    drillingParameter,
-                    rewriteByToolRecord.SubProgramNumber))),
-
-            _ => throw new NotImplementedException(),
-        });
-
-        return rewrittenNcPrograms;
+        return rewrittenNcPrograms.ToList();
     }
+
+    private static INcProgramRewriteArg MakeCenterDrillingRewriteArg(SequenceOrder sequenceOrder, RewriteByToolArg rewriteByToolRecord, DrillingProgramParameter drillingParameter) => sequenceOrder.SequenceOrderType switch
+    {
+        SequenceOrderType.CenterDrilling => new CenterDrillingRewriteArg(
+            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
+            rewriteByToolRecord.Material,
+            drillingParameter,
+            rewriteByToolRecord.SubProgramNumber),
+
+        SequenceOrderType.Drilling => new DrillingRewriteArg(
+            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
+            rewriteByToolRecord.Material,
+            rewriteByToolRecord.DrillingMethod switch
+            {
+                DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
+                DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
+                _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
+            },
+            drillingParameter,
+            rewriteByToolRecord.SubProgramNumber,
+            rewriteByToolRecord.DirectedOperationToolDiameter),
+
+        SequenceOrderType.Chamfering => new ChamferingRewriteArg(
+            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
+            rewriteByToolRecord.Material,
+            drillingParameter,
+            rewriteByToolRecord.SubProgramNumber),
+
+        _ => throw new NotImplementedException(),
+    };
+
 
     /// <summary>
     /// ドリリングの作業指示の時だけ面取りの最後をM1からM30に書き換える

@@ -15,7 +15,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
             var actual = tappingSequenceBuilder.RewriteByTool(param);
 
@@ -56,7 +56,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create();
+            var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder crystalReamingParameterRewriter = new TappingSequenceBuilder();
             var actual = crystalReamingParameterRewriter.RewriteByTool(param);
 
@@ -90,7 +90,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
+            var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
 
             void target()
             {
@@ -109,7 +109,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
+            var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
 
             void target()
             {
@@ -130,7 +130,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
             var tappingSequenceBuilder = new TappingSequenceBuilder();
@@ -158,7 +158,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select)
         {
             decimal drillDiameter = param.TapParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
@@ -177,7 +177,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal reamerDiameter = 5.5m;
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 directedOperationToolDiameter: reamerDiameter,
                 tapParameters: new List<TappingProgramParameter>
                 {
@@ -211,7 +211,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
 
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
             var actual = tappingSequenceBuilder.RewriteByTool(param);
@@ -234,7 +234,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 material: material,
                 thickness: (decimal)expectedThickness);
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
@@ -261,7 +261,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         public void 正常系_タップシーケンスの止まり穴の穴深さが書き換えられること()
         {
             // given
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 drillingMethod: DrillingMethod.BlindHole,
                 blindPilotHoleDepth: 10.25m,
                 blindHoleDepth: 8.75m);

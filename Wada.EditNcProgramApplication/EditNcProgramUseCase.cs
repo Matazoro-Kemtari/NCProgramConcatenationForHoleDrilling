@@ -85,7 +85,7 @@ public record class EditNcProgramParam(
     string BlindHoleDepth,
     MainNcProgramParametersAttempt MainNcProgramParameters)
 {
-    internal RewriteByToolRecord ToRewriteByToolRecord() => new(
+    internal RewriteByToolArg ToRewriteByToolRecord() => new(
         RewritableCodeds.Select(x => x.Convert()),
         (MaterialType)Material,
         Thickness,

@@ -15,7 +15,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
@@ -56,7 +56,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create();
+            var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
@@ -85,7 +85,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: MaterialType.Undefined);
+            var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
             void target()
             {
                 IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
@@ -103,7 +103,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             // given
             // when
             decimal diameter = 3m;
-            var param = TestRewriteByToolRecordFactory.Create(directedOperationToolDiameter: diameter);
+            var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
             void target()
             {
                 IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
@@ -123,7 +123,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 material: material,
                 thickness: (decimal)thickness);
             var drillingSequenceBuilder = new DrillingSequenceBuilder();
@@ -151,7 +151,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolRecord param, Func<DrillingProgramParameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select)
         {
             return param.DrillingParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
@@ -166,7 +166,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create(material: material);
+            var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
@@ -187,23 +187,23 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         {
             // given
             // when
-            var param = TestRewriteByToolRecordFactory.Create();
+            var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
             var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramRole.Chamfering)
-                .Select(x => x.NcBlocks)
-                .SelectMany(x => x)
-                .Where(x => x != null)
-                .Select(x => x?.NcWords)
-                .Where(x => x != null)
-                .SelectMany(x => x!)
-                .Where(x => x.GetType() == typeof(NcWord))
-                .Cast<NcWord>()
-                .Where(x => x.Address.Value == 'M')
-                .Select(x => x.ValueData.Number)
-                .Last();
+                                .Select(x => x.NcBlocks)
+                                .SelectMany(x => x)
+                                .Where(x => x != null)
+                                .Select(x => x?.NcWords)
+                                .Where(x => x != null)
+                                .SelectMany(x => x!)
+                                .Where(x => x.GetType() == typeof(NcWord))
+                                .Cast<NcWord>()
+                                .Where(x => x.Address.Value == 'M')
+                                .Select(x => x.ValueData.Number)
+                                .Last();
 
             Assert.AreEqual(30, lastM30);
         }
@@ -212,7 +212,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         public void 正常系_ドリルシーケンスの止まり穴のドリル工程が書き換えられること()
         {
             // given
-            var param = TestRewriteByToolRecordFactory.Create(
+            var param = TestRewriteByToolArgFactory.Create(
                 drillingMethod: DrillingMethod.BlindHole,
                 blindHoleDepth: 4m);
             

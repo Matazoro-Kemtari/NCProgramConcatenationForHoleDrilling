@@ -51,7 +51,7 @@ public class ReamingParameterReader : IMainProgramParameterReader
                 return cellValue;
             });
 
-        var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "リーマ径");
+        var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "リーマー径");
         var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
         var secondPreparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("C", "DR2(φ)");
         var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("D", "C/D深さ");
