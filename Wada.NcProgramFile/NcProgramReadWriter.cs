@@ -82,11 +82,11 @@ public class NcProgramReadWriter : INcProgramReadWriter
             ncBlocks.Add(new NcBlock(ncWords, hasBlockSkip));
         }
 
-        return new(ConvertToNcProgramType(readNcProgram), programName, ncBlocks);
+        return new(ConvertToNcProgramRole(readNcProgram), programName, ncBlocks);
     }
 
-    private static NcProgramType ConvertToNcProgramType(ReadNcProgramType readNcProgram)
-        => (NcProgramType)readNcProgram;
+    private static NcProgramRole ConvertToNcProgramRole(ReadNcProgramType readNcProgram)
+        => (NcProgramRole)readNcProgram;
 
     private static OptionalBlockSkip ExistsOptionalBlockSkip(string line)
     {

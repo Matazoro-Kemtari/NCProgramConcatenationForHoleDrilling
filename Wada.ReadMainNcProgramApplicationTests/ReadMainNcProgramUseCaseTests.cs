@@ -32,7 +32,7 @@ namespace Wada.ReadMainNcProgramApplication.Tests
                 .Build();
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INcProgramReadWriter> mock_nc = new();
-            mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()))
+            mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<ReadNcProgramType>(), It.IsAny<string>()))
                 .ReturnsAsync(TestNcProgramCodeFactory.Create());
 
             // when
@@ -41,7 +41,7 @@ namespace Wada.ReadMainNcProgramApplication.Tests
 
             // then
             mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Exactly(15));
-            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()), Times.Exactly(15));
+            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<ReadNcProgramType>(), It.IsAny<string>()), Times.Exactly(15));
         }
     }
 }

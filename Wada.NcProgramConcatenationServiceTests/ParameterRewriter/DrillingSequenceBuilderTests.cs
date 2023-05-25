@@ -20,20 +20,20 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.CenterDrilling);
+            decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.CenterDrilling);
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
-            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.CenterDrilling);
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.CenterDrilling);
             decimal expectedCenterDrillDepth = param.DrillingParameters
                 .Select(x => x.CenterDrillDepth)
                 .FirstOrDefault();
-            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramType.CenterDrilling);
+            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramRole.CenterDrilling);
 
-            var rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.CenterDrilling);
+            var rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramRole.CenterDrilling);
             Assert.AreEqual(expectedFeed, rewritedFeed, "送り");
         }
 
-        private static decimal NcWordから値を取得する(IEnumerable<NcProgramCode> ncProgramCode, char address, NcProgramType ncProgram, int skip = 0)
+        private static decimal NcWordから値を取得する(IEnumerable<NcProgramCode> ncProgramCode, char address, NcProgramRole ncProgram, int skip = 0)
         {
             return ncProgramCode
                 .Where(x => x.MainProgramClassification == ncProgram)
@@ -62,10 +62,10 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var directedDiameter = param.DirectedOperationToolDiameter;
-            Assert.AreEqual($"DR {directedDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramType.Drilling));
+            Assert.AreEqual($"DR {directedDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Drilling));
         }
 
-        private static string NcWordから始めのコメントを取得する(IEnumerable<NcProgramCode> ncProgramCode, NcProgramType ncProgram)
+        private static string NcWordから始めのコメントを取得する(IEnumerable<NcProgramCode> ncProgramCode, NcProgramRole ncProgram)
         {
             return ncProgramCode.Where(x => x.MainProgramClassification == ncProgram)
                 .Select(x => x.NcBlocks)
@@ -130,21 +130,21 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Drilling);
+            var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Drilling);
             var expectedSpin = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(param, x => x.SpinForAluminum)
                 : ドリルパラメータから値を取得する(param, x => x.SpinForIron);
             Assert.AreEqual(expectedSpin, rewritedSpin, "下穴の回転数");
 
-            decimal rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            decimal rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Drilling);
             decimal expectedDepth = ドリルパラメータから値を取得する(param, x => -x.DrillTipLength - (decimal)thickness);
             Assert.AreEqual(expectedDepth, rewritedDepth, "下穴のZ");
 
-            decimal rewritedCutDepth = NcWordから値を取得する(actual, 'Q', NcProgramType.Drilling);
+            decimal rewritedCutDepth = NcWordから値を取得する(actual, 'Q', NcProgramRole.Drilling);
             decimal expectedCutDepth = ドリルパラメータから値を取得する(param, x => x.CutDepth);
             Assert.AreEqual(expectedCutDepth, rewritedCutDepth, "下穴の切込");
 
-            decimal rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramType.Drilling);
+            decimal rewritedFeed = NcWordから値を取得する(actual, 'F', NcProgramRole.Drilling);
             decimal expectedFeed = material == MaterialType.Aluminum
                 ? ドリルパラメータから値を取得する(param, x => x.FeedForAluminum)
                 : ドリルパラメータから値を取得する(param, x => x.FeedForIron);
@@ -171,10 +171,10 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramType.Chamfering);
+            decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Chamfering);
             Assert.AreEqual(expectedSpin, rewritedSpin, "回転数");
 
-            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Chamfering);
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Chamfering);
             decimal? expectedChamferingDepth = param.DrillingParameters
                 .Where(x => x.DiameterKey == param.DirectedOperationToolDiameter.ToString())
                 .Select(x => x.ChamferingDepth)
@@ -192,7 +192,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramType.Chamfering)
+            var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramRole.Chamfering)
                 .Select(x => x.NcBlocks)
                 .SelectMany(x => x)
                 .Where(x => x != null)
@@ -221,9 +221,9 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var actual = drillingSequenceBuilder.RewriteByTool(param);
 
             // then
-            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramType.Drilling);
+            var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Drilling);
             decimal expectedCenterDrillDepth = -param.BlindHoleDepth;
-            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramType.CenterDrilling);
+            Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramRole.CenterDrilling);
         }
     }
 }

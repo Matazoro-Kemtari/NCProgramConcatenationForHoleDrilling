@@ -53,24 +53,24 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         }
 
         // リーマーの工程
-        NcProgramType[] machiningSequences = new[]
+        NcProgramRole[] machiningSequences = new[]
         {
-            NcProgramType.CenterDrilling,
-            NcProgramType.Drilling,
-            NcProgramType.Chamfering,
-            NcProgramType.Reaming,
+            NcProgramRole.CenterDrilling,
+            NcProgramRole.Drilling,
+            NcProgramRole.Chamfering,
+            NcProgramRole.Reaming,
         };
 
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = machiningSequences.Select((machiningSequence, i) => machiningSequence switch
         {
-            NcProgramType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+            NcProgramRole.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
                 reamingParameter,
                 rewriteByToolRecord.SubProgramNumber),
 
-            NcProgramType.Drilling => RewriteCncProgramForDrilling(
+            NcProgramRole.Drilling => RewriteCncProgramForDrilling(
                 i,
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
@@ -81,7 +81,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                 reamingParameter,
                 rewriteByToolRecord.SubProgramNumber),
 
-            NcProgramType.Chamfering => reamingParameter.ChamferingDepth != null
+            NcProgramRole.Chamfering => reamingParameter.ChamferingDepth != null
             ? ChamferingProgramRewriter.Rewrite(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
@@ -89,7 +89,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                 rewriteByToolRecord.SubProgramNumber)
             : null,
 
-            NcProgramType.Reaming => ReamingProgramRewriter.Rewrite(
+            NcProgramRole.Reaming => ReamingProgramRewriter.Rewrite(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
                 _reamerType,

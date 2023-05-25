@@ -29,7 +29,7 @@ namespace Wada.NcProgramFile.Tests
             var actual = await ncProgramReadWriter.ReadAllAsync(reader, readNcProgramType, pgName);
 
             // then
-            NcProgramCode expected = new(NcProgramType.SubProgram, pgName, testNcBlocks);
+            NcProgramCode expected = new(NcProgramRole.SubProgram, pgName, testNcBlocks);
             Assert.AreEqual(pgNameMatcher.Value, actual.ProgramName);
 
             CollectionAssert.AreEqual(
@@ -134,7 +134,7 @@ M02
             var actual = await ncProgramReadWriter.ReadAllAsync(reader, readNncProgramType, string.Empty);
 
             // then
-            NcProgramCode expected = new(NcProgramType.CenterDrilling, string.Empty, testNcBlocks);
+            NcProgramCode expected = new(NcProgramRole.CenterDrilling, string.Empty, testNcBlocks);
             Assert.AreEqual(string.Empty, actual.ProgramName);
             Assert.AreEqual(count, actual.NcBlocks.Count());
             Assert.AreEqual(sourceType, actual.NcBlocks.FirstOrDefault()?.ToString());

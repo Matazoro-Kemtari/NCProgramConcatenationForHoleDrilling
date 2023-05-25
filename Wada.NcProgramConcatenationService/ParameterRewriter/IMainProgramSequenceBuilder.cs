@@ -70,11 +70,11 @@ public class TestRewriteByToolRecordFactory
     {
         rewritableCodes ??= new List<NcProgramCode>
         {
-            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.CenterDrilling),
-            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Drilling),
-            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Chamfering),
-            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Reaming),
-            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramType.Tapping),
+            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramRole.CenterDrilling),
+            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramRole.Drilling),
+            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramRole.Chamfering),
+            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramRole.Reaming),
+            TestNcProgramCodeFactory.Create(mainProgramType: NcProgramRole.Tapping),
         };
         crystalReamerParameters ??= new List<ReamingProgramParameter>
         {

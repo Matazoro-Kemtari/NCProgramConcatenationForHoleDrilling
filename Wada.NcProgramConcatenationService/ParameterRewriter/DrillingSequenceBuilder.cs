@@ -32,23 +32,23 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
 
         // ドリルの工程
-        NcProgramType[] machiningSequences = new[]
+        NcProgramRole[] machiningSequences = new[]
         {
-            NcProgramType.CenterDrilling,
-            NcProgramType.Drilling,
-            NcProgramType.Chamfering,
+            NcProgramRole.CenterDrilling,
+            NcProgramRole.Drilling,
+            NcProgramRole.Chamfering,
         };
 
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = machiningSequences.Select(machiningSequence => machiningSequence switch
         {
-            NcProgramType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+            NcProgramRole.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
                 drillingParameter,
                 rewriteByToolRecord.SubProgramNumber),
 
-            NcProgramType.Drilling => DrillingProgramRewriter.Rewrite(
+            NcProgramRole.Drilling => DrillingProgramRewriter.Rewrite(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                 rewriteByToolRecord.Material,
                 rewriteByToolRecord.DrillingMethod switch
@@ -61,7 +61,7 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 rewriteByToolRecord.SubProgramNumber,
                 rewriteByToolRecord.DirectedOperationToolDiameter),
 
-            NcProgramType.Chamfering => ReplaceLastM1ToM30(
+            NcProgramRole.Chamfering => ReplaceLastM1ToM30(
                 ChamferingProgramRewriter.Rewrite(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                     rewriteByToolRecord.Material,
@@ -83,7 +83,7 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
     [Logging]
     public static NcProgramCode ReplaceLastM1ToM30(NcProgramCode ncProgramCode)
     {
-        if (ncProgramCode.MainProgramClassification != NcProgramType.Chamfering)
+        if (ncProgramCode.MainProgramClassification != NcProgramRole.Chamfering)
             throw new ArgumentException("引数に面取り以外のプログラムコードが指定されました");
 
         bool hasFinded1stWord = false;

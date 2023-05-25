@@ -6,19 +6,19 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation
 {
     public record class NcProgramCode
     {
-        public NcProgramCode(NcProgramType mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
+        public NcProgramCode(NcProgramRole mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
         {
             ID = Ulid.NewUlid();
             MainProgramClassification = mainProgramClassification;
             ProgramName = mainProgramClassification switch
             {
-                NcProgramType.SubProgram => FetchProgramNumber(programName),
+                NcProgramRole.SubProgram => FetchProgramNumber(programName),
                 _ => programName,
             };
             NcBlocks = ncBlocks;
         }
 
-        protected NcProgramCode(Ulid id, NcProgramType mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
+        protected NcProgramCode(Ulid id, NcProgramRole mainProgramClassification, string programName, IEnumerable<NcBlock?> ncBlocks)
         {
             ID = id;
             MainProgramClassification = mainProgramClassification;
@@ -45,7 +45,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation
 
         public static NcProgramCode ReConstruct(
             string id,
-            NcProgramType mainProgramClassification,
+            NcProgramRole mainProgramClassification,
             string programName,
             IEnumerable<NcBlock?> ncBlocks) => new(Ulid.Parse(id), mainProgramClassification, programName, ncBlocks);
 
@@ -54,7 +54,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation
         /// <summary>
         /// メインプログラム種別
         /// </summary>
-        public NcProgramType MainProgramClassification { get; init; }
+        public NcProgramRole MainProgramClassification { get; init; }
 
         /// <summary>
         /// プログラム番号
@@ -90,23 +90,23 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation
     public class TestNcProgramCodeFactory
     {
         public static NcProgramCode Create(
-            NcProgramType mainProgramType = NcProgramType.Reaming,
+            NcProgramRole mainProgramType = NcProgramRole.Reaming,
             string programName = "O0001",
             IEnumerable<NcBlock?>? ncBlocks = default)
         {
             var typeComment = mainProgramType switch
             {
-                NcProgramType.CenterDrilling => "C/D",
-                NcProgramType.Drilling => "DR",
-                NcProgramType.Chamfering => "MENTORI",
-                NcProgramType.Reaming => "REAMER",
-                NcProgramType.Tapping => "TAP",
+                NcProgramRole.CenterDrilling => "C/D",
+                NcProgramRole.Drilling => "DR",
+                NcProgramRole.Chamfering => "MENTORI",
+                NcProgramRole.Reaming => "REAMER",
+                NcProgramRole.Tapping => "TAP",
                 _ => "COMMENT",
             };
             var lastMCode = mainProgramType switch
             {
-                NcProgramType.Reaming => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
-                NcProgramType.Tapping => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                NcProgramRole.Reaming => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
+                NcProgramRole.Tapping => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("30")),
                 _ => TestNcWordFactory.Create(TestAddressFactory.Create('M'), TestNumericalValueFactory.Create("1")),
             };
             ncBlocks ??= new List<NcBlock>

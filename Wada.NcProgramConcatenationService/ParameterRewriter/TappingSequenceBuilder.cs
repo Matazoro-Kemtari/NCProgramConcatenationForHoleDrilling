@@ -33,24 +33,24 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
             }
 
             // タップの工程
-            NcProgramType[] machiningSequences = new[]
+            NcProgramRole[] machiningSequences = new[]
             {
-                NcProgramType.CenterDrilling,
-                NcProgramType.Drilling,
-                NcProgramType.Chamfering,
-                NcProgramType.Tapping,
+                NcProgramRole.CenterDrilling,
+                NcProgramRole.Drilling,
+                NcProgramRole.Chamfering,
+                NcProgramRole.Tapping,
             };
 
             // メインプログラムを工程ごとに取り出す
             var rewrittenNcPrograms = machiningSequences.Select(machiningSequence => machiningSequence switch
             {
-                NcProgramType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+                NcProgramRole.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                     rewriteByToolRecord.Material,
                     tappingParameter,
                     rewriteByToolRecord.SubProgramNumber),
 
-                NcProgramType.Drilling => RewriteCncProgramForDrilling(
+                NcProgramRole.Drilling => RewriteCncProgramForDrilling(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                     rewriteByToolRecord.Material,
                     rewriteByToolRecord.Thickness,
@@ -60,13 +60,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter
                     tappingParameter,
                     rewriteByToolRecord.SubProgramNumber),
 
-                NcProgramType.Chamfering => ChamferingProgramRewriter.Rewrite(
+                NcProgramRole.Chamfering => ChamferingProgramRewriter.Rewrite(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                     rewriteByToolRecord.Material,
                     tappingParameter,
                     rewriteByToolRecord.SubProgramNumber),
 
-                NcProgramType.Tapping => TappingProgramRewriter.Rewrite(
+                NcProgramRole.Tapping => TappingProgramRewriter.Rewrite(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
                     rewriteByToolRecord.Material,
                     rewriteByToolRecord.DrillingMethod switch
