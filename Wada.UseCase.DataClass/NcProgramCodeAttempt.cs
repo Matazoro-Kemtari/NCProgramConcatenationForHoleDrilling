@@ -30,7 +30,7 @@ namespace Wada.UseCase.DataClass
             ncProgramCode.ProgramName,
             ncProgramCode.NcBlocks.Select(x => x == null ? null : NcBlockAttempt.Parse(x)));
 
-        public NcProgramCode Convert() => NcProgramCode.ReConstruct(ID, (NCProgramRole)MainProgramClassification, ProgramName, NcBlocks.Select(x => x?.Convert()));
+        public NcProgramCode Convert() => NcProgramCode.ReConstruct(ID, (NcProgramRole)MainProgramClassification, ProgramName, NcBlocks.Select(x => x?.Convert()));
     }
 
     public class TestNcProgramCodeAttemptFactory
