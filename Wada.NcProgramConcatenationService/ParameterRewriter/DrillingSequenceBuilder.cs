@@ -32,24 +32,24 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
 
         // ドリルの工程
-        NcProgramRole[] machiningSequences = new[]
+        SequenceOrder[] sequenceOrders = new[]
         {
-            NcProgramRole.CenterDrilling,
-            NcProgramRole.Drilling,
-            NcProgramRole.Chamfering,
+            new SequenceOrder(SequenceOrderType.CenterDrilling),
+            new SequenceOrder(SequenceOrderType.Drilling),
+            new SequenceOrder(SequenceOrderType.Chamfering),
         };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = machiningSequences.Select(machiningSequence => machiningSequence switch
+        var rewrittenNcPrograms = sequenceOrders.Select(sequenceOrder => sequenceOrder.SequenceOrderType switch
         {
-            NcProgramRole.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 drillingParameter,
                 rewriteByToolRecord.SubProgramNumber),
 
-            NcProgramRole.Drilling => DrillingProgramRewriter.Rewrite(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 rewriteByToolRecord.DrillingMethod switch
                 {
@@ -61,9 +61,9 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 rewriteByToolRecord.SubProgramNumber,
                 rewriteByToolRecord.DirectedOperationToolDiameter),
 
-            NcProgramRole.Chamfering => ReplaceLastM1ToM30(
+            SequenceOrderType.Chamfering => ReplaceLastM1ToM30(
                 ChamferingProgramRewriter.Rewrite(
-                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                    rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                     rewriteByToolRecord.Material,
                     drillingParameter,
                     rewriteByToolRecord.SubProgramNumber)),

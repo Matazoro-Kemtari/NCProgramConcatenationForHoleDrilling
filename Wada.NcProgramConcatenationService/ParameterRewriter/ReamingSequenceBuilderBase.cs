@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
@@ -38,9 +37,6 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         else
             reamingParameters = rewriteByToolRecord.SkillReamerParameters;
 
-        // ドリルのパラメータを受け取る
-        var drillingParameters = rewriteByToolRecord.DrillingParameters;
-
         ReamingProgramParameter reamingParameter;
         try
         {
@@ -52,45 +48,74 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                 $"リーマー径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
         }
 
-        // リーマーの工程
-        NcProgramRole[] machiningSequences = new[]
+        // ドリルのパラメータを受け取る
+
+        // 下穴 1回目
+        var fastDrillingParameter = rewriteByToolRecord.DrillingParameters
+            .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
+            .MaxBy(x => x.DirectedOperationToolDiameter)
+            ?? throw new DomainException(
+                $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
+        var fastDrillingDepth = rewriteByToolRecord.DrillingMethod switch
         {
-            NcProgramRole.CenterDrilling,
-            NcProgramRole.Drilling,
-            NcProgramRole.Chamfering,
-            NcProgramRole.Reaming,
+            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + fastDrillingParameter.DrillTipLength,
+            DrillingMethod.BlindHole => rewriteByToolRecord.BlindPilotHoleDepth,
+            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
+        };
+
+        // 下穴 2回目
+        var secondDrillingParameter = rewriteByToolRecord.DrillingParameters
+            .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
+            .MaxBy(x => x.DirectedOperationToolDiameter)
+            ?? throw new DomainException(
+                $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
+        var secondDrillingDepth = rewriteByToolRecord.Thickness + secondDrillingParameter.DrillTipLength;
+
+        // リーマーの工程
+        SequenceOrder[] sequenceOrders = new[]
+        {
+            new SequenceOrder(SequenceOrderType.CenterDrilling),
+            new SequenceOrder(SequenceOrderType.PilotDrilling),
+            new SequenceOrder(SequenceOrderType.Drilling),
+            new SequenceOrder(SequenceOrderType.Chamfering),
+            new SequenceOrder(SequenceOrderType.Reaming),
         };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = machiningSequences.Select((machiningSequence, i) => machiningSequence switch
+        var rewrittenNcPrograms = sequenceOrders.Select(sequenceOrder => sequenceOrder.SequenceOrderType switch
         {
-            NcProgramRole.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 reamingParameter,
                 rewriteByToolRecord.SubProgramNumber),
 
-            NcProgramRole.Drilling => RewriteCncProgramForDrilling(
-                i,
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+            SequenceOrderType.PilotDrilling => DrillingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
-                rewriteByToolRecord.Thickness,
-                rewriteByToolRecord.DrillingMethod,
-                rewriteByToolRecord.BlindPilotHoleDepth,
-                drillingParameters,
-                reamingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+                fastDrillingDepth,
+                fastDrillingParameter,
+                rewriteByToolRecord.SubProgramNumber,
+                reamingParameter.PreparedHoleDiameter),
 
-            NcProgramRole.Chamfering => reamingParameter.ChamferingDepth != null
+            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
+                rewriteByToolRecord.Material,
+                secondDrillingDepth,
+                secondDrillingParameter,
+                rewriteByToolRecord.SubProgramNumber,
+                reamingParameter.SecondPreparedHoleDiameter),
+
+            SequenceOrderType.Chamfering => reamingParameter.ChamferingDepth != null
             ? ChamferingProgramRewriter.Rewrite(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 reamingParameter,
                 rewriteByToolRecord.SubProgramNumber)
             : null,
 
-            NcProgramRole.Reaming => ReamingProgramRewriter.Rewrite(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == machiningSequence),
+            SequenceOrderType.Reaming => ReamingProgramRewriter.Rewrite(
+                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 _reamerType,
                 rewriteByToolRecord.DrillingMethod switch
@@ -105,84 +130,6 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
             _ => throw new NotImplementedException(),
         });
 
-        return (IEnumerable<NcProgramCode>)rewrittenNcPrograms;
-    }
-
-    /// <summary>
-    /// 2回下穴のパラメータを書き換える
-    /// </summary>
-    /// <param name="rewritableCode"></param>
-    /// <param name="material"></param>
-    /// <param name="thickness"></param>
-    /// <param name="drillingMethod">穴加工方法</param>
-    /// <param name="blindPilotHoleDepth">止まり穴下穴深さ</param>
-    /// <param name="drillingParameters"></param>
-    /// <param name="reamingParameter"></param>
-    /// <param name="subProgramNumber">サブプログラムNo</param>
-    /// <returns></returns>
-    /// <exception cref="DomainException"></exception>
-    [Logging]
-    private static NcProgramCode RewriteCncProgramForDrilling(
-        int index,
-        NcProgramCode rewritableCode,
-        MaterialType material,
-        decimal thickness,
-        DrillingMethod drillingMethod,
-        decimal blindPilotHoleDepth,
-        IEnumerable<DrillingProgramParameter> drillingParameters,
-        ReamingProgramParameter reamingParameter,
-        string subProgramNumber)
-    {
-        return index switch
-        {
-            // 下穴 1回目
-            1 => FastDrilling(),
-
-            // 下穴 2回目
-            2 => SecondDrilling(),
-
-            _ => throw new NotImplementedException(),
-        };
-
-        NcProgramCode FastDrilling()
-        {
-            // 下穴 1回目
-            var fastDrillingParameter = drillingParameters
-                .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.PreparedHoleDiameter)
-                .MaxBy(x => x.DirectedOperationToolDiameter)
-                ?? throw new DomainException(
-                    $"穴径に該当するリストがありません 穴径: {reamingParameter.PreparedHoleDiameter}");
-            var fastDrillingDepth = drillingMethod switch
-            {
-                DrillingMethod.ThroughHole => thickness + fastDrillingParameter.DrillTipLength,
-                DrillingMethod.BlindHole => blindPilotHoleDepth,
-                _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-            };
-            return DrillingProgramRewriter.Rewrite(
-                rewritableCode,
-                material,
-                fastDrillingDepth,
-                fastDrillingParameter,
-                subProgramNumber,
-                reamingParameter.PreparedHoleDiameter);
-        }
-
-        NcProgramCode SecondDrilling()
-        {
-            // 下穴 2回目
-            var secondDrillingParameter = drillingParameters
-                .Where(x => x.DirectedOperationToolDiameter <= reamingParameter.SecondPreparedHoleDiameter)
-                .MaxBy(x => x.DirectedOperationToolDiameter)
-                ?? throw new DomainException(
-                    $"穴径に該当するリストがありません 穴径: {reamingParameter.SecondPreparedHoleDiameter}");
-            var secondDrillingDepth = thickness + secondDrillingParameter.DrillTipLength;
-            return DrillingProgramRewriter.Rewrite(
-                rewritableCode,
-                material,
-                secondDrillingDepth,
-                secondDrillingParameter,
-                subProgramNumber,
-                reamingParameter.SecondPreparedHoleDiameter);
-        }
+        return (IEnumerable<NcProgramCode>)rewrittenNcPrograms.Where(x => x != null);
     }
 }
