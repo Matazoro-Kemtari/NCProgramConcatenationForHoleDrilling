@@ -7,7 +7,6 @@ using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;

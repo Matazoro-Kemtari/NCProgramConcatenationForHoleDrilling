@@ -42,7 +42,7 @@ public class ReadSubNcProgramUseCase : IReadSubNcProgramUseCase
 
         try
         {
-            var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, NcProgramType.SubProgram, fileName);
+            var ncProgramCode = await _ncProgramReadWriter.ReadSubProgramAll(reader, fileName);
             var drillSizeData = await ReadDrillSizeDatasAsync();
             return OperationDirecterAttemp.Parse(
                 OperationDirecter.Create(ncProgramCode, drillSizeData));

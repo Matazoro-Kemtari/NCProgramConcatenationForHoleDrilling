@@ -1,15 +1,14 @@
-﻿using Wada.NcProgramFile;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
+using System.Text.RegularExpressions;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
-using System.Text.RegularExpressions;
 
 namespace Wada.NcProgramFile.Tests
 {
     [TestClass()]
-    public class NcProgramRepositoryTests
+    public class NcProgramReadWriterTests
     {
         [TestMethod()]
         public async Task 正常系_NCプログラムが読み込めること()
@@ -23,14 +22,14 @@ namespace Wada.NcProgramFile.Tests
                     "StreamReader作るときに失敗した");
 
             // when
-            string pgName = "O0150";
-            Match pgNameMatcher = Regex.Match(pgName, @"\d+");
-            NcProgramType ncProgram = NcProgramType.SubProgram;
+            var pgName = "O0150";
+            var pgNameMatcher = Regex.Match(pgName, @"\d+");
+            var readNcProgramType = ReadNcProgramType.SubProgram;
             INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
-            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, pgName);
+            var actual = await ncProgramReadWriter.ReadAllAsync(reader, readNcProgramType, pgName);
 
             // then
-            NcProgramCode expected = new(ncProgram, pgName, testNcBlocks);
+            NcProgramCode expected = new(NcProgramType.SubProgram, pgName, testNcBlocks);
             Assert.AreEqual(pgNameMatcher.Value, actual.ProgramName);
 
             CollectionAssert.AreEqual(
@@ -131,11 +130,11 @@ M02
 
             // when
             INcProgramReadWriter ncProgramReadWriter = new NcProgramReadWriter();
-            NcProgramType ncProgram = NcProgramType.CenterDrilling;
-            NcProgramCode actual = await ncProgramReadWriter.ReadAllAsync(reader, ncProgram, string.Empty);
+            var readNncProgramType = ReadNcProgramType.CenterDrilling;
+            var actual = await ncProgramReadWriter.ReadAllAsync(reader, readNncProgramType, string.Empty);
 
             // then
-            NcProgramCode expected = new(ncProgram, string.Empty, testNcBlocks);
+            NcProgramCode expected = new(NcProgramType.CenterDrilling, string.Empty, testNcBlocks);
             Assert.AreEqual(string.Empty, actual.ProgramName);
             Assert.AreEqual(count, actual.NcBlocks.Count());
             Assert.AreEqual(sourceType, actual.NcBlocks.FirstOrDefault()?.ToString());

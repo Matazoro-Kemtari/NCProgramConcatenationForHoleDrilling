@@ -47,12 +47,12 @@ namespace Wada.ReadMainNcProgramApplication
                 {
                     ncProgramCodeAttempts = await Task.WhenAll(mainPrograms.Select(async program =>
                     {
-                        var fileName = Path.GetFileNameWithoutExtension(program.FileName);
-                        var path = Path.Combine(directory, $"{machine}_{program.FileName}");
+                        var fileName = Path.GetFileNameWithoutExtension(program.fileName);
+                        var path = Path.Combine(directory, $"{machine}_{program.fileName}");
 
                         // メインプログラムを読み込む
                         using StreamReader reader = _streamReaderOpener.Open(path);
-                        var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, program.NcProgramType, fileName);
+                        var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, program.readNcProgramType, fileName);
                         return NcProgramCodeAttempt.Parse(ncProgramCode);
                     }));
                 }
@@ -99,7 +99,7 @@ namespace Wada.ReadMainNcProgramApplication
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        private List<(string FileName, NcProgramType NcProgramType)> FetchMainPrograms()
+        private List<(string fileName, ReadNcProgramType readNcProgramType)> FetchMainPrograms()
         {
             return new()
             {
@@ -107,27 +107,27 @@ namespace Wada.ReadMainNcProgramApplication
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
                     "applicationConfiguration:CenterDrillingProgramName"),
-                    NcProgramType.CenterDrilling),
+                    ReadNcProgramType.CenterDrilling),
                 (_configuration["applicationConfiguration:DrillingProgramName"]
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
                     "applicationConfiguration:DrillingProgramName"),
-                    NcProgramType.Drilling),
+                    ReadNcProgramType.Drilling),
                 (_configuration["applicationConfiguration:ChamferingProgramName"]
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
                     "applicationConfiguration:ChamferingProgramName"),
-                    NcProgramType.Chamfering),
+                    ReadNcProgramType.Chamfering),
                 (_configuration["applicationConfiguration:ReamingProgramName"]
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
                     "applicationConfiguration:ReamingProgramName"),
-                    NcProgramType.Reaming),
+                    ReadNcProgramType.Reaming),
                 (_configuration["applicationConfiguration:TappingProgramName"]
                 ?? throw new InvalidOperationException(
                     "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +
                     "applicationConfiguration:TappingProgramName"),
-                    NcProgramType.Tapping),
+                    ReadNcProgramType.Tapping),
             };
         }
     }
