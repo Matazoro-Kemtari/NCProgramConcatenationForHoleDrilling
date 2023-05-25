@@ -1,14 +1,13 @@
 ﻿using Wada.NcProgramConcatenationService.ValueObjects;
 
-namespace Wada.NcProgramConcatenationService.ParameterRewriter
+namespace Wada.NcProgramConcatenationService.ParameterRewriter;
+
+/// <summary>
+/// クリスタルリーマのパラメータを書き換える
+/// </summary>
+public class CrystalReamingSequenceBuilder : ReamingSequenceBuilderBase, IMainProgramSequenceBuilder
 {
-    /// <summary>
-    /// クリスタルリーマのパラメータを書き換える
-    /// </summary>
-    public class CrystalReamingSequenceBuilder : ReamingSequenceBuilderBase, IMainProgramSequenceBuilder
-    {
-        public CrystalReamingSequenceBuilder()
-            : base(ParameterType.CrystalReamerParameter, ReamerType.CrystalReamerParameter)
-        { }
-    }
+    public CrystalReamingSequenceBuilder()
+        : base(ParameterType.CrystalReamerParameter, ReamerType.CrystalReamerParameter)
+    { }
 }

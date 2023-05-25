@@ -42,13 +42,13 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = sequenceOrders.Select(sequenceOrder => sequenceOrder.SequenceOrderType switch
         {
-            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(new CenterDrillingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 drillingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+                rewriteByToolRecord.SubProgramNumber)),
 
-            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(
+            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(new DrillingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 rewriteByToolRecord.DrillingMethod switch
@@ -59,14 +59,14 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 },
                 drillingParameter,
                 rewriteByToolRecord.SubProgramNumber,
-                rewriteByToolRecord.DirectedOperationToolDiameter),
+                rewriteByToolRecord.DirectedOperationToolDiameter)),
 
             SequenceOrderType.Chamfering => ReplaceLastM1ToM30(
-                ChamferingProgramRewriter.Rewrite(
+                ChamferingProgramRewriter.Rewrite(new ChamferingRewriteArg(
                     rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                     rewriteByToolRecord.Material,
                     drillingParameter,
-                    rewriteByToolRecord.SubProgramNumber)),
+                    rewriteByToolRecord.SubProgramNumber))),
 
             _ => throw new NotImplementedException(),
         });

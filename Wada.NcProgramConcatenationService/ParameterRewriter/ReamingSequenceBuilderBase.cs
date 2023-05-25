@@ -84,37 +84,37 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = sequenceOrders.Select(sequenceOrder => sequenceOrder.SequenceOrderType switch
         {
-            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(
+            SequenceOrderType.CenterDrilling => CenterDrillingProgramRewriter.Rewrite(new CenterDrillingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 reamingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+                rewriteByToolRecord.SubProgramNumber)),
 
-            SequenceOrderType.PilotDrilling => DrillingProgramRewriter.Rewrite(
+            SequenceOrderType.PilotDrilling => DrillingProgramRewriter.Rewrite(new DrillingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 fastDrillingDepth,
                 fastDrillingParameter,
                 rewriteByToolRecord.SubProgramNumber,
-                reamingParameter.PreparedHoleDiameter),
+                reamingParameter.PreparedHoleDiameter)),
 
-            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(
+            SequenceOrderType.Drilling => DrillingProgramRewriter.Rewrite(new DrillingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 secondDrillingDepth,
                 secondDrillingParameter,
                 rewriteByToolRecord.SubProgramNumber,
-                reamingParameter.SecondPreparedHoleDiameter),
+                reamingParameter.SecondPreparedHoleDiameter)),
 
             SequenceOrderType.Chamfering => reamingParameter.ChamferingDepth != null
-            ? ChamferingProgramRewriter.Rewrite(
+            ? ChamferingProgramRewriter.Rewrite(new ChamferingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 reamingParameter,
-                rewriteByToolRecord.SubProgramNumber)
+                rewriteByToolRecord.SubProgramNumber))
             : null,
 
-            SequenceOrderType.Reaming => ReamingProgramRewriter.Rewrite(
+            SequenceOrderType.Reaming => ReamingProgramRewriter.Rewrite(new ReamingRewriteArg(
                 rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
                 rewriteByToolRecord.Material,
                 _reamerType,
@@ -125,7 +125,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                     _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
                 },
                 reamingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+                rewriteByToolRecord.SubProgramNumber)),
 
             _ => throw new NotImplementedException(),
         });
