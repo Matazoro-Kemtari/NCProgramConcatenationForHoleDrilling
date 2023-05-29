@@ -3,12 +3,12 @@ using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet;
+namespace Wada.MainProgramParameterSpreadSheet;
 
-public class ReamingPrameterReader : IMainProgramPrameterReader
+public class ReamingParameterReader : IMainProgramParameterReader
 {
     [Logging]
-    public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
+    public virtual async Task<IEnumerable<IMainProgramParameter>> ReadAllAsync(Stream stream)
     {
         using var xlBook = new XLWorkbook(stream);
         // パラメーターのシートを取得 シートは1つの想定
@@ -26,7 +26,7 @@ public class ReamingPrameterReader : IMainProgramPrameterReader
     }
 
     [Logging]
-    private static async Task<ReamingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
+    private static async Task<ReamingProgramParameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
     {
         [Logging]
         Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
@@ -51,16 +51,16 @@ public class ReamingPrameterReader : IMainProgramPrameterReader
                 return cellValue;
             });
 
-        var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "リーマ径");
-        var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
-        var secondPreparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("C", "DR2(φ)");
+        var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "リーマー径");
+        var pilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
+        var secondaryPilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("C", "DR2(φ)");
         var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("D", "C/D深さ");
         var chamferingDepth = await GetValueWithOutVaridateAsync<decimal?>("E", "面取深さ");
 
-        return new ReamingProgramPrameter(
+        return new ReamingProgramParameter(
             reamerDiameter,
-            preparedHoleDiameter,
-            secondPreparedHoleDiameter,
+            pilotHoleDiameter,
+            secondaryPilotHoleDiameter,
             centerDrillDepth,
             chamferingDepth);
     }

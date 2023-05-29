@@ -6,7 +6,7 @@
              xmlns:viewmodels="clr-namespace:Wada.NcProgramConcatenationForHoleDrilling.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="350" d:DesignWidth="400"
+             d:DesignHeight="500" d:DesignWidth="700"
              d:Background="LightGray"
              d:DataContext="{d:DesignInstance Type=viewmodels:ConcatenationPageViewModel}"
              xmlns:dd="urn:gong-wpf-dragdrop"
@@ -50,12 +50,18 @@
         <!-- BooleanをVisibility列挙型に変換するコンバータ 組み込みコンバータ -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <!-- enumをbooleanに変換するコンバーター -->
-        <local:EnumToBooleanConverter x:Key="EnumToBoolean"/>
+        <viewmodels:EnumToBooleanConverter x:Key="EnumToBoolean"/>
         <!-- enumをbooleanにして True/Falseを反転して Visibility列挙型に変換する -->
-        <local:ValueConverterGroup x:Key="EnumVisibilityConverter">
-            <local:EnumToBooleanConverter/>
+        <viewmodels:ValueConverterGroup x:Key="EnumVisibilityConverter">
+            <viewmodels:EnumToBooleanConverter/>
             <BooleanToVisibilityConverter/>
-        </local:ValueConverterGroup>
+        </viewmodels:ValueConverterGroup>
+        <!-- EnumVisibilityConverterを反転したコンバーター -->
+        <viewmodels:ValueConverterGroup x:Key="EnumNegativeVisibilityConverter">
+            <viewmodels:EnumToBooleanConverter/>
+            <viewmodels:BooleanNegativeConverter/>
+            <BooleanToVisibilityConverter/>
+        </viewmodels:ValueConverterGroup>
     </UserControl.Resources>
 
     <i:Interaction.Triggers>
@@ -111,6 +117,7 @@
             <TextBlock Grid.Row="0"
                        Margin="20"
                        Text="{Binding ErrorMsgNcProgramFileName.Value}"
+                       d:Text="ErrorMsgNcProgramFileName"
                        Foreground="Red"
                        FontWeight="Bold"
                        TextWrapping="Wrap"
@@ -119,6 +126,7 @@
                        VerticalAlignment="Center"/>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition Height="0*"/>
@@ -131,7 +139,7 @@
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Margin="8" Text="加工機" HorizontalAlignment="Right"/>
 
-                <StackPanel Grid.Row="0" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                <WrapPanel Grid.Row="0" Grid.Column="1" Margin="3" Orientation="Horizontal">
                     <StackPanel x:Name="MachineTool" Tag="{Binding MachineTool.Value}" Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                         <RadioButton Margin="5" Content="RB-250F" VerticalAlignment="Center"
                                         IsChecked="{Binding MachineTool.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=RB250F, UpdateSourceTrigger=PropertyChanged}">
@@ -157,13 +165,15 @@
                     </StackPanel>
                     <TextBlock Margin="5"
                                Text="{Binding ErrorMsgMachineTool.Value}"
+                               d:Text="ErrorMsgMachineTool"
                                Foreground="Red"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
                                Visibility="{Binding (Validation.HasError), ElementName=MachineTool, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                </StackPanel>
+                </WrapPanel>
+                
                 <TextBlock Grid.Row="1" Grid.Column="0" Margin="8" Text="材質" HorizontalAlignment="Right"/>
-                <StackPanel Grid.Row="1" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                <WrapPanel Grid.Row="1" Grid.Column="1" Margin="3" Orientation="Horizontal">
                     <StackPanel x:Name="Material" Tag="{Binding Material.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                         <RadioButton Margin="5" Content="AL" VerticalAlignment="Center"
                                      IsChecked="{Binding Material.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=Aluminum, UpdateSourceTrigger=PropertyChanged}">
@@ -182,14 +192,16 @@
                     </StackPanel>
                     <TextBlock Margin="5"
                                Text="{Binding ErrorMsgMaterial.Value}"
+                               d:Text="ErrorMsgMaterial"
                                Foreground="Red"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
                                Visibility="{Binding (Validation.HasError), ElementName=Material, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                </StackPanel>
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="8" Text="リーマ" HorizontalAlignment="Right"
+                </WrapPanel>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="8" Text="リーマー" HorizontalAlignment="Right"
                            Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}"/>
-                <StackPanel Grid.Row="2" Grid.Column="1" Margin="3" Orientation="Horizontal"
+                <WrapPanel Grid.Row="2" Grid.Column="1" Margin="3" Orientation="Horizontal"
                             Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}">
                     <StackPanel x:Name="Reamer" Tag="{Binding Reamer.Value}"  Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}">
                         <RadioButton Margin="5" Content="クリスタルリーマ" VerticalAlignment="Center"
@@ -209,27 +221,139 @@
                     </StackPanel>
                     <TextBlock Margin="5"
                                Text="{Binding ErrorMsgReamer.Value}"
+                               d:Text="ErrorMsgReamer"
                                Foreground="Red"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
                                Visibility="{Binding (Validation.HasError), ElementName=Reamer, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                </StackPanel>
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Text="板厚" HorizontalAlignment="Right"/>
-                <StackPanel Grid.Row="3" Grid.Column="1" Margin="3" Orientation="Horizontal">
-                    <StackPanel Margin="5" Orientation="Horizontal">
-                        <TextBox x:Name="Thickness"
-                                 Text="{Binding Thickness.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
-                                 MinWidth="50"
-                                 VerticalAlignment="Bottom"
-                                 InputMethod.IsInputMethodEnabled="False"/>
-                        <TextBlock Text="mm" VerticalAlignment="Bottom"/>
+                </WrapPanel>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Margin="8" Text="穴加工" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <WrapPanel Grid.Row="3" Grid.Column="1" Margin="3" Orientation="Horizontal">
+                    <StackPanel x:Name="Drilling" Tag="{Binding HoleType.Value}" Orientation="Horizontal" HorizontalAlignment="Left" Validation.ErrorTemplate="{StaticResource ValidationTemplate}" VerticalAlignment="Center">
+                        <RadioButton Margin="5" Content="通し穴" VerticalAlignment="Center"
+                                     IsChecked="{Binding HoleType.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=ThroughHole, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
+                        <RadioButton x:Name="BlindHole" Margin="5" Content="止まり穴" VerticalAlignment="Center"
+                                     IsChecked="{Binding HoleType.Value, Mode=TwoWay, Converter={StaticResource EnumToBoolean}, ConverterParameter=BlindHole, UpdateSourceTrigger=PropertyChanged}">
+                            <Validation.ErrorTemplate>
+                                <!-- エラー時に赤枠を表示させない -->
+                                <ControlTemplate/>
+                            </Validation.ErrorTemplate>
+                        </RadioButton>
                     </StackPanel>
                     <TextBlock Margin="5"
-                               Text="{Binding ErrorMsgThickness.Value}"
+                               Text="{Binding ErrorMsgDrillingMethod.Value}"
+                               d:Text="ErrorMsgDrillingMethod"
                                Foreground="Red"
                                FontWeight="Bold"
                                TextWrapping="Wrap"
-                               Visibility="{Binding (Validation.HasError), ElementName=Thickness, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                               Visibility="{Binding (Validation.HasError), ElementName=Drilling, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center"/>
+
+                    <StackPanel x:Name="HoleDepthRelationship" Tag="{Binding HoleDepthRelationship.Value}"
+                                Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                                Visibility="{Binding IsChecked, ElementName=BlindHole, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                d:Visibility="Visible">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="下穴深さ" HorizontalAlignment="Right"
+                                       Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumNegativeVisibilityConverter}, ConverterParameter=Drilling}" VerticalAlignment="Center"/>
+                            <WrapPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal"
+                                        Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumNegativeVisibilityConverter}, ConverterParameter=Drilling}">
+                                <TextBox x:Name="PilotHoleDepth"
+                                         Margin="5"
+                                     Text="{Binding BlindPilotHoleDepth.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                                     MinWidth="50"
+                                     InputMethod.IsInputMethodEnabled="False"/>
+                                <TextBlock Text="mm" Margin="5" VerticalAlignment="Bottom"/>
+                                <TextBlock Margin="5"
+                                       Text="{Binding ErrorMsgBlindPilotHoleDepth.Value}"
+                                       d:Text="ErrorMsgBlindPilotHoleDepth"
+                                       Foreground="Red"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding (Validation.HasError), ElementName=PilotHoleDepth, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </WrapPanel>
+                            <TextBlock Grid.Row="1" Margin="5" Text="止まり穴深さ" HorizontalAlignment="Right"
+                                       Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Undetected}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Margin="5" Text="タップ深さ" HorizontalAlignment="Right"
+                                       Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Tapping}"
+                                       d:Visibility="Hidden"/>
+                            <TextBlock Grid.Row="1" Margin="5" Text="リーマー深さ" HorizontalAlignment="Right"
+                                       Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Reaming}"
+                                       d:Visibility="Hidden"/>
+                            <TextBlock Grid.Row="1" Margin="5" Text="ドリル深さ" HorizontalAlignment="Right"
+                                       Visibility="{Binding FetchedOperationType.Value, Converter={StaticResource EnumVisibilityConverter}, ConverterParameter=Drilling}"
+                                       d:Visibility="Hidden"/>
+                            <WrapPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                                <TextBox x:Name="Depth"
+                                             Margin="5"
+                                         Text="{Binding BlindHoleDepth.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                                         MinWidth="50"
+                                         InputMethod.IsInputMethodEnabled="False"/>
+                                <TextBlock Text="mm" Margin="5" VerticalAlignment="Bottom"/>
+                                <TextBlock Margin="5"
+                                       Text="{Binding ErrorMsgBlindHoleDepth.Value}"
+                                       d:Text="ErrorMsgBlindHoleDepth"
+                                       Foreground="Red"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding (Validation.HasError), ElementName=Depth, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            </WrapPanel>
+                        </Grid>
+                        <TextBlock Margin="5"
+                               Text="{Binding ErrorMsgHoleDepthRelationship.Value}"
+                               d:Text="ErrorMsgHoleDepthRelationship"
+                               Foreground="Red"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding (Validation.HasError), ElementName=HoleDepthRelationship, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
+                </WrapPanel>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Margin="8" Text="板厚" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <StackPanel Grid.Row="4" Grid.Column="1" Margin="3"
+                            x:Name="ThicknessHoleDepthRelationship" Tag="{Binding ThicknessHoleDepthRelationship.Value}" Validation.ErrorTemplate="{StaticResource ValidationTemplate}"
+                            HorizontalAlignment="Left">
+                    <WrapPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBox x:Name="Thickness"
+                                     Margin="5"
+                                     Text="{Binding Thickness.Value, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+                                     MinWidth="50"
+                                     VerticalAlignment="Bottom"
+                                     InputMethod.IsInputMethodEnabled="False"/>
+                            <TextBlock Text="mm" Margin="5" VerticalAlignment="Bottom"/>
+                        </StackPanel>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Margin="5"
+                                       Text="{Binding ErrorMsgThickness.Value}"
+                                       d:Text="ErrorMsgThickness"
+                                       Foreground="Red"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding (Validation.HasError), ElementName=Thickness, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                            <TextBlock Margin="5"
+                                       Text="{Binding ErrorMsgThicknessHoleDepthRelationship.Value}"
+                                       d:Text="ErrorMsgThicknessHoleDepthRelationship"
+                                       Foreground="Red"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding (Validation.HasError), ElementName=ThicknessHoleDepthRelationship, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </WrapPanel>
                 </StackPanel>
             </Grid>
         </Grid>

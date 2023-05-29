@@ -1,7 +1,7 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 
-namespace Wada.MainProgramPrameterSpreadSheet
+namespace Wada.MainProgramParameterSpreadSheet
 {
     public class StreamOpener : IStreamOpener
     {

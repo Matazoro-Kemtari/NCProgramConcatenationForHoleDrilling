@@ -3,12 +3,12 @@ using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet
+namespace Wada.MainProgramParameterSpreadSheet
 {
-    public class TappingPrameterReader : IMainProgramPrameterReader
+    public class TappingParameterReader : IMainProgramParameterReader
     {
         [Logging]
-        public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
+        public virtual async Task<IEnumerable<IMainProgramParameter>> ReadAllAsync(Stream stream)
         {
             using var xlBook = new XLWorkbook(stream);
             // パラメーターのシートを取得 シートは1つの想定
@@ -27,7 +27,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
 
 
         [Logging]
-        private static async Task<TappingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
+        private static async Task<TappingProgramParameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
         {
             [Logging]
             Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
@@ -42,7 +42,7 @@ namespace Wada.MainProgramPrameterSpreadSheet
                 });
 
             var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "タップ径");
-            var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
+            var pilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
             var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("C", "C/D深さ");
             var chamferingDepth = await GetValueWithVaridateAsync<decimal>("D", "面取深さ");
             var spinForAluminum = await GetValueWithVaridateAsync<int>("E", "回転(AL)");
@@ -50,9 +50,9 @@ namespace Wada.MainProgramPrameterSpreadSheet
             var spinForIron = await GetValueWithVaridateAsync<int>("G", "回転(SS400)");
             var feedForIron = await GetValueWithVaridateAsync<int>("H", "送り(SS400)");
 
-            return new TappingProgramPrameter(
+            return new TappingProgramParameter(
                 reamerDiameter,
-                preparedHoleDiameter,
+                pilotHoleDiameter,
                 centerDrillDepth,
                 chamferingDepth,
                 spinForAluminum,

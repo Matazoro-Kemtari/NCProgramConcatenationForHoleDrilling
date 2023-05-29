@@ -3,13 +3,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet.Tests
+namespace Wada.MainProgramParameterSpreadSheet.Tests
 {
     [TestClass()]
-    public class ReamingPrameterReaderTests
+    public class ReamingParameterReaderTests
     {
         [TestMethod()]
-        public async Task 正常系_リーマパラメータエクセルが読み込めること()
+        public async Task 正常系_リーマーパラメータエクセルが読み込めること()
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -17,11 +17,11 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
+            IEnumerable<IMainProgramParameter> reamingProgramParameters = await reamingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, reamingProgramPrameters.Count());
+            Assert.AreEqual(1, reamingProgramParameters.Count());
         }
 
         [TestMethod()]
@@ -34,12 +34,12 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(xlsStream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
-            IEnumerable<IMainProgramPrameter> reamingProgramPrameters = await reamingPrameterReader.ReadAllAsync(xlsStream);
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
+            IEnumerable<IMainProgramParameter> reamingProgramParameters = await reamingParameterReader.ReadAllAsync(xlsStream);
 
             // then
-            Assert.AreEqual(1, reamingProgramPrameters.Count());
-            Assert.IsNull(reamingProgramPrameters.Select(x => x.ChamferingDepth).First());
+            Assert.AreEqual(1, reamingProgramParameters.Count());
+            Assert.IsNull(reamingProgramParameters.Select(x => x.ChamferingDepth).First());
         }
 
         [DataTestMethod()]
@@ -49,7 +49,7 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
         [DataRow(null)]
         [DataRow("")]
         [DataRow("漢字")]
-        public async Task 異常系_リーマ径に数値以外が入っているとき例外を返すこと(string? value)
+        public async Task 異常系_リーマー径に数値以外が入っているとき例外を返すこと(string? value)
         {
             // given
             using XLWorkbook workbook = MakeTestBook();
@@ -58,13 +58,13 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
-            string expected = $"リーマ径が取得できません" +
+            string expected = $"リーマー径が取得できません" +
                 $" シート: Sheet1," +
                 $" セル: A2";
             Assert.AreEqual(expected, ex.Message);
@@ -86,9 +86,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -114,9 +114,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);
@@ -142,9 +142,9 @@ namespace Wada.MainProgramPrameterSpreadSheet.Tests
             workbook.SaveAs(stream);
 
             // when
-            IMainProgramPrameterReader reamingPrameterReader = new ReamingPrameterReader();
+            IMainProgramParameterReader reamingParameterReader = new ReamingParameterReader();
             Task target() =>
-                 reamingPrameterReader.ReadAllAsync(stream);
+                 reamingParameterReader.ReadAllAsync(stream);
 
             // then
             var ex = await Assert.ThrowsExceptionAsync<MainProgramParameterException>(target);

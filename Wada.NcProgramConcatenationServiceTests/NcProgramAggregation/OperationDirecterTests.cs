@@ -28,7 +28,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation.Tests
                 null,null,null,
                 TestNcBlockFactory.Create(),
             };
-            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramRole.CenterDrilling, "O1000", ncBlocks);
 
             // when
             var operationDirecter = OperationDirecter.Create(ncProgramCode, drillSizeData);
@@ -110,7 +110,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation.Tests
                     TestNcWordFactory.Create(),
                 }),
             };
-            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramRole.CenterDrilling, "O1000", ncBlocks);
 
             // when
             void target()
@@ -144,7 +144,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation.Tests
                 null,null,null,
                 TestNcBlockFactory.Create(),
             };
-            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramRole.CenterDrilling, "O1000", ncBlocks);
 
             // when
             void target()
@@ -174,7 +174,7 @@ namespace Wada.NcProgramConcatenationService.NcProgramAggregation.Tests
                 null,
                 TestNcBlockFactory.Create(),
             };
-            NcProgramCode ncProgramCode = new(NcProgramType.CenterDrilling, "O1000", ncBlocks);
+            NcProgramCode ncProgramCode = new(NcProgramRole.CenterDrilling, "O1000", ncBlocks);
 
             // when
             void target()

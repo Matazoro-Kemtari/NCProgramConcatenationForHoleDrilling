@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.MainProgramParameterSpreadSheet\Wada.MainProgramParameterSpreadSheet.csproj" />
   </ItemGroup>
 
 </Project>

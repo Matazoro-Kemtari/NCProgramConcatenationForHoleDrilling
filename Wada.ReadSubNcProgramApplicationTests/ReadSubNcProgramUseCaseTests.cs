@@ -16,12 +16,12 @@ namespace Wada.ReadSubNcProgramApplication.Tests
             // given
             Mock<IConfiguration> configMock = new();
             configMock.Setup(x => x["applicationConfiguration:ListDirectory"])
-                .Returns("リスト");
+                .Returns(@"..\リスト");
             configMock.Setup(x => x["applicationConfiguration:InchTable"])
                 .Returns("インチ.xlsx");
             Mock<IStreamReaderOpener> mock_reader = new();
             Mock<INcProgramReadWriter> mock_nc = new();
-            mock_nc.Setup(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()))
+            mock_nc.Setup(x => x.ReadSubProgramAll(It.IsAny<StreamReader>(), It.IsAny<string>()))
                 .ReturnsAsync(TestNcProgramCodeFactory.Create(
                     ncBlocks: new List<NcBlock>
                     {
@@ -40,7 +40,7 @@ namespace Wada.ReadSubNcProgramApplication.Tests
 
             // then
             mock_reader.Verify(x => x.Open(It.IsAny<string>()), Times.Once);
-            mock_nc.Verify(x => x.ReadAllAsync(It.IsAny<StreamReader>(), It.IsAny<NcProgramType>(), It.IsAny<string>()), Times.Once);
+            mock_nc.Verify(x => x.ReadSubProgramAll(It.IsAny<StreamReader>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

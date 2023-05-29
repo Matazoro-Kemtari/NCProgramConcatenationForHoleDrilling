@@ -42,7 +42,7 @@ public class ReadSubNcProgramUseCase : IReadSubNcProgramUseCase
 
         try
         {
-            var ncProgramCode = await _ncProgramReadWriter.ReadAllAsync(reader, NcProgramType.SubProgram, fileName);
+            var ncProgramCode = await _ncProgramReadWriter.ReadSubProgramAll(reader, fileName);
             var drillSizeData = await ReadDrillSizeDatasAsync();
             return OperationDirecterAttemp.Parse(
                 OperationDirecter.Create(ncProgramCode, drillSizeData));
@@ -57,8 +57,6 @@ public class ReadSubNcProgramUseCase : IReadSubNcProgramUseCase
     private async Task<IEnumerable<DrillSizeData>> ReadDrillSizeDatasAsync()
     {
         var path = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
-            "..",
             _configuration["applicationConfiguration:ListDirectory"]
             ?? throw new InvalidOperationException(
                 "設定情報が取得できませんでした システム担当まで連絡してしてください\n" +

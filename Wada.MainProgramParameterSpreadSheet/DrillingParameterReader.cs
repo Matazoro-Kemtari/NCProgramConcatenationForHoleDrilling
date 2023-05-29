@@ -3,12 +3,12 @@ using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 
-namespace Wada.MainProgramPrameterSpreadSheet;
+namespace Wada.MainProgramParameterSpreadSheet;
 
-public class DrillingParameterReader : IMainProgramPrameterReader
+public class DrillingParameterReader : IMainProgramParameterReader
 {
     [Logging]
-    public virtual async Task<IEnumerable<IMainProgramPrameter>> ReadAllAsync(Stream stream)
+    public virtual async Task<IEnumerable<IMainProgramParameter>> ReadAllAsync(Stream stream)
     {
         using var xlBook = new XLWorkbook(stream);
         // パラメーターのシートを取得 シートは1つの想定
@@ -26,7 +26,7 @@ public class DrillingParameterReader : IMainProgramPrameterReader
     }
 
     [Logging]
-    private static async Task<DrillingProgramPrameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
+    private static async Task<DrillingProgramParameter> FetchParameterAsync(IXLRangeRow row, IXLWorksheet paramSheet)
     {
         [Logging]
         Task<T> GetValueWithVaridateAsync<T>(string columnLetter, string columnHedder) => Task.Run(
@@ -49,7 +49,7 @@ public class DrillingParameterReader : IMainProgramPrameterReader
         var spinForIron = await GetValueWithVaridateAsync<int>("H", "回転(SS400)");
         var feedForIron = await GetValueWithVaridateAsync<int>("I", "送り(SS400)");
 
-        return new DrillingProgramPrameter(
+        return new DrillingProgramParameter(
             drillDiameter,
             centerDrillDepth,
             cutDepth,

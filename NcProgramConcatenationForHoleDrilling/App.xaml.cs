@@ -7,7 +7,7 @@ using System.Windows;
 using Wada.CombineMainNcProgramApplication;
 using Wada.EditNcProgramApplication;
 using Wada.InchMillimeterConvertSpreadSheet;
-using Wada.MainProgramPrameterSpreadSheet;
+using Wada.MainProgramParameterSpreadSheet;
 using Wada.NcProgramConcatenationForHoleDrilling;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.MainProgramCombiner;
@@ -43,17 +43,17 @@ public partial class App
 
         // パラメーターリスト読み込み
         _ = containerRegistry.Register<IStreamOpener, StreamOpener>();
-        _ = containerRegistry.Register<ReamingPrameterReader>();
-        _ = containerRegistry.Register<TappingPrameterReader>();
+        _ = containerRegistry.Register<ReamingParameterReader>();
+        _ = containerRegistry.Register<TappingParameterReader>();
         _ = containerRegistry.Register<DrillingParameterReader>();
         _ = containerRegistry.Register<IDrillSizeDataReader, DrillSizeDataReader>();
         _ = containerRegistry.Register<IReadMainNcProgramParametersUseCase, ReadMainNcProgramParametersUseCase>();
 
         // メインプログラムの編集
-        _ = containerRegistry.Register<CrystalReamingParameterRewriter>();
-        _ = containerRegistry.Register<SkillReamingParameterRewriter>();
-        _ = containerRegistry.Register<TappingParameterRewriter>();
-        _ = containerRegistry.Register<DrillingParameterRewriter>();
+        _ = containerRegistry.Register<CrystalReamingSequenceBuilder>();
+        _ = containerRegistry.Register<SkillReamingSequenceBuilder>();
+        _ = containerRegistry.Register<TappingSequenceBuilder>();
+        _ = containerRegistry.Register<DrillingSequenceBuilder>();
         _ = containerRegistry.Register<IEditNcProgramUseCase, EditNcProgramUseCase>();
 
         // メインプログラムの結合

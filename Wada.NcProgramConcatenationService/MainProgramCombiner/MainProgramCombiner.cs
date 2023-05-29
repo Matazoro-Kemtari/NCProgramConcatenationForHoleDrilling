@@ -36,7 +36,7 @@ namespace Wada.NcProgramConcatenationService.MainProgramCombiner
                     OptionalBlockSkip.None));
 
             return new(
-                NcProgramType.CombinedProgram,
+                NcProgramRole.CombinedProgram,
                 string.Join('>', combinableCode.Select(x => x.ProgramName)),
                 combinedBlocks);
         }

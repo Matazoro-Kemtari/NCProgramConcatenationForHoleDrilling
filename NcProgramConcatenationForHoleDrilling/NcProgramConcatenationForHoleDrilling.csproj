@@ -24,7 +24,7 @@
     <ProjectReference Include="..\Wada.CombineMainNcProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.EditNcProgramApplication\Wada.EditNcProgramApplication.csproj" />
     <ProjectReference Include="..\Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj" />
-    <ProjectReference Include="..\Wada.MainProgramPrameterSpreadSheet\Wada.MainProgramPrameterSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.MainProgramParameterSpreadSheet\Wada.MainProgramParameterSpreadSheet.csproj" />
     <ProjectReference Include="..\Wada.NcProgramConcatenationForHoleDrilling\Wada.NcProgramConcatenationForHoleDrilling.csproj" />
     <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
     <ProjectReference Include="..\Wada.NcProgramFile\Wada.NcProgramFile.csproj" />

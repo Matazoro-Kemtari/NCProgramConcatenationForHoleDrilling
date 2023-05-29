@@ -19,12 +19,12 @@ namespace Wada.EditNcProgramApplication.Tests
         {
             // given
             // when
-            Mock<CrystalReamingParameterRewriter> mock_crystal = new();
-            Mock<SkillReamingParameterRewriter> mock_skill = new();
-            Mock<TappingParameterRewriter> mock_tap = new();
-            Mock<DrillingParameterRewriter> mock_drill = new();
+            Mock<CrystalReamingSequenceBuilder> mock_crystal = new();
+            Mock<SkillReamingSequenceBuilder> mock_skill = new();
+            Mock<TappingSequenceBuilder> mock_tap = new();
+            Mock<DrillingSequenceBuilder> mock_drill = new();
 
-            var editNcProgramPram = TestEditNcProgramPramFactory.Create(
+            var editNcProgramParam = TestEditNcProgramParamFactory.Create(
                 directedOperation: directedOperation,
                 reamer: reamer);
 
@@ -34,16 +34,16 @@ namespace Wada.EditNcProgramApplication.Tests
                      mock_skill.Object,
                      mock_tap.Object,
                      mock_drill.Object);
-            _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramPram);
+            _ = await editNcProgramUseCase.ExecuteAsync(editNcProgramParam);
 
             // then
-            mock_crystal.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_crystal.Verify(x => x.RewriteByToolAsync(It.IsAny<ToolParameter>()),
                 reamer == ReamerTypeAttempt.Crystal && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_skill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_skill.Verify(x => x.RewriteByToolAsync(It.IsAny<ToolParameter>()),
                 reamer == ReamerTypeAttempt.Skill && directedOperation == DirectedOperationTypeAttempt.Reaming ? Times.Once() : Times.Never());
-            mock_tap.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_tap.Verify(x => x.RewriteByToolAsync(It.IsAny<ToolParameter>()),
                 directedOperation == DirectedOperationTypeAttempt.Tapping ? Times.Once() : Times.Never());
-            mock_drill.Verify(x => x.RewriteByTool(It.IsAny<RewriteByToolRecord>()),
+            mock_drill.Verify(x => x.RewriteByToolAsync(It.IsAny<ToolParameter>()),
                 directedOperation == DirectedOperationTypeAttempt.Drilling ? Times.Once() : Times.Never());
         }
     }
