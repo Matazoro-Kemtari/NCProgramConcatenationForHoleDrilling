@@ -52,15 +52,15 @@ public class ReamingParameterReader : IMainProgramParameterReader
             });
 
         var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "リーマー径");
-        var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
-        var secondPreparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("C", "DR2(φ)");
+        var pilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
+        var secondaryPilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("C", "DR2(φ)");
         var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("D", "C/D深さ");
         var chamferingDepth = await GetValueWithOutVaridateAsync<decimal?>("E", "面取深さ");
 
         return new ReamingProgramParameter(
             reamerDiameter,
-            preparedHoleDiameter,
-            secondPreparedHoleDiameter,
+            pilotHoleDiameter,
+            secondaryPilotHoleDiameter,
             centerDrillDepth,
             chamferingDepth);
     }

@@ -42,7 +42,7 @@ namespace Wada.MainProgramParameterSpreadSheet
                 });
 
             var reamerDiameter = await GetValueWithVaridateAsync<string>("A", "タップ径");
-            var preparedHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
+            var pilotHoleDiameter = await GetValueWithVaridateAsync<decimal>("B", "DR1(φ)");
             var centerDrillDepth = await GetValueWithVaridateAsync<decimal>("C", "C/D深さ");
             var chamferingDepth = await GetValueWithVaridateAsync<decimal>("D", "面取深さ");
             var spinForAluminum = await GetValueWithVaridateAsync<int>("E", "回転(AL)");
@@ -52,7 +52,7 @@ namespace Wada.MainProgramParameterSpreadSheet
 
             return new TappingProgramParameter(
                 reamerDiameter,
-                preparedHoleDiameter,
+                pilotHoleDiameter,
                 centerDrillDepth,
                 chamferingDepth,
                 spinForAluminum,

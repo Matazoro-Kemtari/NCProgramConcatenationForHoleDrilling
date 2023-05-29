@@ -151,7 +151,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(ToolParameter param, Func<DrillingProgramParameter, decimal> select)
         {
             return param.DrillingParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)

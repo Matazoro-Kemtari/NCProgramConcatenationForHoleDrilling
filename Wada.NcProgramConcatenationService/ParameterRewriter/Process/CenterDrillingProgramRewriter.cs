@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -10,13 +9,13 @@ internal class CenterDrillingProgramRewriter
     /// <summary>
     /// センタードリルのメインプログラムを書き換える
     /// </summary>
-    /// <param name="ncProgramRewriteArg">メインプログラムを書き換え引数用オブジェクト</param>
+    /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteArg ncProgramRewriteArg)
+    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = ncProgramRewriteArg.RewritableCode.NcBlocks
+        var rewrittenNcBlocks = ncProgramRewriteParameter.RewritableCode.NcBlocks
             .Select(x =>
             {
                 if (x == null)
@@ -34,10 +33,10 @@ internal class CenterDrillingProgramRewriter
 
                             return ncWord.Address.Value switch
                             {
-                                'S' => RewriteSpin(ncProgramRewriteArg.Material, ncWord),
-                                'Z' => RewriteCenterDrillDepth(ncProgramRewriteArg.RewritingParameter.CenterDrillDepth, ncWord),
-                                'F' => RewriteFeed(ncProgramRewriteArg.Material, ncWord),
-                                'P' => RewriteSubProgramNumber(ncProgramRewriteArg.SubProgramNumber, ncWord),
+                                'S' => RewriteSpin(ncProgramRewriteParameter.Material, ncWord),
+                                'Z' => RewriteCenterDrillDepth(ncProgramRewriteParameter.RewritingParameter.CenterDrillDepth, ncWord),
+                                'F' => RewriteFeed(ncProgramRewriteParameter.Material, ncWord),
+                                'P' => RewriteSubProgramNumber(ncProgramRewriteParameter.SubProgramNumber, ncWord),
                                 _ => y
                             };
                         });
@@ -45,7 +44,7 @@ internal class CenterDrillingProgramRewriter
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
             });
 
-        return ncProgramRewriteArg.RewritableCode with
+        return ncProgramRewriteParameter.RewritableCode with
         {
             NcBlocks = rewrittenNcBlocks
         };
@@ -120,9 +119,3 @@ internal class CenterDrillingProgramRewriter
         return value;
     }
 }
-
-internal record class CenterDrillingRewriteArg(
-    NcProgramCode RewritableCode,
-    MaterialType Material,
-    IMainProgramParameter RewritingParameter,
-    string SubProgramNumber) : INcProgramRewriteArg;

@@ -64,12 +64,12 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var directedDiameter = param.DirectedOperationToolDiameter;
             var drDiameter = param.CrystalReamerParameters
                 .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
-                .Select(x => x.PreparedHoleDiameter)
+                .Select(x => x.PilotHoleDiameter)
                 .First();
             Assert.AreEqual($"DR {drDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Drilling));
             var dr2ndDiameter = param.CrystalReamerParameters
                 .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
-                .Select(x => x.SecondPreparedHoleDiameter)
+                .Select(x => x.SecondaryPilotHoleDiameter)
                 .First(); Assert.AreEqual($"DR {dr2ndDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Drilling, 1));
             Assert.AreEqual($"REAMER {directedDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Reaming));
         }
@@ -130,7 +130,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_クリスタルリーマシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
+        public void 正常系_クリスタルリーマーシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
@@ -182,17 +182,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴2の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select, int skip = 0)
+        private static decimal ドリルパラメータから値を取得する(ToolParameter param, Func<DrillingProgramParameter, decimal> select, int skip = 0)
         {
             decimal drillDiameter = skip switch
             {
                 1 => param.CrystalReamerParameters
                         .Where(x => x.DirectedOperationToolDiameter <= param.DirectedOperationToolDiameter)
-                        .Select(x => x.SecondPreparedHoleDiameter)
+                        .Select(x => x.SecondaryPilotHoleDiameter)
                         .Max(),
                 _ => param.CrystalReamerParameters
                         .Where(x => x.DirectedOperationToolDiameter <= param.DirectedOperationToolDiameter)
-                        .Select(x => x.PreparedHoleDiameter)
+                        .Select(x => x.PilotHoleDiameter)
                         .Max(),
             };
             return param.DrillingParameters
@@ -211,7 +211,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 directedOperationToolDiameter: reamerDiameter,
                 crystalReamerParameters: new List<ReamingProgramParameter>
                 {
-                    TestReamingProgramParameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PreparedHoleDiameter: 3),
+                    TestReamingProgramParameterFactory.Create(DiameterKey: reamerDiameter.ToString(), PilotHoleDiameter: 3),
                 },
                 drillingParameters: new List<DrillingProgramParameter>
                 {
@@ -227,7 +227,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var fastDrill = param.CrystalReamerParameters
-                .Select(x => x.PreparedHoleDiameter)
+                .Select(x => x.PilotHoleDiameter)
                 .FirstOrDefault();
             var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
@@ -246,8 +246,8 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 {
                     TestReamingProgramParameterFactory.Create(
                         DiameterKey: reamerDiameter.ToString(),
-                        PreparedHoleDiameter: 20m,
-                        SecondPreparedHoleDiameter: 3m),
+                        PilotHoleDiameter: 20m,
+                        SecondaryPilotHoleDiameter: 3m),
                 },
                 drillingParameters: new List<DrillingProgramParameter>
                 {
@@ -263,7 +263,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var fastDrill = param.CrystalReamerParameters
-                .Select(x => x.SecondPreparedHoleDiameter)
+                .Select(x => x.SecondaryPilotHoleDiameter)
                 .FirstOrDefault();
             var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",

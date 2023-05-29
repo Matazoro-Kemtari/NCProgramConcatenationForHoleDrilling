@@ -8,7 +8,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class TappingSequenceBuilder : IMainProgramSequenceBuilder
 {
-    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteArg, NcProgramCode>> _ncProgramRewriters = new()
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, NcProgramCode>> _ncProgramRewriters = new()
     {
         { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
         { SequenceOrderType.PilotDrilling, DrillingProgramRewriter.Rewrite },
@@ -16,41 +16,40 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         { SequenceOrderType.Tapping, TappingProgramRewriter.Rewrite }
     };
 
-
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolArg rewriteByToolRecord)
+    public virtual IEnumerable<NcProgramCode> RewriteByTool(ToolParameter toolParameter)
     {
-        if (rewriteByToolRecord.Material == MaterialType.Undefined)
+        if (toolParameter.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
 
         // タップのパラメータを受け取る
-        var tappingParameters = rewriteByToolRecord.TapParameters;
+        var tappingParameters = toolParameter.TapParameters;
 
         // ドリルのパラメータを受け取る
-        var drillingParameters = rewriteByToolRecord.DrillingParameters;
+        var drillingParameters = toolParameter.DrillingParameters;
 
         TappingProgramParameter tappingParameter;
         try
         {
             tappingParameter = tappingParameters
-                .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
+                .First(x => x.DirectedOperationToolDiameter == toolParameter.DirectedOperationToolDiameter);
         }
         catch (InvalidOperationException ex)
         {
             throw new DomainException(
-                $"タップ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
+                $"タップ径 {toolParameter.DirectedOperationToolDiameter}のリストがありません", ex);
         }
 
         var drillingParameter = drillingParameters
-            .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
+            .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PilotHoleDiameter)
             .MaxBy(x => x.DirectedOperationToolDiameter)
             ?? throw new DomainException(
-                $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
+                $"穴径に該当するリストがありません 穴径: {tappingParameter.PilotHoleDiameter}");
 
-        var drillingDepth = rewriteByToolRecord.DrillingMethod switch
+        var drillingDepth = toolParameter.DrillingMethod switch
         {
-            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
-            DrillingMethod.BlindHole => rewriteByToolRecord.BlindPilotHoleDepth,
+            DrillingMethod.ThroughHole => toolParameter.Thickness + drillingParameter.DrillTipLength,
+            DrillingMethod.BlindHole => toolParameter.BlindPilotHoleDepth,
             _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
         };
 
@@ -66,77 +65,22 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = sequenceOrders.Select(
             sequenceOrder => _ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteArg(sequenceOrder, rewriteByToolRecord)));
+                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter)));
 
         return rewrittenNcPrograms.ToList();
     }
 
-    private static INcProgramRewriteArg MakeCenterDrillingRewriteArg(SequenceOrder sequenceOrder, RewriteByToolArg rewriteByToolRecord)
+    private static INcProgramRewriteParameter MakeCenterDrillingRewriteParameter(SequenceOrder sequenceOrder, ToolParameter toolParameter)
     {
-        // タップのパラメータを受け取る
-        var tappingParameters = rewriteByToolRecord.TapParameters;
-
-        // ドリルのパラメータを受け取る
-        var drillingParameters = rewriteByToolRecord.DrillingParameters;
-
-        TappingProgramParameter tappingParameter;
-        try
-        {
-            tappingParameter = tappingParameters
-                .First(x => x.DirectedOperationToolDiameter == rewriteByToolRecord.DirectedOperationToolDiameter);
-        }
-        catch (InvalidOperationException ex)
-        {
-            throw new DomainException(
-                $"タップ径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません", ex);
-        }
-
-        var drillingParameter = drillingParameters
-            .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PreparedHoleDiameter)
-            .MaxBy(x => x.DirectedOperationToolDiameter)
-            ?? throw new DomainException(
-                $"穴径に該当するリストがありません 穴径: {tappingParameter.PreparedHoleDiameter}");
-
-        var drillingDepth = rewriteByToolRecord.DrillingMethod switch
-        {
-            DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
-            DrillingMethod.BlindHole => rewriteByToolRecord.BlindPilotHoleDepth,
-            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-        };
-
         return sequenceOrder.SequenceOrderType switch
         {
-            SequenceOrderType.CenterDrilling => new CenterDrillingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                tappingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+            SequenceOrderType.CenterDrilling => toolParameter.ToCenterDrillingRewriteParameter(RewriterSelector.Tapping),
 
-            SequenceOrderType.PilotDrilling => new DrillingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                drillingDepth,
-                drillingParameter,
-                rewriteByToolRecord.SubProgramNumber,
-                tappingParameter.PreparedHoleDiameter),
+            SequenceOrderType.PilotDrilling => toolParameter.ToPilotDrillingRewriteParameter(RewriterSelector.Tapping),
 
-            SequenceOrderType.Chamfering => new ChamferingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                tappingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+            SequenceOrderType.Chamfering => toolParameter.ToChamferingRewriteParameter(RewriterSelector.Tapping),
 
-            SequenceOrderType.Tapping => new TappingRewriteArg(
-                rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-                rewriteByToolRecord.Material,
-                rewriteByToolRecord.DrillingMethod switch
-                {
-                    DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + 5m,
-                    DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                    _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-                },
-                tappingParameter,
-                rewriteByToolRecord.SubProgramNumber),
+            SequenceOrderType.Tapping => toolParameter.ToTappingRewriteParameter(),
 
             _ => throw new NotImplementedException(),
         };

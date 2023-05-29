@@ -9,6 +9,9 @@ using Wada.NcProgramConcatenationForHoleDrilling.Models;
 
 namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels;
 
+// TODO: シンタックスハイライトできたらいいな
+// https://social.msdn.microsoft.com/Forums/ja-JP/befc82d7-df41-4be4-aa4b-061638532425/textblock12398text12398199683709612384123693339412434227932635612377?forum=wpfja
+// https://blog.okazuki.jp/entry/2016/02/28/153154
 public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogAware, IDestructible
 {
     private readonly NotationContentConfirmationDialogModel _notationContentConfirmation = new();

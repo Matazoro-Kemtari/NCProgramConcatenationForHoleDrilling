@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -10,19 +9,19 @@ internal class ChamferingProgramRewriter
     /// <summary>
     /// 面取りのメインプログラムを書き換える
     /// </summary>
-    /// <param name="ncProgramRewriteArg">メインプログラムを書き換え引数用オブジェクト</param>
+    /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteArg ncProgramRewriteArg)
+    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = ncProgramRewriteArg.RewritableCode.NcBlocks
+        var rewrittenNcBlocks = ncProgramRewriteParameter.RewritableCode.NcBlocks
             .Select(x =>
             {
                 if (x == null)
                     return null;
 
-                if (ncProgramRewriteArg.RewritingParameter.ChamferingDepth == null)
+                if (ncProgramRewriteParameter.RewritingParameter.ChamferingDepth == null)
                     throw new InvalidOperationException("面取りが無いのに呼び出された");
 
                 var rewritedNcWords = x.NcWords
@@ -37,9 +36,9 @@ internal class ChamferingProgramRewriter
 
                         return ncWord.Address.Value switch
                         {
-                            'S' => RewriteSpin(ncProgramRewriteArg.Material, ncWord),
-                            'Z' => RewriteChamferingDepth(ncProgramRewriteArg.RewritingParameter.ChamferingDepth.Value, ncWord),
-                            'P' => RewriteSubProgramNumber(ncProgramRewriteArg.SubProgramNumber, ncWord),
+                            'S' => RewriteSpin(ncProgramRewriteParameter.Material, ncWord),
+                            'Z' => RewriteChamferingDepth(ncProgramRewriteParameter.RewritingParameter.ChamferingDepth.Value, ncWord),
+                            'P' => RewriteSubProgramNumber(ncProgramRewriteParameter.SubProgramNumber, ncWord),
                             _ => y
                         };
                     });
@@ -47,7 +46,7 @@ internal class ChamferingProgramRewriter
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
             });
 
-        return ncProgramRewriteArg.RewritableCode with
+        return ncProgramRewriteParameter.RewritableCode with
         {
             NcBlocks = rewrittenNcBlocks
         };
@@ -106,9 +105,3 @@ internal class ChamferingProgramRewriter
         return value;
     }
 }
-
-internal record class ChamferingRewriteArg(
-    NcProgramCode RewritableCode,
-    MaterialType Material,
-    IMainProgramParameter RewritingParameter,
-    string SubProgramNumber) : INcProgramRewriteArg;

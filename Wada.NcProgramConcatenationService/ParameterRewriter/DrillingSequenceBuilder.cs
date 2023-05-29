@@ -8,7 +8,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
 {
-    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteArg, NcProgramCode>> _ncProgramRewriters = new()
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, NcProgramCode>> _ncProgramRewriters = new()
     {
         { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
         { SequenceOrderType.Drilling, DrillingProgramRewriter.Rewrite },
@@ -16,27 +16,27 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
     };
 
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolArg rewriteByToolRecord)
+    public virtual IEnumerable<NcProgramCode> RewriteByTool(ToolParameter toolParameter)
     {
-        if (rewriteByToolRecord.Material == MaterialType.Undefined)
+        if (toolParameter.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
 
         // ドリルのパラメータを受け取る
-        var drillingParameters = rewriteByToolRecord.DrillingParameters;
+        var drillingParameters = toolParameter.DrillingParameters;
 
         var maxDiameter = drillingParameters.MaxBy(x => x.DirectedOperationToolDiameter)
             ?.DirectedOperationToolDiameter;
         if (maxDiameter == null
-            || maxDiameter + 0.5m < rewriteByToolRecord.DirectedOperationToolDiameter)
+            || maxDiameter + 0.5m < toolParameter.DirectedOperationToolDiameter)
             throw new DomainException(
-                $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません\n" +
+                $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません\n" +
                 $"リストの最大ドリル径({maxDiameter})を超えています");
 
         DrillingProgramParameter drillingParameter = drillingParameters
-            .Where(x => x.DirectedOperationToolDiameter <= rewriteByToolRecord.DirectedOperationToolDiameter)
+            .Where(x => x.DirectedOperationToolDiameter <= toolParameter.DirectedOperationToolDiameter)
             .MaxBy(x => x.DirectedOperationToolDiameter)
             ?? throw new DomainException(
-                $"ドリル径 {rewriteByToolRecord.DirectedOperationToolDiameter}のリストがありません");
+                $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 
         // ドリルの工程
         SequenceOrder[] sequenceOrders = new[]
@@ -50,39 +50,20 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         var rewrittenNcPrograms = sequenceOrders.Select(
             sequenceOrder => sequenceOrder.SequenceOrderType == SequenceOrderType.Chamfering
             ? ReplaceLastM1ToM30(_ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteArg(sequenceOrder, rewriteByToolRecord, drillingParameter)))
+                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter, drillingParameter)))
             : _ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteArg(sequenceOrder, rewriteByToolRecord, drillingParameter)));
+                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter, drillingParameter)));
 
         return rewrittenNcPrograms.ToList();
     }
 
-    private static INcProgramRewriteArg MakeCenterDrillingRewriteArg(SequenceOrder sequenceOrder, RewriteByToolArg rewriteByToolRecord, DrillingProgramParameter drillingParameter) => sequenceOrder.SequenceOrderType switch
+    private static INcProgramRewriteParameter MakeCenterDrillingRewriteParameter(SequenceOrder sequenceOrder, ToolParameter toolParameter, DrillingProgramParameter drillingParameter) => sequenceOrder.SequenceOrderType switch
     {
-        SequenceOrderType.CenterDrilling => new CenterDrillingRewriteArg(
-            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-            rewriteByToolRecord.Material,
-            drillingParameter,
-            rewriteByToolRecord.SubProgramNumber),
+        SequenceOrderType.CenterDrilling => toolParameter.ToCenterDrillingRewriteParameter(RewriterSelector.Drilling),
 
-        SequenceOrderType.Drilling => new DrillingRewriteArg(
-            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-            rewriteByToolRecord.Material,
-            rewriteByToolRecord.DrillingMethod switch
-            {
-                DrillingMethod.ThroughHole => rewriteByToolRecord.Thickness + drillingParameter.DrillTipLength,
-                DrillingMethod.BlindHole => rewriteByToolRecord.BlindHoleDepth,
-                _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-            },
-            drillingParameter,
-            rewriteByToolRecord.SubProgramNumber,
-            rewriteByToolRecord.DirectedOperationToolDiameter),
+        SequenceOrderType.Drilling => toolParameter.ToDrillingRewriteParameter(),
 
-        SequenceOrderType.Chamfering => new ChamferingRewriteArg(
-            rewriteByToolRecord.RewritableCodes.Single(x => x.MainProgramClassification == sequenceOrder.ToNcProgramRole()),
-            rewriteByToolRecord.Material,
-            drillingParameter,
-            rewriteByToolRecord.SubProgramNumber),
+        SequenceOrderType.Chamfering => toolParameter.ToChamferingRewriteParameter(RewriterSelector.Drilling),
 
         _ => throw new NotImplementedException(),
     };

@@ -10,15 +10,15 @@ internal class DrillingProgramRewriter
     /// <summary>
     /// 下穴ドリルのメインプログラムを書き換える
     /// </summary>
-    /// <param name="ncProgramRewriteArg">メインプログラムを書き換え引数用オブジェクト</param>
+    /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteArg ncProgramRewriteArg)
+    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
-        var drillingRewriteArg = (DrillingRewriteArg)ncProgramRewriteArg;
+        var drillingRewriteParameter = (DrillingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = drillingRewriteArg.RewritableCode.NcBlocks
+        var rewrittenNcBlocks = drillingRewriteParameter.RewritableCode.NcBlocks
             .Select(x =>
             {
                 if (x == null)
@@ -36,7 +36,7 @@ internal class DrillingProgramRewriter
                                     string.Concat(
                                         nCComment.Comment,
                                         ' ',
-                                        drillingRewriteArg.DrillDiameter));
+                                        drillingRewriteParameter.DrillDiameter));
                             else
                                 result = y;
                         }
@@ -46,11 +46,11 @@ internal class DrillingProgramRewriter
                             if (ncWord.ValueData.Indefinite)
                                 result = ncWord.Address.Value switch
                                 {
-                                    'S' => RewriteSpin(drillingRewriteArg.Material, (DrillingProgramParameter)drillingRewriteArg.RewritingParameter, ncWord),
-                                    'Z' => RewriteDrillingDepth(drillingRewriteArg.DrillingDepth, ncWord),
-                                    'Q' => RewriteCutDepth((DrillingProgramParameter)drillingRewriteArg.RewritingParameter, ncWord),
-                                    'F' => RewriteFeed(drillingRewriteArg.Material, (DrillingProgramParameter)drillingRewriteArg.RewritingParameter, ncWord),
-                                    'P' => RewriteSubProgramNumber(drillingRewriteArg.SubProgramNumber, ncWord),
+                                    'S' => RewriteSpin(drillingRewriteParameter.Material, (DrillingProgramParameter)drillingRewriteParameter.RewritingParameter, ncWord),
+                                    'Z' => RewriteDrillingDepth(drillingRewriteParameter.DrillingDepth, ncWord),
+                                    'Q' => RewriteCutDepth((DrillingProgramParameter)drillingRewriteParameter.RewritingParameter, ncWord),
+                                    'F' => RewriteFeed(drillingRewriteParameter.Material, (DrillingProgramParameter)drillingRewriteParameter.RewritingParameter, ncWord),
+                                    'P' => RewriteSubProgramNumber(drillingRewriteParameter.SubProgramNumber, ncWord),
                                     _ => y
                                 };
                             else
@@ -65,7 +65,7 @@ internal class DrillingProgramRewriter
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
             });
 
-        return drillingRewriteArg.RewritableCode with
+        return drillingRewriteParameter.RewritableCode with
         {
             NcBlocks = rewrittenNcBlocks
         };
@@ -158,11 +158,3 @@ internal class DrillingProgramRewriter
         return value;
     }
 }
-
-internal record class DrillingRewriteArg(
-    NcProgramCode RewritableCode,
-    MaterialType Material,
-    decimal DrillingDepth,
-    IMainProgramParameter RewritingParameter,
-    string SubProgramNumber,
-    decimal DrillDiameter) : INcProgramRewriteArg;

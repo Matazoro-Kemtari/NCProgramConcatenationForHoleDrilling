@@ -17,7 +17,7 @@ public class EditNcProgramUseCase : IEditNcProgramUseCase
     private readonly IMainProgramSequenceBuilder _skillReamingParameterRewriter;
     private readonly IMainProgramSequenceBuilder _tappingParameterRewriter;
     private readonly IMainProgramSequenceBuilder _drillingParameterRewriter;
-    private readonly Dictionary<RewriterSelectorAttempt, IMainProgramSequenceBuilder> _rewriter;
+    private readonly Dictionary<RewriterSelector, IMainProgramSequenceBuilder> _rewriter;
 
     public EditNcProgramUseCase(
         CrystalReamingSequenceBuilder crystalReamingParameterRewriter,
@@ -32,10 +32,10 @@ public class EditNcProgramUseCase : IEditNcProgramUseCase
 
         _rewriter = new()
         {
-            { RewriterSelectorAttempt.Tapping, _tappingParameterRewriter },
-            { RewriterSelectorAttempt.CrystalReaming, _crystalReamingParameterRewriter },
-            { RewriterSelectorAttempt.SkillReaming, _skillReamingParameterRewriter },
-            { RewriterSelectorAttempt.Drilling , _drillingParameterRewriter },
+            { RewriterSelector.Tapping, _tappingParameterRewriter },
+            { RewriterSelector.CrystalReaming, _crystalReamingParameterRewriter },
+            { RewriterSelector.SkillReaming, _skillReamingParameterRewriter },
+            { RewriterSelector.Drilling , _drillingParameterRewriter },
         };
     }
 
@@ -85,7 +85,7 @@ public record class EditNcProgramParam(
     string BlindHoleDepth,
     MainNcProgramParametersAttempt MainNcProgramParameters)
 {
-    internal RewriteByToolArg ToRewriteByToolRecord() => new(
+    internal ToolParameter ToRewriteByToolRecord() => new(
         RewritableCodeds.Select(x => x.Convert()),
         (MaterialType)Material,
         Thickness,
@@ -99,15 +99,15 @@ public record class EditNcProgramParam(
         MainNcProgramParameters.TapParameters.Select(x => x.Convert()),
         MainNcProgramParameters.DrillingParameters.Select(x => x.Convert()));
 
-    private RewriterSelectorAttempt GetRewriterSelection() => DirectedOperation switch
+    private RewriterSelector GetRewriterSelection() => DirectedOperation switch
     {
-        DirectedOperationTypeAttempt.Tapping => RewriterSelectorAttempt.Tapping,
+        DirectedOperationTypeAttempt.Tapping => RewriterSelector.Tapping,
         DirectedOperationTypeAttempt.Reaming => GetReamerRewriterSelection(DirectedOperation, Reamer),
-        DirectedOperationTypeAttempt.Drilling => RewriterSelectorAttempt.Drilling,
+        DirectedOperationTypeAttempt.Drilling => RewriterSelector.Drilling,
         _ => throw new NotImplementedException(),
     };
 
-    private static RewriterSelectorAttempt GetReamerRewriterSelection(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
+    private static RewriterSelector GetReamerRewriterSelection(DirectedOperationTypeAttempt directedOperation, ReamerTypeAttempt reamer)
     {
         if (directedOperation == DirectedOperationTypeAttempt.Reaming
             && reamer == ReamerTypeAttempt.Undefined)
@@ -115,13 +115,13 @@ public record class EditNcProgramParam(
 
         return reamer switch
         {
-            ReamerTypeAttempt.Crystal => RewriterSelectorAttempt.CrystalReaming,
-            ReamerTypeAttempt.Skill => RewriterSelectorAttempt.SkillReaming,
+            ReamerTypeAttempt.Crystal => RewriterSelector.CrystalReaming,
+            ReamerTypeAttempt.Skill => RewriterSelector.SkillReaming,
             _ => throw new NotImplementedException(),
         };
     }
 
-    public RewriterSelectorAttempt RewriterSelector => GetRewriterSelection();
+    public RewriterSelector RewriterSelector => GetRewriterSelection();
 }
 
 public class TestEditNcProgramParamFactory
@@ -208,14 +208,6 @@ public enum DrillingMethodAttempt
     ThroughHole,
     // 止まり穴
     BlindHole,
-}
-
-public enum RewriterSelectorAttempt
-{
-    Tapping,
-    CrystalReaming,
-    SkillReaming,
-    Drilling,
 }
 
 public record class EditNcProgramDto(IEnumerable<NcProgramCodeAttempt> NcProgramCodes);

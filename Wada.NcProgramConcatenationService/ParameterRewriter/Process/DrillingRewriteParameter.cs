@@ -4,10 +4,10 @@ using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 
-internal interface INcProgramRewriteArg
-{
-    MaterialType Material { get; init; }
-    NcProgramCode RewritableCode { get; init; }
-    IMainProgramParameter RewritingParameter { get; init; }
-    string SubProgramNumber { get; init; }
-}
+internal record class DrillingRewriteParameter(
+    NcProgramCode RewritableCode,
+    MaterialType Material,
+    decimal DrillingDepth,
+    IMainProgramParameter RewritingParameter,
+    string SubProgramNumber,
+    decimal DrillDiameter) : INcProgramRewriteParameter;

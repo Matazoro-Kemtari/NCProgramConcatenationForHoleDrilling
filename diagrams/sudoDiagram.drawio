@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RzdB1_ECVK01WcsdOi-J" name="sodo">
-        <mxGraphModel dx="1631" dy="926" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1386" dy="787" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -320,6 +320,45 @@
                 </mxCell>
                 <mxCell id="698" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;インチ変換表&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(&lt;span style=&quot;text-align: left;&quot;&gt;DrillSizeData&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;br style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;font color=&quot;#ffffff&quot;&gt;識別子&lt;br&gt;インチ径&lt;br&gt;&lt;/font&gt;ミリ径" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
                     <mxGeometry x="199.38" y="1500" width="150.62" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="699" value="&lt;u&gt;メインプログラム書き換えドメインサービス&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="10.93" y="1670" width="509.07" height="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="700" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;工具パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(ToolParameter&lt;span&gt;)&lt;br&gt;&lt;/span&gt;書き換え元NCプログラムリスト&lt;br&gt;&lt;font color=&quot;#ffffff&quot;&gt;素材&lt;br&gt;板厚&lt;br&gt;サブプログラム番号&lt;br&gt;工具径&lt;br&gt;穴加工方法&lt;br&gt;止まり穴下穴深さ&lt;br&gt;止まり穴深さ&lt;br&gt;クリスタルリーマーパラメータリスト&lt;br&gt;スキルリーマーパラメータリスト&lt;br&gt;タップパラメータリスト&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="30.31" y="1700" width="219.69" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="707" style="edgeStyle=none;html=1;endArrow=block;endFill=0;startArrow=none;startFill=0;" edge="1" parent="1" source="701" target="702">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="708" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=block;endFill=0;" edge="1" parent="1" source="701" target="703">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="709" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=block;endFill=0;" edge="1" parent="1" source="701" target="704">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="710" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=block;endFill=0;" edge="1" parent="1" source="701" target="705">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="711" style="edgeStyle=none;html=1;startArrow=none;startFill=0;endArrow=block;endFill=0;" edge="1" parent="1" source="701" target="706">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="701" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;メインプログラム書き換えパラメータIF&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(INcProgramRewriteParameter&lt;span&gt;)&lt;br&gt;&lt;/span&gt;書き換え元NCプログラム&lt;br&gt;&lt;font color=&quot;#ffffff&quot;&gt;素材&lt;br&gt;ツールパラメーター&lt;br&gt;サブプログラム番号&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="30.31" y="1945" width="229.69" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="702" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;センタードリル&lt;/u&gt;&lt;/span&gt;&lt;u style=&quot;color: rgb(255, 255, 255);&quot;&gt;書き換え&lt;/u&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(CenterDrillingRewriteParameter&lt;span&gt;)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="289.69" y="1830" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="703" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;面取り&lt;/u&gt;&lt;/span&gt;&lt;u style=&quot;color: rgb(255, 255, 255);&quot;&gt;書き換え&lt;/u&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(ChamferingRewriteParameter&lt;span&gt;)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="289.69" y="1895" width="200" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="704" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;ドリル&lt;/u&gt;&lt;/span&gt;&lt;u style=&quot;color: rgb(255, 255, 255);&quot;&gt;書き換え&lt;/u&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(DrillingRewriteParameter&lt;span&gt;)&lt;br&gt;ドリル深さ&lt;br&gt;ドリル径&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="289.69" y="1965" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="705" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;リーマ&lt;/u&gt;&lt;/span&gt;&lt;u style=&quot;color: rgb(255, 255, 255);&quot;&gt;書き換え&lt;/u&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(ReamingRewriteParameter&lt;span&gt;)&lt;br&gt;リーマー種類&lt;br&gt;リーマー深さ&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="289.69" y="2043" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="706" value="&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;タップ&lt;/u&gt;&lt;/span&gt;&lt;u style=&quot;color: rgb(255, 255, 255);&quot;&gt;書き換え&lt;/u&gt;&lt;span style=&quot;color: rgb(255 , 255 , 255)&quot;&gt;&lt;u&gt;パラメータ&lt;br&gt;&lt;/u&gt;&lt;/span&gt;(TappingRewriteParameter&lt;span&gt;)&lt;br&gt;タップ深さ&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="289.69" y="2125" width="200" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

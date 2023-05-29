@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+﻿using Wada.Extensions;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
-using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
@@ -12,5 +10,20 @@ public interface IMainProgramSequenceBuilder
     /// </summary>
     /// <param name="rewriteByToolArg"></param>
     /// <returns></returns>
-    IEnumerable<NcProgramCode> RewriteByTool(RewriteByToolArg rewriteByToolArg);
+    IEnumerable<NcProgramCode> RewriteByTool(ToolParameter rewriteByToolArg);
+}
+
+public enum RewriterSelector
+{
+    [EnumDisplayName("タップ")]
+    Tapping,
+
+    [EnumDisplayName("クリスタルリーマー")]
+    CrystalReaming,
+    
+    [EnumDisplayName("スキルリーマー")]
+    SkillReaming,
+    
+    [EnumDisplayName("ドリル")]
+    Drilling,
 }

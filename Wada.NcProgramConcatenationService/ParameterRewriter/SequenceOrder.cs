@@ -7,7 +7,9 @@ internal record class SequenceOrder(SequenceOrderType SequenceOrderType)
     public NcProgramRole ToNcProgramRole() => SequenceOrderType switch
     {
         SequenceOrderType.CenterDrilling => NcProgramRole.CenterDrilling,
-        SequenceOrderType.PilotDrilling or SequenceOrderType.Drilling => NcProgramRole.Drilling,
+        SequenceOrderType.PilotDrilling
+        or SequenceOrderType.SecondaryPilotDrilling
+        or SequenceOrderType.Drilling => NcProgramRole.Drilling,
         SequenceOrderType.Chamfering => NcProgramRole.Chamfering,
         SequenceOrderType.Reaming => NcProgramRole.Reaming,
         SequenceOrderType.Tapping => NcProgramRole.Tapping,
@@ -19,6 +21,7 @@ internal enum SequenceOrderType
 {
     CenterDrilling,
     PilotDrilling,
+    SecondaryPilotDrilling,
     Drilling,
     Chamfering,
     Reaming,

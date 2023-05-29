@@ -64,7 +64,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var directedDiameter = param.DirectedOperationToolDiameter;
             var drDiameter = param.TapParameters
                 .Where(x => x.DirectedOperationToolDiameter == directedDiameter)
-                .Select(x => x.PreparedHoleDiameter)
+                .Select(x => x.PilotHoleDiameter)
                 .First();
             Assert.AreEqual($"DR {drDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Drilling));
             Assert.AreEqual($"TAP M{directedDiameter}", NcWordから始めのコメントを取得する(actual, NcProgramRole.Tapping));
@@ -158,11 +158,11 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             Assert.AreEqual(expectedFeed, rewritedFeed, "下穴1の送り");
         }
 
-        private static decimal ドリルパラメータから値を取得する(RewriteByToolArg param, Func<DrillingProgramParameter, decimal> select)
+        private static decimal ドリルパラメータから値を取得する(ToolParameter param, Func<DrillingProgramParameter, decimal> select)
         {
             decimal drillDiameter = param.TapParameters
                 .Where(x => x.DirectedOperationToolDiameter == param.DirectedOperationToolDiameter)
-                .Select(x => x.PreparedHoleDiameter)
+                .Select(x => x.PilotHoleDiameter)
                 .First();
 
             return param.DrillingParameters
@@ -181,7 +181,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 directedOperationToolDiameter: reamerDiameter,
                 tapParameters: new List<TappingProgramParameter>
                 {
-                    TestTappingProgramParameterFactory.Create(DiameterKey: $"M{reamerDiameter}", PreparedHoleDiameter: 3),
+                    TestTappingProgramParameterFactory.Create(DiameterKey: $"M{reamerDiameter}", PilotHoleDiameter: 3),
                 },
                 drillingParameters: new List<DrillingProgramParameter>
                 {
@@ -197,7 +197,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // then
             var fastDrill = param.TapParameters
-                .Select(x => x.PreparedHoleDiameter)
+                .Select(x => x.PilotHoleDiameter)
                 .FirstOrDefault();
             var ex = Assert.ThrowsException<DomainException>(target);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",

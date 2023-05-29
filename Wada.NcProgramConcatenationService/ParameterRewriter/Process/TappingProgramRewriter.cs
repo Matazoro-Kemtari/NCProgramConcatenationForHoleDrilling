@@ -10,15 +10,15 @@ internal class TappingProgramRewriter
     /// <summary>
     /// タップのメインプログラムを書き換える
     /// </summary>
-    /// <param name="ncProgramRewriteArg">メインプログラムを書き換え引数用オブジェクト</param>
+    /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteArg ncProgramRewriteArg)
+    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
-        var tappingRewriteArg = (TappingRewriteArg)ncProgramRewriteArg;
+        var tappingRewriteParameter = (TappingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = tappingRewriteArg.RewritableCode.NcBlocks
+        var rewrittenNcBlocks = tappingRewriteParameter.RewritableCode.NcBlocks
             .Select(x =>
             {
                 if (x == null)
@@ -36,21 +36,21 @@ internal class TappingProgramRewriter
                                     string.Concat(
                                         nCComment.Comment,
                                         " M",
-                                        tappingRewriteArg.RewritingParameter.DirectedOperationToolDiameter));
+                                        tappingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter));
                             else
                                 result = y;
                         }
                         else if (y.GetType() == typeof(NcWord))
                         {
-                            var tappingProgramParameter = (TappingProgramParameter)tappingRewriteArg.RewritingParameter;
+                            var tappingProgramParameter = (TappingProgramParameter)tappingRewriteParameter.RewritingParameter;
                             NcWord ncWord = (NcWord)y;
                             if (ncWord.ValueData.Indefinite)
                                 result = ncWord.Address.Value switch
                                 {
-                                    'S' => RewriteSpin(tappingRewriteArg.Material, tappingProgramParameter, ncWord),
-                                    'Z' => RewriteTappingDepth(tappingRewriteArg.TappingDepth, ncWord),
-                                    'F' => RewriteFeed(tappingRewriteArg.Material, tappingProgramParameter, ncWord),
-                                    'P' => RewriteSubProgramNumber(tappingRewriteArg.SubProgramNumber, ncWord),
+                                    'S' => RewriteSpin(tappingRewriteParameter.Material, tappingProgramParameter, ncWord),
+                                    'Z' => RewriteTappingDepth(tappingRewriteParameter.TappingDepth, ncWord),
+                                    'F' => RewriteFeed(tappingRewriteParameter.Material, tappingProgramParameter, ncWord),
+                                    'P' => RewriteSubProgramNumber(tappingRewriteParameter.SubProgramNumber, ncWord),
                                     _ => y
                                 };
                             else
@@ -65,7 +65,7 @@ internal class TappingProgramRewriter
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
             });
 
-        return tappingRewriteArg.RewritableCode with
+        return tappingRewriteParameter.RewritableCode with
         {
             NcBlocks = rewrittenNcBlocks
         };
@@ -140,10 +140,3 @@ internal class TappingProgramRewriter
         return value;
     }
 }
-
-internal record class TappingRewriteArg(
-    NcProgramCode RewritableCode,
-    MaterialType Material,
-    decimal TappingDepth,
-    IMainProgramParameter RewritingParameter,
-    string SubProgramNumber) : INcProgramRewriteArg;

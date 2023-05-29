@@ -1,8 +1,5 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
-using Wada.NcProgramConcatenationService.ParameterRewriter;
-using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.ParameterRewriter.Process;
@@ -12,15 +9,15 @@ internal class ReamingProgramRewriter
     /// <summary>
     /// リーマのメインプログラムを書き換える
     /// </summary>
-    /// <param name="ncProgramRewriteArg">メインプログラムを書き換え引数用オブジェクト</param>
+    /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteArg ncProgramRewriteArg)
+    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
-        var reamingRewriteArg = (ReamingRewriteArg)ncProgramRewriteArg;
+        var reamingRewriteParameter = (ReamingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = reamingRewriteArg.RewritableCode.NcBlocks
+        var rewrittenNcBlocks = reamingRewriteParameter.RewritableCode.NcBlocks
             .Select(x =>
             {
                 if (x == null)
@@ -38,7 +35,7 @@ internal class ReamingProgramRewriter
                                     string.Concat(
                                         nCComment.Comment,
                                         ' ',
-                                        reamingRewriteArg.RewritingParameter.DirectedOperationToolDiameter));
+                                        reamingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter));
                             else
                                 result = y;
                         }
@@ -48,10 +45,10 @@ internal class ReamingProgramRewriter
                             if (ncWord.ValueData.Indefinite)
                                 result = ncWord.Address.Value switch
                                 {
-                                    'S' => RewriteSpin(reamingRewriteArg.Material, reamingRewriteArg.Reamer, reamingRewriteArg.RewritingParameter.DirectedOperationToolDiameter, ncWord),
-                                    'Z' => RewriteReamingDepth(reamingRewriteArg.ReamingDepth, ncWord),
-                                    'F' => RewriteFeed(reamingRewriteArg.Material, reamingRewriteArg.Reamer, reamingRewriteArg.RewritingParameter.DirectedOperationToolDiameter, ncWord),
-                                    'P' => RewriteSubProgramNumber(reamingRewriteArg.SubProgramNumber, ncWord),
+                                    'S' => RewriteSpin(reamingRewriteParameter.Material, reamingRewriteParameter.Reamer, reamingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter, ncWord),
+                                    'Z' => RewriteReamingDepth(reamingRewriteParameter.ReamingDepth, ncWord),
+                                    'F' => RewriteFeed(reamingRewriteParameter.Material, reamingRewriteParameter.Reamer, reamingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter, ncWord),
+                                    'P' => RewriteSubProgramNumber(reamingRewriteParameter.SubProgramNumber, ncWord),
                                     _ => y
                                 };
                             else
@@ -66,7 +63,7 @@ internal class ReamingProgramRewriter
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
             });
 
-        return reamingRewriteArg.RewritableCode with
+        return reamingRewriteParameter.RewritableCode with
         {
             NcBlocks = rewrittenNcBlocks
         };
@@ -199,11 +196,3 @@ internal class ReamingProgramRewriter
         return value;
     }
 }
-
-internal record class ReamingRewriteArg(
-NcProgramCode RewritableCode,
-MaterialType Material,
-ReamerType Reamer,
-decimal ReamingDepth, 
-IMainProgramParameter RewritingParameter,
-string SubProgramNumber) : INcProgramRewriteArg;

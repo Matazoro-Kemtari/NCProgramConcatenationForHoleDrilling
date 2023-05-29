@@ -33,7 +33,7 @@ namespace Wada.UseCase.DataClass
             tapParameters ??= new List<TappingProgramParameterAttempt>
             {
                 new(DiameterKey: "M12",
-                    PreparedHoleDiameter: fastDrill,
+                    PilotHoleDiameter: fastDrill,
                     CenterDrillDepth: centerDrillDepth,
                     ChamferingDepth: -6.3m,
                     SpinForAluminum: 160,
@@ -65,24 +65,24 @@ namespace Wada.UseCase.DataClass
 
     public record class ReamingProgramParameterAttempt(
         string DiameterKey,
-        decimal PreparedHoleDiameter,
-        decimal SecondPreparedHoleDiameter,
+        decimal PilotHoleDiameter,
+        decimal SecondaryPilotHoleDiameter,
         decimal CenterDrillDepth,
         decimal? ChamferingDepth)
     {
-        public ReamingProgramParameter Convert() => new(DiameterKey, PreparedHoleDiameter, SecondPreparedHoleDiameter, CenterDrillDepth, ChamferingDepth);
+        public ReamingProgramParameter Convert() => new(DiameterKey, PilotHoleDiameter, SecondaryPilotHoleDiameter, CenterDrillDepth, ChamferingDepth);
 
         public static ReamingProgramParameterAttempt Parse(ReamingProgramParameter mainProgramParameter)
         => new(mainProgramParameter.DiameterKey,
-               mainProgramParameter.PreparedHoleDiameter,
-               mainProgramParameter.SecondPreparedHoleDiameter,
+               mainProgramParameter.PilotHoleDiameter,
+               mainProgramParameter.SecondaryPilotHoleDiameter,
                mainProgramParameter.CenterDrillDepth,
                mainProgramParameter.ChamferingDepth);
     }
 
     public record class TappingProgramParameterAttempt(
         string DiameterKey,
-        decimal PreparedHoleDiameter,
+        decimal PilotHoleDiameter,
         decimal CenterDrillDepth,
         decimal? ChamferingDepth,
         int SpinForAluminum,
@@ -90,11 +90,11 @@ namespace Wada.UseCase.DataClass
         int SpinForIron,
         int FeedForIron)
     {
-        public TappingProgramParameter Convert() => new(DiameterKey, PreparedHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
+        public TappingProgramParameter Convert() => new(DiameterKey, PilotHoleDiameter, CenterDrillDepth, ChamferingDepth, SpinForAluminum, FeedForAluminum, SpinForIron, FeedForIron);
 
         public static TappingProgramParameterAttempt Parse(TappingProgramParameter mainProgramParameter)
         => new(mainProgramParameter.DiameterKey,
-               mainProgramParameter.PreparedHoleDiameter,
+               mainProgramParameter.PilotHoleDiameter,
                mainProgramParameter.CenterDrillDepth,
                mainProgramParameter.ChamferingDepth,
                mainProgramParameter.SpinForAluminum,

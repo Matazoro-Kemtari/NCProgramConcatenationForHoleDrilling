@@ -3,8 +3,14 @@
 public enum DrillingMethod
 {
     Undefined,
-    // 通し穴
+
+    /// <summary>
+    /// 通し穴
+    /// </summary>
     ThroughHole,
-    // 止まり穴
+
+    /// <summary>
+    /// 止まり穴
+    /// </summary>
     BlindHole,
 }
