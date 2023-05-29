@@ -8,16 +8,16 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class TappingSequenceBuilder : IMainProgramSequenceBuilder
 {
-    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, NcProgramCode>> _ncProgramRewriters = new()
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
-        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.PilotDrilling, DrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.Rewrite },
-        { SequenceOrderType.Tapping, TappingProgramRewriter.Rewrite }
+        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.PilotDrilling, DrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Tapping, TappingProgramRewriter.RewriteAsync }
     };
 
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(ToolParameter toolParameter)
+    public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
     {
         if (toolParameter.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
@@ -63,9 +63,9 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = sequenceOrders.Select(
-            sequenceOrder => _ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter)));
+        var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(
+            async sequenceOrder => await _ncProgramRewriters[sequenceOrder.SequenceOrderType](
+                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter))));
 
         return rewrittenNcPrograms.ToList();
     }

@@ -10,7 +10,7 @@ public interface IMainProgramSequenceBuilder
     /// </summary>
     /// <param name="rewriteByToolArg"></param>
     /// <returns></returns>
-    IEnumerable<NcProgramCode> RewriteByTool(ToolParameter rewriteByToolArg);
+    Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter rewriteByToolArg);
 }
 
 public enum RewriterSelector
@@ -20,10 +20,10 @@ public enum RewriterSelector
 
     [EnumDisplayName("クリスタルリーマー")]
     CrystalReaming,
-    
+
     [EnumDisplayName("スキルリーマー")]
     SkillReaming,
-    
+
     [EnumDisplayName("ドリル")]
     Drilling,
 }

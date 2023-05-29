@@ -12,11 +12,11 @@ internal class ChamferingProgramRewriter
     /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
+    internal static async Task<NcProgramCode> RewriteAsync(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = ncProgramRewriteParameter.RewritableCode.NcBlocks
-            .Select(x =>
+        var rewrittenNcBlocks = await Task.WhenAll(ncProgramRewriteParameter.RewritableCode.NcBlocks
+            .Select(async x =>
             {
                 if (x == null)
                     return null;
@@ -24,8 +24,8 @@ internal class ChamferingProgramRewriter
                 if (ncProgramRewriteParameter.RewritingParameter.ChamferingDepth == null)
                     throw new InvalidOperationException("面取りが無いのに呼び出された");
 
-                var rewritedNcWords = x.NcWords
-                    .Select(y =>
+                var rewritedNcWords = await Task.WhenAll(x.NcWords
+                    .Select(async y =>
                     {
                         if (y.GetType() != typeof(NcWord))
                             return y;
@@ -34,17 +34,17 @@ internal class ChamferingProgramRewriter
                         if (!ncWord.ValueData.Indefinite)
                             return y;
 
-                        return ncWord.Address.Value switch
+                        return await Task.Run(() => ncWord.Address.Value switch
                         {
                             'S' => RewriteSpin(ncProgramRewriteParameter.Material, ncWord),
                             'Z' => RewriteChamferingDepth(ncProgramRewriteParameter.RewritingParameter.ChamferingDepth.Value, ncWord),
                             'P' => RewriteSubProgramNumber(ncProgramRewriteParameter.SubProgramNumber, ncWord),
                             _ => y
-                        };
-                    });
+                        });
+                    }));
 
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
-            });
+            }));
 
         return ncProgramRewriteParameter.RewritableCode with
         {

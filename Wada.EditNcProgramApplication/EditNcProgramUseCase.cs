@@ -1,5 +1,6 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
+using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ParameterRewriter;
 using Wada.NcProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
@@ -17,7 +18,7 @@ public class EditNcProgramUseCase : IEditNcProgramUseCase
     private readonly IMainProgramSequenceBuilder _skillReamingParameterRewriter;
     private readonly IMainProgramSequenceBuilder _tappingParameterRewriter;
     private readonly IMainProgramSequenceBuilder _drillingParameterRewriter;
-    private readonly Dictionary<RewriterSelector, IMainProgramSequenceBuilder> _rewriter;
+    private readonly Dictionary<RewriterSelector, Func<ToolParameter, Task<IEnumerable<NcProgramCode>>>> _rewriter;
 
     public EditNcProgramUseCase(
         CrystalReamingSequenceBuilder crystalReamingParameterRewriter,
@@ -32,10 +33,10 @@ public class EditNcProgramUseCase : IEditNcProgramUseCase
 
         _rewriter = new()
         {
-            { RewriterSelector.Tapping, _tappingParameterRewriter },
-            { RewriterSelector.CrystalReaming, _crystalReamingParameterRewriter },
-            { RewriterSelector.SkillReaming, _skillReamingParameterRewriter },
-            { RewriterSelector.Drilling , _drillingParameterRewriter },
+            { RewriterSelector.Tapping, _tappingParameterRewriter.RewriteByToolAsync },
+            { RewriterSelector.CrystalReaming, _crystalReamingParameterRewriter.RewriteByToolAsync },
+            { RewriterSelector.SkillReaming, _skillReamingParameterRewriter.RewriteByToolAsync },
+            { RewriterSelector.Drilling , _drillingParameterRewriter.RewriteByToolAsync },
         };
     }
 
@@ -46,10 +47,8 @@ public class EditNcProgramUseCase : IEditNcProgramUseCase
 
         try
         {
-            return await Task.Run(
-                () => new EditNcProgramDto(
-                    _rewriter[editNcProgramParam.RewriterSelector].RewriteByTool(rewriteByToolRecord)
-                    .Select(x => NcProgramCodeAttempt.Parse(x))));
+            var rewritedProgram = await _rewriter[editNcProgramParam.RewriterSelector](rewriteByToolRecord);
+            return new EditNcProgramDto(rewritedProgram.Select(x => NcProgramCodeAttempt.Parse(x)));
         }
         catch (DomainException ex)
         {
@@ -92,8 +91,8 @@ public record class EditNcProgramParam(
         SubProgramNumger,
         DirectedOperationToolDiameter,
         (DrillingMethod)HoleType,
-        decimal.Parse(BlindPilotHoleDepth),
-        decimal.Parse(BlindHoleDepth),
+        decimal.TryParse(BlindPilotHoleDepth, out var _blindPilotHoleDepth) ? _blindPilotHoleDepth : 0,
+        decimal.TryParse(BlindHoleDepth, out var _blindHoleDepth) ? _blindHoleDepth : 0,
         MainNcProgramParameters.CrystalReamerParameters.Select(x => x.Convert()),
         MainNcProgramParameters.SkillReamerParameters.Select(x => x.Convert()),
         MainNcProgramParameters.TapParameters.Select(x => x.Convert()),

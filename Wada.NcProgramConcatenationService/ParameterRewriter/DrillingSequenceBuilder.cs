@@ -8,15 +8,15 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
 {
-    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, NcProgramCode>> _ncProgramRewriters = new()
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
-        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.Drilling, DrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.Rewrite },
+        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Drilling, DrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
     };
 
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(ToolParameter toolParameter)
+    public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
     {
         if (toolParameter.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
@@ -32,10 +32,9 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
                 $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません\n" +
                 $"リストの最大ドリル径({maxDiameter})を超えています");
 
-        DrillingProgramParameter drillingParameter = drillingParameters
-            .Where(x => x.DirectedOperationToolDiameter <= toolParameter.DirectedOperationToolDiameter)
-            .MaxBy(x => x.DirectedOperationToolDiameter)
-            ?? throw new DomainException(
+        if (drillingParameters.Where(x => x.DirectedOperationToolDiameter <= toolParameter.DirectedOperationToolDiameter)
+                              .MaxBy(x => x.DirectedOperationToolDiameter) == null)
+            throw new DomainException(
                 $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 
         // ドリルの工程
@@ -47,17 +46,21 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = sequenceOrders.Select(
-            sequenceOrder => sequenceOrder.SequenceOrderType == SequenceOrderType.Chamfering
-            ? ReplaceLastM1ToM30(_ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter, drillingParameter)))
-            : _ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter, drillingParameter)));
+        var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(
+            async sequenceOrder =>
+            {
+                var rewritedProgram = await _ncProgramRewriters[sequenceOrder.SequenceOrderType](
+                    MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter));
+
+                return sequenceOrder.SequenceOrderType == SequenceOrderType.Chamfering
+                    ? ReplaceLastM1ToM30(rewritedProgram)
+                    : rewritedProgram;
+            }));
 
         return rewrittenNcPrograms.ToList();
     }
 
-    private static INcProgramRewriteParameter MakeCenterDrillingRewriteParameter(SequenceOrder sequenceOrder, ToolParameter toolParameter, DrillingProgramParameter drillingParameter) => sequenceOrder.SequenceOrderType switch
+    private static INcProgramRewriteParameter MakeCenterDrillingRewriteParameter(SequenceOrder sequenceOrder, ToolParameter toolParameter) => sequenceOrder.SequenceOrderType switch
     {
         SequenceOrderType.CenterDrilling => toolParameter.ToCenterDrillingRewriteParameter(RewriterSelector.Drilling),
 

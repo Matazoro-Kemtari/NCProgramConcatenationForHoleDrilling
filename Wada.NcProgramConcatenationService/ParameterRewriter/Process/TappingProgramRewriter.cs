@@ -13,39 +13,38 @@ internal class TappingProgramRewriter
     /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
+    internal static async Task<NcProgramCode> RewriteAsync(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         var tappingRewriteParameter = (TappingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = tappingRewriteParameter.RewritableCode.NcBlocks
-            .Select(x =>
+        var rewrittenNcBlocks = await Task.WhenAll(tappingRewriteParameter.RewritableCode.NcBlocks
+            .Select(async x =>
             {
                 if (x == null)
                     return null;
 
-                var rewritedNcWords = x.NcWords
-                    .Select(y =>
+                var rewritedNcWords = await Task.WhenAll(x.NcWords
+                    .Select(async y => await Task.Run(() =>
                     {
-                        INcWord result;
                         if (y.GetType() == typeof(NcComment))
                         {
                             NcComment nCComment = (NcComment)y;
                             if (nCComment.Comment == "TAP")
-                                result = new NcComment(
+                                return new NcComment(
                                     string.Concat(
                                         nCComment.Comment,
                                         " M",
                                         tappingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter));
                             else
-                                result = y;
+                                return y;
                         }
                         else if (y.GetType() == typeof(NcWord))
                         {
                             var tappingProgramParameter = (TappingProgramParameter)tappingRewriteParameter.RewritingParameter;
                             NcWord ncWord = (NcWord)y;
                             if (ncWord.ValueData.Indefinite)
-                                result = ncWord.Address.Value switch
+                                return ncWord.Address.Value switch
                                 {
                                     'S' => RewriteSpin(tappingRewriteParameter.Material, tappingProgramParameter, ncWord),
                                     'Z' => RewriteTappingDepth(tappingRewriteParameter.TappingDepth, ncWord),
@@ -54,16 +53,14 @@ internal class TappingProgramRewriter
                                     _ => y
                                 };
                             else
-                                result = y;
+                                return y;
                         }
                         else
-                            result = y;
-
-                        return result;
-                    });
+                            return y;
+                    })));
 
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
-            });
+            }));
 
         return tappingRewriteParameter.RewritableCode with
         {

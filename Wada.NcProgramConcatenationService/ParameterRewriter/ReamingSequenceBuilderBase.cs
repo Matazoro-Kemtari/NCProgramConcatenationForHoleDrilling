@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Runtime.InteropServices;
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
@@ -17,13 +18,13 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
 {
     private readonly ParameterType _parameterType;
     private readonly ReamerType _reamerType;
-    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, NcProgramCode>> _ncProgramRewriters = new()
+    private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
-        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.PilotDrilling, DrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.SecondaryPilotDrilling, DrillingProgramRewriter.Rewrite },
-        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.Rewrite },
-        { SequenceOrderType.Reaming, ReamingProgramRewriter.Rewrite },
+        { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.PilotDrilling, DrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.SecondaryPilotDrilling, DrillingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
+        { SequenceOrderType.Reaming, ReamingProgramRewriter.RewriteAsync },
     };
 
     private protected ReamingSequenceBuilderBase(ParameterType parameterType, ReamerType reamerType)
@@ -33,7 +34,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
     }
 
     [Logging]
-    public virtual IEnumerable<NcProgramCode> RewriteByTool(ToolParameter toolParameter)
+    public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
     {
         if (toolParameter.Material == MaterialType.Undefined)
             throw new ArgumentException("素材が未定義です");
@@ -76,9 +77,9 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
             };
 
         // メインプログラムを工程ごとに取り出す
-        var rewrittenNcPrograms = sequenceOrders.Select(
-            sequenceOrder => _ncProgramRewriters[sequenceOrder.SequenceOrderType](
-                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter)));
+        var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(
+            async sequenceOrder => await _ncProgramRewriters[sequenceOrder.SequenceOrderType](
+                MakeCenterDrillingRewriteParameter(sequenceOrder, toolParameter))));
 
         return rewrittenNcPrograms.ToList();
     }

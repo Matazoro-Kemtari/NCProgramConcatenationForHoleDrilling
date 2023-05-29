@@ -11,13 +11,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_タップシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public async Task 正常系_タップシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-            var actual = tappingSequenceBuilder.RewriteByTool(param);
+            var actual = await tappingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.CenterDrilling);
@@ -52,13 +52,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_コメントにツール径が追記されること()
+        public async Task 正常系_コメントにツール径が追記されること()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder crystalReamingParameterRewriter = new TappingSequenceBuilder();
-            var actual = crystalReamingParameterRewriter.RewriteByTool(param);
+            var actual = await crystalReamingParameterRewriter.RewriteByToolAsync(param);
 
             // then
             var directedDiameter = param.DirectedOperationToolDiameter;
@@ -86,39 +86,39 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_素材が未定義の場合例外を返すこと()
+        public async Task 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
 
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-                _ = tappingSequenceBuilder.RewriteByTool(param);
+                _ = await tappingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<ArgumentException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(targetAsync);
             Assert.AreEqual("素材が未定義です", ex.Message);
         }
 
         [TestMethod]
-        public void 異常系_リストに一致するタップ径が無いとき例外を返すこと()
+        public async Task 異常系_リストに一致するタップ径が無いとき例外を返すこと()
         {
             // given
             // when
             decimal diameter = 3m;
             var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
 
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-                _ = tappingSequenceBuilder.RewriteByTool(param);
+                _ = await tappingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(targetAsync);
             Assert.AreEqual($"タップ径 {diameter}のリストがありません",
                 ex.Message);
         }
@@ -126,7 +126,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_タップシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
+        public async Task 正常系_タップシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
@@ -134,7 +134,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)thickness);
             var tappingSequenceBuilder = new TappingSequenceBuilder();
-            var actual = tappingSequenceBuilder.RewriteByTool(param);
+            var actual = await tappingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Drilling);
@@ -172,7 +172,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_下穴に該当するドリル径が無いとき例外を返すこと()
+        public async Task 異常系_下穴に該当するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
@@ -189,17 +189,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                     TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-                _ = tappingSequenceBuilder.RewriteByTool(param);
+                _ = await tappingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
             var fastDrill = param.TapParameters
                 .Select(x => x.PilotHoleDiameter)
                 .FirstOrDefault();
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(targetAsync);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
                 ex.Message);
         }
@@ -207,14 +207,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_タップシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
+        public async Task 正常系_タップシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
 
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-            var actual = tappingSequenceBuilder.RewriteByTool(param);
+            var actual = await tappingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Chamfering);
@@ -230,7 +230,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_タップシーケンスのタップ工程が書き換えられること(MaterialType material, double expectedThickness)
+        public async Task 正常系_タップシーケンスのタップ工程が書き換えられること(MaterialType material, double expectedThickness)
         {
             // given
             // when
@@ -238,7 +238,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)expectedThickness);
             IMainProgramSequenceBuilder tappingSequenceBuilder = new TappingSequenceBuilder();
-            var actual = tappingSequenceBuilder.RewriteByTool(param);
+            var actual = await tappingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Tapping);
@@ -258,7 +258,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_タップシーケンスの止まり穴の穴深さが書き換えられること()
+        public async Task 正常系_タップシーケンスの止まり穴の穴深さが書き換えられること()
         {
             // given
             var param = TestRewriteByToolArgFactory.Create(
@@ -268,7 +268,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // when
             var tappingSequenceBuilder = new TappingSequenceBuilder();
-            var actual = tappingSequenceBuilder.RewriteByTool(param);
+            var actual = await tappingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Drilling);

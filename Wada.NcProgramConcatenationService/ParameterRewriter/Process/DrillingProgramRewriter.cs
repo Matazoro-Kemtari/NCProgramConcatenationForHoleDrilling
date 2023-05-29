@@ -13,19 +13,19 @@ internal class DrillingProgramRewriter
     /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
+    internal static async Task<NcProgramCode> RewriteAsync(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         var drillingRewriteParameter = (DrillingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = drillingRewriteParameter.RewritableCode.NcBlocks
-            .Select(x =>
+        var rewrittenNcBlocks = await Task.WhenAll(drillingRewriteParameter.RewritableCode.NcBlocks
+            .Select(async x =>
             {
                 if (x == null)
                     return null;
 
-                var rewritedNcWords = x.NcWords
-                    .Select(y =>
+                var rewritedNcWords = await Task.WhenAll(x.NcWords
+                    .Select(async y =>
                     {
                         INcWord result;
                         if (y.GetType() == typeof(NcComment))
@@ -44,7 +44,7 @@ internal class DrillingProgramRewriter
                         {
                             NcWord ncWord = (NcWord)y;
                             if (ncWord.ValueData.Indefinite)
-                                result = ncWord.Address.Value switch
+                                result = await Task.Run(() => ncWord.Address.Value switch
                                 {
                                     'S' => RewriteSpin(drillingRewriteParameter.Material, (DrillingProgramParameter)drillingRewriteParameter.RewritingParameter, ncWord),
                                     'Z' => RewriteDrillingDepth(drillingRewriteParameter.DrillingDepth, ncWord),
@@ -52,7 +52,7 @@ internal class DrillingProgramRewriter
                                     'F' => RewriteFeed(drillingRewriteParameter.Material, (DrillingProgramParameter)drillingRewriteParameter.RewritingParameter, ncWord),
                                     'P' => RewriteSubProgramNumber(drillingRewriteParameter.SubProgramNumber, ncWord),
                                     _ => y
-                                };
+                                });
                             else
                                 result = y;
                         }
@@ -60,10 +60,10 @@ internal class DrillingProgramRewriter
                             result = y;
 
                         return result;
-                    });
+                    }));
 
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
-            });
+            }));
 
         return drillingRewriteParameter.RewritableCode with
         {

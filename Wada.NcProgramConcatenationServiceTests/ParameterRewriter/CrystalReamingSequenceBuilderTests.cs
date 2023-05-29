@@ -11,13 +11,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_クリスタルリーマシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public async Task 正常系_クリスタルリーマシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.CenterDrilling);
@@ -52,13 +52,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_コメントにツール径が追記されること()
+        public async Task 正常系_コメントにツール径が追記されること()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var directedDiameter = param.DirectedOperationToolDiameter;
@@ -91,38 +91,38 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_素材が未定義の場合例外を返すこと()
+        public async Task 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-                _ = crystalReamingSequenceBuilder.RewriteByTool(param);
+                _ = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<ArgumentException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(targetAsync);
             Assert.AreEqual("素材が未定義です", ex.Message);
         }
 
         [TestMethod]
-        public void 異常系_リストに一致するリーマー径が無いとき例外を返すこと()
+        public async Task 異常系_リストに一致するリーマー径が無いとき例外を返すこと()
         {
             // given
             // when
             decimal diameter = 3m;
             var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
 
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-                _ = crystalReamingSequenceBuilder.RewriteByTool(param);
+                _ = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(targetAsync);
             Assert.AreEqual($"リーマー径 {diameter}のリストがありません",
                 ex.Message);
         }
@@ -130,7 +130,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_クリスタルリーマーシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
+        public async Task 正常系_クリスタルリーマーシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
@@ -138,7 +138,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)thickness);
             var crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Drilling);
@@ -202,7 +202,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_下穴1回目に該当するドリル径が無いとき例外を返すこと()
+        public async Task 異常系_下穴1回目に該当するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
@@ -219,23 +219,23 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                     TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-                _ = crystalReamingSequenceBuilder.RewriteByTool(param);
+                _ = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
             var fastDrill = param.CrystalReamerParameters
                 .Select(x => x.PilotHoleDiameter)
                 .FirstOrDefault();
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(targetAsync);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
                 ex.Message);
         }
 
         [TestMethod]
-        public void 異常系_下穴2回目に該当するドリル径が無いとき例外を返すこと()
+        public async Task 異常系_下穴2回目に該当するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
@@ -255,17 +255,17 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                     TestDrillingProgramParameterFactory.Create(DiameterKey: "22"),
                 });
 
-            void target()
+            async Task target()
             {
                 IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-                _ = crystalReamingSequenceBuilder.RewriteByTool(param);
+                _ = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
             var fastDrill = param.CrystalReamerParameters
                 .Select(x => x.SecondaryPilotHoleDiameter)
                 .FirstOrDefault();
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(target);
             Assert.AreEqual($"穴径に該当するリストがありません 穴径: {fastDrill}",
                 ex.Message);
         }
@@ -273,14 +273,14 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_クリスタルリーマシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
+        public async Task 正常系_クリスタルリーマシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
 
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Chamfering);
@@ -293,7 +293,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_パラメータで面取りが無のとき面取りのNCプログラムがないこと()
+        public async Task 正常系_パラメータで面取りが無のとき面取りのNCプログラムがないこと()
         {
             // given
             // when
@@ -302,7 +302,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 new("13.3", 10m, 20m, 0.1m, null),
             });
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var cnt = actual.Count(x => x.MainProgramClassification == NcProgramRole.Chamfering);
@@ -312,7 +312,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(13.3, MaterialType.Aluminum, 10.5, 380, 80)]
         [DataRow(13.3, MaterialType.Iron, 12.4, 290, 40)]
-        public void 正常系_工程リーマが書き換えられること(
+        public async Task 正常系_工程リーマが書き換えられること(
             double toolDiameter,
             MaterialType material,
             double expectedThickness,
@@ -326,7 +326,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 thickness: (decimal)expectedThickness,
                 directedOperationToolDiameter: (decimal)toolDiameter);
             IMainProgramSequenceBuilder crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Reaming);
@@ -340,7 +340,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_クリスタルリーマシーケンスの止まり穴の穴深さが書き換えられること()
+        public async Task 正常系_クリスタルリーマシーケンスの止まり穴の穴深さが書き換えられること()
         {
             // given
             var param = TestRewriteByToolArgFactory.Create(
@@ -350,7 +350,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
 
             // when
             var crystalReamingSequenceBuilder = new CrystalReamingSequenceBuilder();
-            var actual = crystalReamingSequenceBuilder.RewriteByTool(param);
+            var actual = await crystalReamingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedPilotDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Drilling);

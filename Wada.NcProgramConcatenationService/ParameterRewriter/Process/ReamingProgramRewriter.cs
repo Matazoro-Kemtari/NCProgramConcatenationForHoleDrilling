@@ -12,38 +12,37 @@ internal class ReamingProgramRewriter
     /// <param name="ncProgramRewriteParameter">メインプログラムを書き換え引数用オブジェクト</param>
     /// <returns></returns>
     [Logging]
-    internal static NcProgramCode Rewrite(INcProgramRewriteParameter ncProgramRewriteParameter)
+    internal static async Task<NcProgramCode> RewriteAsync(INcProgramRewriteParameter ncProgramRewriteParameter)
     {
         var reamingRewriteParameter = (ReamingRewriteParameter)ncProgramRewriteParameter;
 
         // NCプログラムを走査して書き換え対象を探す
-        var rewrittenNcBlocks = reamingRewriteParameter.RewritableCode.NcBlocks
-            .Select(x =>
+        var rewrittenNcBlocks = await Task.WhenAll(reamingRewriteParameter.RewritableCode.NcBlocks
+            .Select(async x =>
             {
                 if (x == null)
                     return null;
 
-                var rewritedNcWords = x.NcWords
-                    .Select(y =>
+                var rewritedNcWords = await Task.WhenAll(x.NcWords
+                    .Select(async y => await Task.Run(() =>
                     {
-                        INcWord result;
                         if (y.GetType() == typeof(NcComment))
                         {
                             NcComment nCComment = (NcComment)y;
                             if (nCComment.Comment == "REAMER")
-                                result = new NcComment(
+                                return new NcComment(
                                     string.Concat(
                                         nCComment.Comment,
                                         ' ',
                                         reamingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter));
                             else
-                                result = y;
+                                return y;
                         }
                         else if (y.GetType() == typeof(NcWord))
                         {
                             NcWord ncWord = (NcWord)y;
                             if (ncWord.ValueData.Indefinite)
-                                result = ncWord.Address.Value switch
+                                return ncWord.Address.Value switch
                                 {
                                     'S' => RewriteSpin(reamingRewriteParameter.Material, reamingRewriteParameter.Reamer, reamingRewriteParameter.RewritingParameter.DirectedOperationToolDiameter, ncWord),
                                     'Z' => RewriteReamingDepth(reamingRewriteParameter.ReamingDepth, ncWord),
@@ -52,16 +51,14 @@ internal class ReamingProgramRewriter
                                     _ => y
                                 };
                             else
-                                result = y;
+                                return y;
                         }
                         else
                             return y;
-
-                        return result;
-                    });
+                    })));
 
                 return new NcBlock(rewritedNcWords, x.HasBlockSkip);
-            });
+            }));
 
         return reamingRewriteParameter.RewritableCode with
         {

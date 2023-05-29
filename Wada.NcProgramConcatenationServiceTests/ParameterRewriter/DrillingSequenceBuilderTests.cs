@@ -11,13 +11,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 2000, 150)]
         [DataRow(MaterialType.Iron, 1500, 100)]
-        public void 正常系_ドリルシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
+        public async Task 正常系_ドリルシーケンスのセンタードリル工程が書き換えられること(MaterialType material, int expectedSpin, int expectedFeed)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.CenterDrilling);
@@ -52,13 +52,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_コメントにツール径が追記されること()
+        public async Task 正常系_コメントにツール径が追記されること()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var directedDiameter = param.DirectedOperationToolDiameter;
@@ -81,37 +81,37 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 異常系_素材が未定義の場合例外を返すこと()
+        public async Task 異常系_素材が未定義の場合例外を返すこと()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: MaterialType.Undefined);
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-                _ = drillingSequenceBuilder.RewriteByTool(param);
+                _ = await drillingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<ArgumentException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<ArgumentException>(targetAsync);
             Assert.AreEqual("素材が未定義です", ex.Message);
         }
 
         [TestMethod]
-        public void 異常系_リストに一致するドリル径が無いとき例外を返すこと()
+        public async Task 異常系_リストに一致するドリル径が無いとき例外を返すこと()
         {
             // given
             // when
             decimal diameter = 3m;
             var param = TestRewriteByToolArgFactory.Create(directedOperationToolDiameter: diameter);
-            void target()
+            async Task targetAsync()
             {
                 IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-                _ = drillingSequenceBuilder.RewriteByTool(param);
+                _ = await drillingSequenceBuilder.RewriteByToolAsync(param);
             }
 
             // then
-            var ex = Assert.ThrowsException<DomainException>(target);
+            var ex = await Assert.ThrowsExceptionAsync<DomainException>(targetAsync);
             Assert.AreEqual($"ドリル径 {diameter}のリストがありません",
                 ex.Message);
         }
@@ -119,7 +119,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod]
         [DataRow(MaterialType.Aluminum, 10.5)]
         [DataRow(MaterialType.Iron, 12.4)]
-        public void 正常系_ドリルシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
+        public async Task 正常系_ドリルシーケンスの下穴工程が書き換えられること(MaterialType material, double thickness)
         {
             // given
             // when
@@ -127,7 +127,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
                 material: material,
                 thickness: (decimal)thickness);
             var drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Drilling);
@@ -162,13 +162,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         [DataTestMethod()]
         [DataRow(MaterialType.Aluminum, 1400)]
         [DataRow(MaterialType.Iron, 1100)]
-        public void 正常系_ドリルシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
+        public async Task 正常系_ドリルシーケンスの面取り工程が書き換えられること(MaterialType material, int expectedSpin)
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create(material: material);
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             decimal rewritedSpin = NcWordから値を取得する(actual, 'S', NcProgramRole.Chamfering);
@@ -183,13 +183,13 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod()]
-        public void 面取りの最後Mコードが30になっていること()
+        public async Task 面取りの最後Mコードが30になっていること()
         {
             // given
             // when
             var param = TestRewriteByToolArgFactory.Create();
             IMainProgramSequenceBuilder drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var lastM30 = actual.Where(x => x.MainProgramClassification == NcProgramRole.Chamfering)
@@ -209,16 +209,16 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
         }
 
         [TestMethod]
-        public void 正常系_ドリルシーケンスの止まり穴のドリル工程が書き換えられること()
+        public async Task 正常系_ドリルシーケンスの止まり穴のドリル工程が書き換えられること()
         {
             // given
             var param = TestRewriteByToolArgFactory.Create(
                 drillingMethod: DrillingMethod.BlindHole,
                 blindHoleDepth: 4m);
-            
+
             // when
             var drillingSequenceBuilder = new DrillingSequenceBuilder();
-            var actual = drillingSequenceBuilder.RewriteByTool(param);
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
 
             // then
             var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Drilling);
