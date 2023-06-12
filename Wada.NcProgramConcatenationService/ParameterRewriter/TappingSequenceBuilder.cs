@@ -8,6 +8,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class TappingSequenceBuilder : IMainProgramSequenceBuilder
 {
+    private const decimal chamferingThresholdDrillDiameter = 15.6m;
     private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
         { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
@@ -54,13 +55,20 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         };
 
         // タップの工程
-        SequenceOrder[] sequenceOrders = new[]
-        {
-            new SequenceOrder(SequenceOrderType.CenterDrilling),
-            new SequenceOrder(SequenceOrderType.PilotDrilling),
-            new SequenceOrder(SequenceOrderType.Chamfering),
-            new SequenceOrder(SequenceOrderType.Tapping),
-        };
+        SequenceOrder[] sequenceOrders = tappingParameter.PilotHoleDiameter >= chamferingThresholdDrillDiameter
+            ? new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.PilotDrilling),
+                new SequenceOrder(SequenceOrderType.Tapping),
+            }
+            : new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.PilotDrilling),
+                new SequenceOrder(SequenceOrderType.Chamfering),
+                new SequenceOrder(SequenceOrderType.Tapping),
+            };
 
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(
