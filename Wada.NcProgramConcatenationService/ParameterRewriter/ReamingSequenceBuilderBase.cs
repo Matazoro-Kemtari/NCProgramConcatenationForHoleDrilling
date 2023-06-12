@@ -2,6 +2,7 @@
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
+using Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -26,6 +27,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Reaming, ReamingProgramRewriter.RewriteAsync },
     };
+    private readonly ReamingParameterPolicy _parameterPolicy = new();
 
     private protected ReamingSequenceBuilderBase(ParameterType parameterType, ReamerType reamerType)
     {
@@ -47,16 +49,11 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
             _ => throw new NotImplementedException(),
         };
 
-        ReamingProgramParameter reamingParameter;
-        try
-        {
-            reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == toolParameter.DirectedOperationToolDiameter);
-        }
-        catch (InvalidOperationException ex)
-        {
+        if (!_parameterPolicy.ComplyWithAll(reamingParameters, toolParameter.DirectedOperationToolDiameter))
             throw new DomainException(
-                $"リーマー径 {toolParameter.DirectedOperationToolDiameter}のリストがありません", ex);
-        }
+                $"リーマー径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
+
+        var reamingParameter = reamingParameters.First(x => x.DirectedOperationToolDiameter == toolParameter.DirectedOperationToolDiameter);
 
         // リーマーの工程
         SequenceOrder[] sequenceOrders = IsChamferingExecute(reamingParameter)

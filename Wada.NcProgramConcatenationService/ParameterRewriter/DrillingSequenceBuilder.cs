@@ -1,5 +1,6 @@
 ﻿using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
+using Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -14,6 +15,7 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         { SequenceOrderType.Drilling, DrillingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
     };
+    private readonly DrillingParameterPolicy _parameterPolicy = new();
 
     [Logging]
     public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
@@ -24,16 +26,7 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         // ドリルのパラメータを受け取る
         var drillingParameters = toolParameter.DrillingParameters;
 
-        var maxDiameter = drillingParameters.MaxBy(x => x.DirectedOperationToolDiameter)
-            ?.DirectedOperationToolDiameter;
-        if (maxDiameter == null
-            || maxDiameter + 0.5m < toolParameter.DirectedOperationToolDiameter)
-            throw new DomainException(
-                $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません\n" +
-                $"リストの最大ドリル径({maxDiameter})を超えています");
-
-        if (drillingParameters.Where(x => x.DirectedOperationToolDiameter <= toolParameter.DirectedOperationToolDiameter)
-                              .MaxBy(x => x.DirectedOperationToolDiameter) == null)
+        if (!_parameterPolicy.ComplyWithAll(drillingParameters, toolParameter.DirectedOperationToolDiameter))
             throw new DomainException(
                 $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 
