@@ -225,5 +225,26 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             decimal expectedCenterDrillDepth = -param.BlindHoleDepth;
             Assert.AreEqual(expectedCenterDrillDepth, rewritedDepth, "Z値", NcProgramRole.CenterDrilling);
         }
+
+        [TestMethod]
+        public async Task 正常系_ドリル計が規定以上のときは面取り工程が省かれること()
+        {
+            // given
+            var drillDiameter = 15.6m;
+            var param = TestRewriteByToolArgFactory.Create(
+                directedOperationToolDiameter: drillDiameter,
+                drillingParameters: new List<DrillingProgramParameter>
+                {
+                    TestDrillingProgramParameterFactory.Create(DiameterKey: drillDiameter.ToString()),
+                });
+
+            // when
+            var drillingSequenceBuilder = new DrillingSequenceBuilder();
+            var actual = await drillingSequenceBuilder.RewriteByToolAsync(param);
+
+            // then
+            Assert.AreEqual(2, actual.Count());
+            Assert.IsFalse(actual.Any(x => x.MainProgramClassification == NcProgramRole.Chamfering));
+        }
     }
 }
