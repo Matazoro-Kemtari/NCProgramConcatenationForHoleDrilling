@@ -2,7 +2,6 @@
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
-using Wada.NcProgramConcatenationService.ValueObjects;
 using Wada.UseCase.DataClass;
 
 namespace Wada.ReadSubNcProgramApplication;

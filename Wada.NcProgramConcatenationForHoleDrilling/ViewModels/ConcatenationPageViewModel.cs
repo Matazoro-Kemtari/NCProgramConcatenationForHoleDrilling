@@ -338,6 +338,7 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
         _concatenation.DirectedOperationToolDiameter.Value = operationDirecter.DirectedOperationToolDiameter;
         _concatenation.SubProgramNumber.Value = operationDirecter.SubNcProgramCode.ProgramName;
 
+        // サブプログラム確認画面表示
         IDialogParameters parameters = new DialogParameters(
             $"OperationTypeString={_concatenation.FetchedOperationType.Value.GetEnumDisplayName()}&SubProgramSource={operationDirecter.SubNcProgramCode}");
         IDialogResult? dialogResult = default;
