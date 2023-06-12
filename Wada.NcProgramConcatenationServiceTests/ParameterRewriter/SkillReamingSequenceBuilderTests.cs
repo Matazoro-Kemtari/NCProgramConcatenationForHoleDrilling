@@ -346,5 +346,27 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter.Tests
             var rewritedDepth = NcWordから値を取得する(actual, 'Z', NcProgramRole.Reaming);
             Assert.AreEqual(-param.BlindHoleDepth, rewritedDepth, "リーマー-Z値");
         }
+
+        [TestMethod]
+        public async Task 正常系_下穴計が規定以上のときは面取り工程が省かれること()
+        {
+            // given
+            var reammerDiameter = 17m;
+            var param = TestRewriteByToolArgFactory.Create(
+                directedOperationToolDiameter: reammerDiameter,
+                skillReamerParameters: new List<ReamingProgramParameter>
+                {
+                    TestReamingProgramParameterFactory.Create(DiameterKey: reammerDiameter.ToString(),
+                                                              SecondaryPilotHoleDiameter: 15.6m)
+                });
+
+            // when
+            var skillReamingSequenceBuilder = new SkillReamingSequenceBuilder();
+            var actual = await skillReamingSequenceBuilder.RewriteByToolAsync(param);
+
+            // then
+            Assert.AreEqual(4, actual.Count());
+            Assert.IsFalse(actual.Any(x => x.MainProgramClassification == NcProgramRole.Chamfering));
+        }
     }
 }

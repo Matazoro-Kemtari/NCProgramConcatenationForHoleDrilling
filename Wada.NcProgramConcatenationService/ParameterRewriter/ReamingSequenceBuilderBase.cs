@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Runtime.InteropServices;
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
@@ -16,6 +15,7 @@ internal enum ReamerType
 
 public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
 {
+    private const decimal chamferingThresholdDrillDiameter = 15.6m;
     private readonly ParameterType _parameterType;
     private readonly ReamerType _reamerType;
     private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
@@ -59,12 +59,13 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         }
 
         // リーマーの工程
-        SequenceOrder[] sequenceOrders = reamingParameter.ChamferingDepth == null
+        SequenceOrder[] sequenceOrders = IsChamferingExecute(reamingParameter)
             ? new[]
             {
                 new SequenceOrder(SequenceOrderType.CenterDrilling),
                 new SequenceOrder(SequenceOrderType.PilotDrilling),
                 new SequenceOrder(SequenceOrderType.SecondaryPilotDrilling),
+                new SequenceOrder(SequenceOrderType.Chamfering),
                 new SequenceOrder(SequenceOrderType.Reaming),
             }
             : new[]
@@ -72,7 +73,6 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
                 new SequenceOrder(SequenceOrderType.CenterDrilling),
                 new SequenceOrder(SequenceOrderType.PilotDrilling),
                 new SequenceOrder(SequenceOrderType.SecondaryPilotDrilling),
-                new SequenceOrder(SequenceOrderType.Chamfering),
                 new SequenceOrder(SequenceOrderType.Reaming),
             };
 
@@ -83,6 +83,10 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
 
         return rewrittenNcPrograms.ToList();
     }
+
+    private static bool IsChamferingExecute(ReamingProgramParameter reamingParameter)
+        => !(reamingParameter.ChamferingDepth == null
+        || reamingParameter.SecondaryPilotHoleDiameter >= chamferingThresholdDrillDiameter);
 
     private INcProgramRewriteParameter MakeCenterDrillingRewriteParameter(SequenceOrder sequenceOrder, ToolParameter toolParameter)
     {
