@@ -7,6 +7,15 @@
     <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\CncHighlighting.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewModels\NcHighlighting.xshd">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="gong-wpf-dragdrop" Version="3.2.1" />
     <PackageReference Include="LivetCask.Messaging" Version="4.0.2" />
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />

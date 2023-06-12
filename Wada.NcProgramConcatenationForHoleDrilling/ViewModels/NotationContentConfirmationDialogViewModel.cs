@@ -1,4 +1,6 @@
-﻿using Prism.Mvvm;
+﻿using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
+using Prism.Mvvm;
 using Prism.Navigation;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
@@ -9,13 +11,10 @@ using Wada.NcProgramConcatenationForHoleDrilling.Models;
 
 namespace Wada.NcProgramConcatenationForHoleDrilling.ViewModels;
 
-// TODO: シンタックスハイライトできたらいいな
-// https://social.msdn.microsoft.com/Forums/ja-JP/befc82d7-df41-4be4-aa4b-061638532425/textblock12398text12398199683709612384123693339412434227932635612377?forum=wpfja
-// https://blog.okazuki.jp/entry/2016/02/28/153154
 public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogAware, IDestructible
 {
     private readonly NotationContentConfirmationDialogModel _notationContentConfirmation = new();
-    
+
     public NotationContentConfirmationDialogViewModel()
     {
         OperationTypeString = _notationContentConfirmation
@@ -27,6 +26,8 @@ public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogA
             .SubProgramSource
             .ToReactivePropertySlimAsSynchronized(x => x.Value)
             .AddTo(Disposables);
+
+        NcHighlighting = _notationContentConfirmation.NcHighlighting;
 
         ExecCommand = new ReactiveCommand()
             .WithSubscribe(() =>
@@ -48,7 +49,7 @@ public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogA
     public void OnDialogOpened(IDialogParameters parameters)
     {
         _notationContentConfirmation.OperationTypeString.Value = parameters.GetValue<string>(nameof(OperationTypeString));
-        _notationContentConfirmation.SubProgramSource.Value = parameters.GetValue<string>(nameof(SubProgramSource));
+        _notationContentConfirmation.SubProgramSource.Value = new TextDocument(parameters.GetValue<string>(nameof(SubProgramSource)));
     }
 
     /// <summary>オブジェクトを破棄します</summary>
@@ -61,9 +62,11 @@ public class NotationContentConfirmationDialogViewModel : BindableBase, IDialogA
 
     public ReactivePropertySlim<string?> OperationTypeString { get; }
 
-    public ReactivePropertySlim<string?> SubProgramSource { get; }
+    public ReactivePropertySlim<TextDocument?> SubProgramSource { get; }
 
     public ReactiveCommand ExecCommand { get; }
 
     public ReactiveCommand CancelCommand { get; }
+
+    public IHighlightingDefinition NcHighlighting { get; }
 }

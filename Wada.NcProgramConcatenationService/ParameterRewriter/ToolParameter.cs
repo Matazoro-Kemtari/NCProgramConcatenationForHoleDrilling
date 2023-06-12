@@ -15,17 +15,17 @@ public record class ToolParameter
     private readonly Dictionary<RewriterSelector, NcProgramCode> _rewritableCodes;
 
     public ToolParameter(IEnumerable<NcProgramCode> rewritableCodes,
-                            MaterialType material,
-                            decimal thickness,
-                            string subProgramNumber,
-                            decimal directedOperationToolDiameter,
-                            DrillingMethod drillingMethod,
-                            decimal blindPilotHoleDepth,
-                            decimal blindHoleDepth,
-                            IEnumerable<ReamingProgramParameter> crystalReamerParameters,
-                            IEnumerable<ReamingProgramParameter> skillReamerParameters,
-                            IEnumerable<TappingProgramParameter> tapParameters,
-                            IEnumerable<DrillingProgramParameter> drillingParameters)
+                         MaterialType material,
+                         decimal thickness,
+                         string subProgramNumber,
+                         decimal directedOperationToolDiameter,
+                         DrillingMethod drillingMethod,
+                         decimal blindPilotHoleDepth,
+                         decimal blindHoleDepth,
+                         IEnumerable<ReamingProgramParameter> crystalReamerParameters,
+                         IEnumerable<ReamingProgramParameter> skillReamerParameters,
+                         IEnumerable<TappingProgramParameter> tapParameters,
+                         IEnumerable<DrillingProgramParameter> drillingParameters)
     {
         RewritableCodes = rewritableCodes ?? throw new ArgumentNullException(nameof(rewritableCodes));
         Material = material;

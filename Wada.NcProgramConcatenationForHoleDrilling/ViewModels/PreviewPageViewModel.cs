@@ -1,4 +1,6 @@
-﻿using Livet.Messaging;
+﻿using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
+using Livet.Messaging;
 using Livet.Messaging.IO;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -30,6 +32,8 @@ public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructibl
         CombinedProgramSource = _previewPageModel
             .CombinedProgramSource
             .AddTo(Disposables);
+
+        NcHighlighting = _previewPageModel.NcHighlighting;
 
         ExecCommand = new AsyncReactiveCommand()
             .WithSubscribe(() => SaveNcProgramCodeAsync())
@@ -63,7 +67,7 @@ public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructibl
 
         var savingFilePath = message.Response[0];
         using var writer = _streamWriterOpener.Open(savingFilePath);
-        await _ncProgramReadWriter.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value);
+        await _ncProgramReadWriter.WriteAllAsync(writer, _previewPageModel.CombinedProgramSource.Value.Text);
     }
 
     public void Destroy() => Disposables.Dispose();
@@ -89,7 +93,7 @@ public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructibl
         PreviousViewCommand.RaiseCanExecuteChanged();
 
         string combinedCode = navigationContext.Parameters.GetValue<string>(nameof(combinedCode));
-        _previewPageModel.CombinedProgramSource.Value = combinedCode;
+        _previewPageModel.CombinedProgramSource.Value = new TextDocument(combinedCode);
     }
 
     /// <summary>
@@ -99,9 +103,11 @@ public class PreviewPageViewModel : BindableBase, INavigationAware, IDestructibl
 
     public InteractionMessenger Messenger { get; } = new InteractionMessenger();
 
-    public ReactivePropertySlim<string> CombinedProgramSource { get; }
+    public ReactivePropertySlim<TextDocument> CombinedProgramSource { get; }
 
     public AsyncReactiveCommand ExecCommand { get; }
 
     public DelegateCommand PreviousViewCommand { get; }
+
+    public IHighlightingDefinition NcHighlighting { get; }
 }

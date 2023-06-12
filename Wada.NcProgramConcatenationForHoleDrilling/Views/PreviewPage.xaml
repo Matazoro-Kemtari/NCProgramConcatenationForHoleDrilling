@@ -13,6 +13,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
+             xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
              FontSize="16">
     <i:Interaction.Triggers>
         <l:InteractionMessageTrigger MessageKey="SaveFiling" Messenger="{Binding Messenger}">
@@ -49,13 +50,15 @@
                 <TextBlock Text="結合内容に間違いありませんか?"/>
                 <TextBlock Text="間違いなければ 保存してください"/>
             </StackPanel>
-            <TextBox Grid.Row="1"
-                     Margin="5"
-                     Text="{Binding CombinedProgramSource.Value}"
-                     VerticalScrollBarVisibility="Auto"
-                     HorizontalScrollBarVisibility="Auto"
-                     TextWrapping="Wrap"
-                     IsReadOnly="True"/>
+            <avalonEdit:TextEditor Grid.Row="1"
+                                   Margin="5"
+                                   Padding="5"
+                                   VerticalScrollBarVisibility="Auto"
+                                   HorizontalScrollBarVisibility="Auto"
+                                   Document="{Binding CombinedProgramSource.Value}"
+                                   SyntaxHighlighting="{Binding NcHighlighting}"
+                                   IsReadOnly="True"
+                                   Background="WhiteSmoke"/>
         </Grid>
     </DockPanel>
 </UserControl>
