@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -15,7 +14,6 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         { SequenceOrderType.Drilling, DrillingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
     };
-    private readonly DrillingParameterExistencePolicy _parameterPolicy = new();
 
     [Logging]
     public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
@@ -26,7 +24,7 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         // ドリルのパラメータを受け取る
         var drillingParameters = toolParameter.DrillingParameters;
 
-        if (!_parameterPolicy.ComplyWithAll(drillingParameters, toolParameter.DirectedOperationToolDiameter))
+        if (!drillingParameters.Any(x => x.CanUse(toolParameter.DirectedOperationToolDiameter)))
             throw new DomainException(
                 $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 

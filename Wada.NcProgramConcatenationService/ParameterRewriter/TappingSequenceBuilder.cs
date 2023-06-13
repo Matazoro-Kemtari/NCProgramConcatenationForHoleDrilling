@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -16,8 +15,6 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Tapping, TappingProgramRewriter.RewriteAsync }
     };
-    private readonly TappingParameterExistencePolicy _tappingParameterPolicy = new();
-    private readonly DrillingParameterExistencePolicy _drillingParameterPolicy = new();
 
     [Logging]
     public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
@@ -28,7 +25,7 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         // タップのパラメータを受け取る
         var tappingParameters = toolParameter.TapParameters;
 
-        if (!_tappingParameterPolicy.ComplyWithAll(tappingParameters, toolParameter.DirectedOperationToolDiameter))
+        if (!tappingParameters.Any(x => x.CanUse(toolParameter.DirectedOperationToolDiameter)))
             throw new DomainException(
                 $"タップ径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 
@@ -38,7 +35,7 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         // ドリルのパラメータを受け取る
         var drillingParameters = toolParameter.DrillingParameters;
 
-        if (!_drillingParameterPolicy.ComplyWithAll(drillingParameters, tappingParameter.PilotHoleDiameter))
+        if (!drillingParameters.Any(x=>x.CanUse(tappingParameter.PilotHoleDiameter)))
             throw new DomainException(
                 $"穴径に該当するリストがありません 穴径: {tappingParameter.PilotHoleDiameter}");
 
