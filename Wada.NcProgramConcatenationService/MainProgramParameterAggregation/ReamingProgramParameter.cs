@@ -19,6 +19,10 @@ public record class ReamingProgramParameter(
     decimal? ChamferingDepth) : IPilotHoleDrilledParameter
 {
     [Logging]
+    public bool CanUse(decimal diameter)
+        => DirectedOperationToolDiameter == diameter;
+    
+    [Logging]
     private static decimal Validate(string value) => decimal.Parse(value);
 
     public decimal DirectedOperationToolDiameter => Validate(DiameterKey);

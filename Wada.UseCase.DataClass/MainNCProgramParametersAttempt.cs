@@ -30,13 +30,13 @@ public record class MainNcProgramParametersAttempt
 
     private bool ExistsReamingProgramParameter(decimal diameter)
         => CrystalReamerParameters.Union(SkillReamerParameters)
-                                  .Any(x => x.DirectedOperationToolDiameter == diameter);
+                                  .Any(x => x.CanUse(diameter));
 
     private bool ExistsTappingProgramParameter(decimal diameter)
-        => TapParameters.Any(x => x.DirectedOperationToolDiameter == diameter);
+        => TapParameters.Any(x => x.CanUse(diameter));
 
     private bool ExistsDrillingProgramParameter(decimal diameter)
-        => DrillingParameters.Any(x => x.DirectedOperationToolDiameter == diameter);
+        => DrillingParameters.Any(x => x.CanUse(diameter));
 
     public IEnumerable<ReamingProgramParameterAttempt> CrystalReamerParameters { get; init; }
     public IEnumerable<ReamingProgramParameterAttempt> SkillReamerParameters { get; init; }
@@ -115,10 +115,7 @@ public record class ReamingProgramParameterAttempt(
            mainProgramParameter.CenterDrillDepth,
            mainProgramParameter.ChamferingDepth);
 
-    public decimal DirectedOperationToolDiameter
-    {
-        get => Convert().DirectedOperationToolDiameter;
-    }
+    public bool CanUse(decimal diameter) => Convert().CanUse(diameter);
 }
 
 public record class TappingProgramParameterAttempt(
@@ -143,10 +140,7 @@ public record class TappingProgramParameterAttempt(
            mainProgramParameter.SpinForIron,
            mainProgramParameter.FeedForIron);
 
-    public decimal DirectedOperationToolDiameter
-    {
-        get => Convert().DirectedOperationToolDiameter;
-    }
+    public bool CanUse(decimal diameter) => Convert().CanUse(diameter);
 }
 
 public record class DrillingProgramParameterAttempt(
@@ -169,8 +163,5 @@ public record class DrillingProgramParameterAttempt(
            mainProgramParameter.SpinForIron,
            mainProgramParameter.FeedForIron);
 
-    public decimal DirectedOperationToolDiameter
-    {
-        get => Convert().DirectedOperationToolDiameter;
-    }
+    public bool CanUse(decimal diameter) => Convert().CanUse(diameter);
 }

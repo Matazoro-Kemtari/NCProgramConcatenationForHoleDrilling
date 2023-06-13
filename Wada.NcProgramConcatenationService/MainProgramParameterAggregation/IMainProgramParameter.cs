@@ -5,6 +5,13 @@ namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 public interface IMainProgramParameter
 {
     /// <summary>
+    /// パラメータが使えるかどうかを判定する
+    /// </summary>
+    /// <param name="diameter"></param>
+    /// <returns>責任があるときtrue</returns>
+    bool CanUse(decimal diameter);
+
+    /// <summary>
     /// ツール径キー
     /// </summary>
     string DiameterKey { get; }

@@ -22,6 +22,13 @@ public record class DrillingProgramParameter(
     int SpinForIron,
     int FeedForIron) : IMainProgramParameter
 {
+    private const decimal diameterMargin = 0.5m;
+
+    [Logging]
+    public bool CanUse(decimal diameter)
+        => DirectedOperationToolDiameter <= diameter
+           && diameter < (DirectedOperationToolDiameter + diameterMargin);
+
     [Logging]
     private static decimal Validate(string value) => decimal.Parse(value);
 

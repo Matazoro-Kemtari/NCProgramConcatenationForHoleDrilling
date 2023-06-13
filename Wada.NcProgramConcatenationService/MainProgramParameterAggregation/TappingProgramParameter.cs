@@ -26,6 +26,10 @@ public record class TappingProgramParameter(
     int FeedForIron) : IPilotHoleDrilledParameter
 {
     [Logging]
+    public bool CanUse(decimal diameter)
+        => DirectedOperationToolDiameter == diameter;
+
+    [Logging]
     private static decimal Validate(string value)
     {
         var matchedDiameter = Regex.Match(value, @"(?<=M)\d+(\.\d)?");
