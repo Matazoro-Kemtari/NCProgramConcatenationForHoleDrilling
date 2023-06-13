@@ -11,7 +11,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 /// </summary>
 public record class ToolParameter
 {
-    private readonly Dictionary<RewriterSelector, IEnumerable<IMainProgramParameter>> _toolParameters;
+    private readonly Dictionary<RewriterSelector, Func<IMainProgramParameter>> _parameterFetcher;
     private readonly Dictionary<RewriterSelector, NcProgramCode> _rewritableCodes;
 
     public ToolParameter(IEnumerable<NcProgramCode> rewritableCodes,
@@ -44,12 +44,12 @@ public record class ToolParameter
             _ => default,
         };
 
-        _toolParameters = new()
+        _parameterFetcher = new()
         {
-            { RewriterSelector.CrystalReaming, crystalReamerParameters },
-            { RewriterSelector.SkillReaming, skillReamerParameters },
-            { RewriterSelector.Tapping, tapParameters },
-            { RewriterSelector.Drilling, drillingParameters },
+            { RewriterSelector.CrystalReaming, FetchCrystalReamerParameter },
+            { RewriterSelector.SkillReaming, FetchSkillReamerParameter },
+            { RewriterSelector.Tapping, FetchTapParameter },
+            { RewriterSelector.Drilling, FetchDrillingParameter },
         };
 
         _rewritableCodes = new()
@@ -232,10 +232,9 @@ public record class ToolParameter
         IMainProgramParameter mainProgramParameter;
         try
         {
-            mainProgramParameter = _toolParameters[rewriterSelector]
-                .First(x => x.DirectedOperationToolDiameter == DirectedOperationToolDiameter);
+            mainProgramParameter = _parameterFetcher[rewriterSelector].Invoke();
         }
-        catch (InvalidOperationException ex)
+        catch (Exception ex) when (ex is InvalidOperationException or DomainException)
         {
             throw new DomainException(
                 $"{rewriterSelector.GetEnumDisplayName()}径 {DirectedOperationToolDiameter}のリストがありません", ex);
@@ -243,6 +242,21 @@ public record class ToolParameter
 
         return mainProgramParameter;
     }
+
+    private IMainProgramParameter FetchDrillingParameter()
+        => DrillingParameters.Where(x => x.CanUse(DirectedOperationToolDiameter))
+                             .MaxBy(x => x.DirectedOperationToolDiameter)
+            ?? throw new DomainException();
+
+    private IMainProgramParameter FetchTapParameter()
+        => TapParameters.First(x => x.DirectedOperationToolDiameter == DirectedOperationToolDiameter);
+
+    private IMainProgramParameter FetchSkillReamerParameter()
+        => SkillReamerParameters.First(x => x.DirectedOperationToolDiameter == DirectedOperationToolDiameter);
+
+    private IMainProgramParameter FetchCrystalReamerParameter()
+        => CrystalReamerParameters.First(x => x.DirectedOperationToolDiameter == DirectedOperationToolDiameter);
+
 
     /// <summary>
     /// 書き換え元NCプログラム

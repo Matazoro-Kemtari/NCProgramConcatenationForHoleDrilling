@@ -74,3 +74,7 @@ Copyright (c) 2018 neuecc, xin9le, okazuki
 
 Copyright (c) 2019 Cysharp, Inc.
 <https://github.com/Cysharp/Ulid/blob/master/LICENSE>
+
+### icons8
+
+<a target="_blank" href="https://icons8.com/icon/492aVyc3A-Rh/cnc%E3%83%9E%E3%82%B7%E3%83%B3">CNCマシン</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
