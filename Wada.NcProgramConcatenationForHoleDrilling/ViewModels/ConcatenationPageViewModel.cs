@@ -325,8 +325,19 @@ public class ConcatenationPageViewModel : BindableBase, INavigationAware, IDestr
         }
         catch (ReadSubNcProgramUseCaseException ex)
         {
-            var message = MessageNotificationViaLivet.MakeInformationMessage(
+            var message = MessageNotificationViaLivet.MakeExclamationMessage(
                 $"サブプログラムの読み込みでエラーが発生しました\n{ex.Message}");
+            await Messenger.RaiseAsync(message);
+            _concatenation.Clear();
+
+            return;
+        }
+
+        // ツール径リスト存在チェック
+        if (!(_concatenation.MainNcProgramParameters?.CheckParameterPresence(operationDirecter) ?? false))
+        {
+            var message = MessageNotificationViaLivet.MakeExclamationMessage(
+                $"指定したツール径がリストにありません");
             await Messenger.RaiseAsync(message);
             _concatenation.Clear();
 

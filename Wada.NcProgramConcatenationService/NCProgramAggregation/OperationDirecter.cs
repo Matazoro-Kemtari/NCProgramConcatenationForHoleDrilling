@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
 namespace Wada.NcProgramConcatenationService.NcProgramAggregation
