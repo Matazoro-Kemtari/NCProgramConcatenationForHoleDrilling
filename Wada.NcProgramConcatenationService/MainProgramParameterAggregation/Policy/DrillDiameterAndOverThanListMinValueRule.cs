@@ -1,6 +1,4 @@
-﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
-
-namespace Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
+﻿namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 
 internal class DrillDiameterAndOverThanListMinValueRule : IUsingParameterListRule
 {

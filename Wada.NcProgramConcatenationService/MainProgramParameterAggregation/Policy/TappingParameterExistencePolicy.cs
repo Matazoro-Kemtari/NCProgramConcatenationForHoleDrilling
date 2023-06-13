@@ -1,15 +1,13 @@
-﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+﻿namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 
-namespace Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
-
-internal class ReamingParameterPolicy
+internal class TappingParameterExistencePolicy
 {
     private readonly ToolParameterPolicy _policy;
 
-    public ReamingParameterPolicy()
+    public TappingParameterExistencePolicy()
     {
         _policy = new ToolParameterPolicy();
-        _policy.Add(new ReamerDiameterExistsRule());
+        _policy.Add(new TapDiameterExistenceRule());
     }
 
     public bool ComplyWithAll(IEnumerable<IMainProgramParameter> mainProgramParameters, decimal toolDiameter)

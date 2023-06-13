@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using Wada.AOP.Logging;
 using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
-using Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -27,7 +27,7 @@ public abstract class ReamingSequenceBuilderBase : IMainProgramSequenceBuilder
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Reaming, ReamingProgramRewriter.RewriteAsync },
     };
-    private readonly ReamingParameterPolicy _parameterPolicy = new();
+    private readonly ReamingParameterExistencePolicy _parameterPolicy = new();
 
     private protected ReamingSequenceBuilderBase(ParameterType parameterType, ReamerType reamerType)
     {

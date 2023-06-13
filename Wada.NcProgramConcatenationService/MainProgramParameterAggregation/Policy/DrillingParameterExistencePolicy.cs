@@ -1,14 +1,12 @@
-﻿using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
+﻿namespace Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 
-namespace Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
-
-public class DrillingParameterPolicy
+public class DrillingParameterExistencePolicy
 {
     private readonly ToolParameterPolicy _policy;
 
-    public DrillingParameterPolicy()
+    public DrillingParameterExistencePolicy()
     {
-        _policy = new ToolParameterPolicy();
+        _policy = new();
         _policy.Add(new DrillDiameterAndOverThanListMinValueRule());
         _policy.Add(new DrillDiameterAndBelowThanListMaxValueRule());
     }

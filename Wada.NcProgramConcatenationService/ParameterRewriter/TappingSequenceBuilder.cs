@@ -1,6 +1,6 @@
 ﻿using Wada.AOP.Logging;
+using Wada.NcProgramConcatenationService.MainProgramParameterAggregation.Policy;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
-using Wada.NcProgramConcatenationService.ParameterRewriter.Policy;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
 
@@ -16,8 +16,8 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         { SequenceOrderType.Chamfering, ChamferingProgramRewriter.RewriteAsync },
         { SequenceOrderType.Tapping, TappingProgramRewriter.RewriteAsync }
     };
-    private readonly TappingParameterPolicy _tappingParameterPolicy = new();
-    private readonly DrillingParameterPolicy _drillingParameterPolicy = new();
+    private readonly TappingParameterExistencePolicy _tappingParameterPolicy = new();
+    private readonly DrillingParameterExistencePolicy _drillingParameterPolicy = new();
 
     [Logging]
     public virtual async Task<IEnumerable<NcProgramCode>> RewriteByToolAsync(ToolParameter toolParameter)
