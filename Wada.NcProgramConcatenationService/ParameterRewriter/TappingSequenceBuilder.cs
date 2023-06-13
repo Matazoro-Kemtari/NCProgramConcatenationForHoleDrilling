@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -8,6 +7,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class TappingSequenceBuilder : IMainProgramSequenceBuilder
 {
+    private const decimal chamferingThresholdDrillDiameter = 15.6m;
     private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
         { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
@@ -25,42 +25,35 @@ public class TappingSequenceBuilder : IMainProgramSequenceBuilder
         // タップのパラメータを受け取る
         var tappingParameters = toolParameter.TapParameters;
 
+        if (!tappingParameters.Any(x => x.CanUse(toolParameter.DirectedOperationToolDiameter)))
+            throw new DomainException(
+                $"タップ径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
+
+        var tappingParameter = tappingParameters
+            .First(x => x.DirectedOperationToolDiameter == toolParameter.DirectedOperationToolDiameter);
+
         // ドリルのパラメータを受け取る
         var drillingParameters = toolParameter.DrillingParameters;
 
-        TappingProgramParameter tappingParameter;
-        try
-        {
-            tappingParameter = tappingParameters
-                .First(x => x.DirectedOperationToolDiameter == toolParameter.DirectedOperationToolDiameter);
-        }
-        catch (InvalidOperationException ex)
-        {
+        if (!drillingParameters.Any(x=>x.CanUse(tappingParameter.PilotHoleDiameter)))
             throw new DomainException(
-                $"タップ径 {toolParameter.DirectedOperationToolDiameter}のリストがありません", ex);
-        }
-
-        var drillingParameter = drillingParameters
-            .Where(x => x.DirectedOperationToolDiameter <= tappingParameter.PilotHoleDiameter)
-            .MaxBy(x => x.DirectedOperationToolDiameter)
-            ?? throw new DomainException(
                 $"穴径に該当するリストがありません 穴径: {tappingParameter.PilotHoleDiameter}");
 
-        var drillingDepth = toolParameter.DrillingMethod switch
-        {
-            DrillingMethod.ThroughHole => toolParameter.Thickness + drillingParameter.DrillTipLength,
-            DrillingMethod.BlindHole => toolParameter.BlindPilotHoleDepth,
-            _ => throw new NotImplementedException("DrillingMethodの値が想定外の値です"),
-        };
-
         // タップの工程
-        SequenceOrder[] sequenceOrders = new[]
-        {
-            new SequenceOrder(SequenceOrderType.CenterDrilling),
-            new SequenceOrder(SequenceOrderType.PilotDrilling),
-            new SequenceOrder(SequenceOrderType.Chamfering),
-            new SequenceOrder(SequenceOrderType.Tapping),
-        };
+        SequenceOrder[] sequenceOrders = tappingParameter.PilotHoleDiameter >= chamferingThresholdDrillDiameter
+            ? new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.PilotDrilling),
+                new SequenceOrder(SequenceOrderType.Tapping),
+            }
+            : new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.PilotDrilling),
+                new SequenceOrder(SequenceOrderType.Chamfering),
+                new SequenceOrder(SequenceOrderType.Tapping),
+            };
 
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(

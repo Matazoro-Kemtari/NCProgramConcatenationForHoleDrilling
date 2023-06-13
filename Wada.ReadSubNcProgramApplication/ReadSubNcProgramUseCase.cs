@@ -46,7 +46,10 @@ public class ReadSubNcProgramUseCase : IReadSubNcProgramUseCase
             return OperationDirecterAttemp.Parse(
                 OperationDirecter.Create(ncProgramCode, drillSizeData));
         }
-        catch (Exception ex) when (ex is DomainException || ex is DirectedOperationNotFoundException || ex is DirectedOperationToolDiameterNotFoundException)
+        catch (Exception ex) when (ex is DomainException
+                                      or DirectedOperationNotFoundException
+                                      or DirectedOperationToolDiameterNotFoundException
+                                      or OpenFileStreamException)
         {
             throw new ReadSubNcProgramUseCaseException(ex.Message, ex);
         }

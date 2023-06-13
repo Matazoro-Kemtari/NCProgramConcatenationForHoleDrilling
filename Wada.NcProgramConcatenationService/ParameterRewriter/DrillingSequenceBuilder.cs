@@ -1,5 +1,4 @@
 ﻿using Wada.AOP.Logging;
-using Wada.NcProgramConcatenationService.MainProgramParameterAggregation;
 using Wada.NcProgramConcatenationService.NcProgramAggregation;
 using Wada.NcProgramConcatenationService.ParameterRewriter.Process;
 using Wada.NcProgramConcatenationService.ValueObjects;
@@ -8,6 +7,7 @@ namespace Wada.NcProgramConcatenationService.ParameterRewriter;
 
 public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
 {
+    private const decimal chamferingThresholdDrillDiameter = 15.6m;
     private readonly Dictionary<SequenceOrderType, Func<INcProgramRewriteParameter, Task<NcProgramCode>>> _ncProgramRewriters = new()
     {
         { SequenceOrderType.CenterDrilling, CenterDrillingProgramRewriter.RewriteAsync },
@@ -24,26 +24,23 @@ public class DrillingSequenceBuilder : IMainProgramSequenceBuilder
         // ドリルのパラメータを受け取る
         var drillingParameters = toolParameter.DrillingParameters;
 
-        var maxDiameter = drillingParameters.MaxBy(x => x.DirectedOperationToolDiameter)
-            ?.DirectedOperationToolDiameter;
-        if (maxDiameter == null
-            || maxDiameter + 0.5m < toolParameter.DirectedOperationToolDiameter)
-            throw new DomainException(
-                $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません\n" +
-                $"リストの最大ドリル径({maxDiameter})を超えています");
-
-        if (drillingParameters.Where(x => x.DirectedOperationToolDiameter <= toolParameter.DirectedOperationToolDiameter)
-                              .MaxBy(x => x.DirectedOperationToolDiameter) == null)
+        if (!drillingParameters.Any(x => x.CanUse(toolParameter.DirectedOperationToolDiameter)))
             throw new DomainException(
                 $"ドリル径 {toolParameter.DirectedOperationToolDiameter}のリストがありません");
 
         // ドリルの工程
-        SequenceOrder[] sequenceOrders = new[]
-        {
-            new SequenceOrder(SequenceOrderType.CenterDrilling),
-            new SequenceOrder(SequenceOrderType.Drilling),
-            new SequenceOrder(SequenceOrderType.Chamfering),
-        };
+        SequenceOrder[] sequenceOrders = toolParameter.DirectedOperationToolDiameter >= chamferingThresholdDrillDiameter
+            ? new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.Drilling),
+            }
+            : new[]
+            {
+                new SequenceOrder(SequenceOrderType.CenterDrilling),
+                new SequenceOrder(SequenceOrderType.Drilling),
+                new SequenceOrder(SequenceOrderType.Chamfering),
+            };
 
         // メインプログラムを工程ごとに取り出す
         var rewrittenNcPrograms = await Task.WhenAll(sequenceOrders.Select(
