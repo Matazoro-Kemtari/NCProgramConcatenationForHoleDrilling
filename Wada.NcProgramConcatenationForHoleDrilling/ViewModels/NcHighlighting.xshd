@@ -1,0 +1,26 @@
+﻿<SyntaxDefinition name="NC" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<!-- 参考: https://ponyoth.hateblo.jp/entry/2016/06/13/130606 -->
+	<Color name="PgNumber" foreground="#FF6347" fontWeight="bold" />
+	<Color name="Comment" foreground="#FF008000" exampleText="string text = &quot;Hello, World!&quot;" />
+	<Color name="Variable" foreground="#FF00FF" />
+	<Color name="SequenceNumber" foreground="#FF8C00" />
+	<Color name="GCode" foreground="#0000FF" />
+	<Color name="MCode" foreground="#9ACD32" />
+	<Color name="Spin" foreground="#B8860B" />
+	<Color name="Feed" foreground="#FA8072" />
+	<Color name="Tool" foreground="#FF00FF" />
+	<Color name="Address" foreground="#DC143C" />
+	<Color name="Coordinate" foreground="#800000" />
+	<RuleSet>
+		<Rule color="PgNumber">O[0-9]{1,4}</Rule>
+		<Span color="Comment" begin="\(" end="\)" />
+		<Rule color="Variable">\#[0-9]{1,4}</Rule>
+		<Rule color="SequenceNumber">N[0-9]+</Rule>
+		<Rule color="GCode">G(?=[0-9]{1,3})</Rule>
+		<Rule color="MCode">M(?=[0-9]{1,3})</Rule>
+		<Rule color="Spin">S[0-9]+</Rule>
+		<Rule color="Feed">F[0-9]+</Rule>
+		<Rule color="Tool">T[0-9]+</Rule>
+		<Rule color="Address">[XYZPR]</Rule>		
+	</RuleSet>
+</SyntaxDefinition>

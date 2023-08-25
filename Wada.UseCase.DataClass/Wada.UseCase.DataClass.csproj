@@ -10,10 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="MethodDecorator.Fody" Version="1.1.1" />
+    <PackageReference Include="Wada.Extensions" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wada.NCProgramConcatenationService\Wada.NCProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
   </ItemGroup>
 
 </Project>

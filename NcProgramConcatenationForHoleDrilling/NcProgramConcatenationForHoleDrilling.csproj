@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>cnc.ico</ApplicationIcon>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="cnc.ico" />
+    <None Remove="cnc.xcf" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="2.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="NLog" Version="5.1.4" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wada.CombineMainNcProgramApplication\Wada.CombineMainNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.EditNcProgramApplication\Wada.EditNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.InchMillimeterConvertSpreadSheet\Wada.InchMillimeterConvertSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.MainProgramParameterSpreadSheet\Wada.MainProgramParameterSpreadSheet.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramConcatenationForHoleDrilling\Wada.NcProgramConcatenationForHoleDrilling.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramConcatenationService\Wada.NcProgramConcatenationService.csproj" />
+    <ProjectReference Include="..\Wada.NcProgramFile\Wada.NcProgramFile.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNcProgramApplication\Wada.ReadMainNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadMainNcProgramParametersApplication\Wada.ReadMainNcProgramParametersApplication.csproj" />
+    <ProjectReference Include="..\Wada.ReadSubNcProgramApplication\Wada.ReadSubNcProgramApplication.csproj" />
+    <ProjectReference Include="..\Wada.StoreNcProgramCodeApplication\Wada.StoreNcProgramCodeApplication.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

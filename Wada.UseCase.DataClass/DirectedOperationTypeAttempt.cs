@@ -1,4 +1,4 @@
-﻿using Wada.Extension;
+﻿using Wada.Extensions;
 
 namespace Wada.UseCase.DataClass
 {
@@ -6,7 +6,7 @@ namespace Wada.UseCase.DataClass
     {
         [EnumDisplayName("タップ")]
         Tapping,
-        [EnumDisplayName("リーマ")]
+        [EnumDisplayName("リーマー")]
         Reaming,
         [EnumDisplayName("ドリル")]
         Drilling,
@@ -40,12 +40,5 @@ namespace Wada.UseCase.DataClass
 
         [EnumDisplayName("SS400")]
         Iron,
-    }
-
-    public enum ReamerTypeAttempt
-    {
-        Undefined,
-        Crystal,
-        Skill
     }
 }
